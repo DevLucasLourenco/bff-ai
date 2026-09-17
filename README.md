@@ -91,6 +91,20 @@ npm run dev
 
 Acesse `http://localhost:5173`.
 
+### 3. Testes
+
+```bash
+cd backend && python -m pytest
+```
+
+```bash
+cd frontend && npm test
+```
+
+Os testes do backend usam um SQLite temporário migrado por `alembic upgrade head`
+e uma chave-mestra descartável: nunca tocam `backend/data/bff_ai.db` nem o `.env`.
+Nenhum teste faz I/O de rede.
+
 ## Regras deliberadas do projeto
 
 1. **Sem fallback de LLM.** `create_adapter()` retorna exatamente o provider escolhido ou lança erro.
@@ -113,25 +127,40 @@ bff-ai/
 │  ├─ app/
 │  │  ├─ api/routes/
 │  │  ├─ core/
-│  │  ├─ db/
+│  │  ├─ db/            schema.py verifica a revisão no boot
 │  │  ├─ domain/
 │  │  ├─ repositories/
-│  │  └─ services/llm/
+│  │  └─ services/
+│  │     ├─ context.py  montagem do prompt, pura e testável
+│  │     └─ llm/        adapters, capacidades e erros tipados
 │  ├─ scripts/
 │  └─ tests/
+├─ docs/
 └─ frontend/
    └─ src/
       ├─ components/
-      ├─ features/chat/
+      ├─ features/chat/    Markdown, MessageBubble, StreamingMessage
       ├─ features/settings/
-      └─ lib/
+      ├─ hooks/            useConfig, useConversations, useChatStream
+      └─ lib/              api, sse, streamBuffer
 ```
+
+## Diagnóstico e saúde
+
+`GET /health` diz só que o processo está de pé. `GET /health/ready` checa o que
+realmente quebra: o banco abre, a revisão do schema é a esperada e a
+`APP_MASTER_KEY` ainda decifra os segredos guardados. Responde 503 quando algo
+está degradado.
 
 ## Próximas extensões naturais
 
 - editor visual completo de personas;
-- memórias estruturadas por usuária/conversa;
 - anexos e multimodal;
 - ferramentas/MCP com permissões explícitas;
+- busca semântica de memórias (hoje o filtro é por escopo + teto);
+- sumarização do histórico antigo (hoje ele é truncado com aviso);
 - autenticação caso deixe de ser uma aplicação local;
 - PostgreSQL quando sair do modo local.
+
+O roadmap técnico que originou o estado atual, com o porquê de cada decisão, está
+em [docs/PLANO_DE_MELHORIAS.md](docs/PLANO_DE_MELHORIAS.md).

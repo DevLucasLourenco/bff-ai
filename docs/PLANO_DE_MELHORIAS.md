@@ -4,11 +4,61 @@ Roadmap técnico derivado da leitura completa do código em 2026-09-17. O objeti
 tratar dívida **estrutural**, não cosmética: cada fase remove uma classe inteira de
 problema, não um sintoma.
 
+## Status da execução
+
+As fases 0 a 7 foram executadas. A fase 8 continua condicional e não foi iniciada.
+
+| Item | Status | Onde conferir |
+|---|---|---|
+| F0.1 Controle de versão | ✅ | `git log` |
+| F0.2 `.gitignore` | ✅ | [.gitignore](../.gitignore), [.gitattributes](../.gitattributes) |
+| F0.3 Defaults com fonte única | ✅ | [bootstrap.py](../backend/app/services/bootstrap.py) |
+| F0.4 Injeção de sessão | ✅ | [deps.py](../backend/app/api/deps.py) |
+| F1.1 Alembic no lugar de `create_all` | ✅ | [schema.py](../backend/app/db/schema.py) |
+| F1.2 URL e batch do Alembic | ✅ | [env.py](../backend/alembic/env.py) |
+| F1.3 Trava models × migrations | ✅ | `test_schema_coherence.py` |
+| F2.1 Capacidades no adapter | ✅ | [base.py](../backend/app/services/llm/base.py) |
+| F2.2 Registry de adapters | ✅ | [factory.py](../backend/app/services/llm/factory.py) |
+| F3.1 Resposta parcial persistida | ✅ | [chat.py](../backend/app/services/chat.py) |
+| F3.2 Cancelamento ponta a ponta | ✅ | `useChatStream.ts`, `chat.py` |
+| F3.3 Tokens de uso | ⚠️ | só NVIDIA NIM — ver ressalva abaixo |
+| F3.4 I/O fora do event loop | ✅ | `prepare()` + `run_in_threadpool` |
+| F3.5 Regenerar | ✅ | `POST .../messages/{id}/regenerate` |
+| F4.1 ContextBuilder | ✅ | [context.py](../backend/app/services/context.py) |
+| F4.2 Orçamento de contexto | ✅ | `context_window` por modelo |
+| F4.3 Escopo de memória | ✅ | `Memory.scope` |
+| F5.1 Erro tipado | ✅ | [errors.py](../backend/app/services/llm/errors.py) |
+| F5.2 Logging | ✅ | [main.py](../backend/app/main.py) |
+| F5.3 Health honesto | ✅ | `GET /health/ready` |
+| F6.1 Infra de teste | ✅ | `tests/conftest.py` |
+| F6.2 Comportamento crítico | ✅ | 49 testes no backend |
+| F6.3 Parser SSE testado | ✅ | 20 testes no frontend |
+| F7.1–F7.4 Frontend | ✅ | `src/hooks/`, `Markdown.tsx` |
+| F8.x Sair do modo local | ⬜ | condicional, não iniciado |
+
+### Achado extra, fora do plano original
+
+Rodando o app contra um provider falso apareceu um defeito que a leitura estática
+não tinha revelado: **um provider que fecha a conexão no meio da resposta era
+gravado como `complete`**. `httpx.aiter_lines` apenas termina a iteração, sem
+levantar, então a resposta truncada era indistinguível de uma que acabou. O
+adapter passou a exigir a marca de fim do protocolo (`[DONE]` ou `finish_reason`).
+
+### Ressalva sobre F3.3
+
+`stream_options: {"include_usage": true}` está **ligado só para NVIDIA NIM** e
+desligado para Ollama. Nenhum dos dois pôde ser verificado contra um servidor
+real nesta execução (o Ollama local não estava rodando), e pedir um campo que o
+servidor rejeita derrubaria o chat — a regra 1 proíbe tentar de novo sem ele.
+Ligar para Ollama é trocar `supports_usage_in_stream` para `True` em
+[ollama.py](../backend/app/services/llm/ollama.py), depois de conferir na sua versão.
+
 ## Como ler
 
 Cada item tem **Problema** (com evidência no código), **Proposta**, **Arquivos**,
 **Aceite** (como saber que terminou) e **Esforço** (P ≈ menos de 1h, M ≈ meio dia,
-G ≈ 1–3 dias).
+G ≈ 1–3 dias). O texto de cada item foi mantido como registro do **porquê** de
+cada mudança, mesmo depois de executada.
 
 As fases são ordenadas por dependência, não por importância. Fase 0 e 1 desbloqueiam
 todo o resto — fazer Fase 6 antes da Fase 1 significa escrever testes sobre um schema
