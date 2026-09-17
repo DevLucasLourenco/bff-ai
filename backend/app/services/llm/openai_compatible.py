@@ -76,12 +76,21 @@ class OpenAICompatibleAdapter:
             provider_detail=body,
         )
 
+    def _client(self, timeout: httpx.Timeout) -> httpx.AsyncClient:
+        # Isolado para os testes poderem injetar um transporte falso.
+        return httpx.AsyncClient(timeout=timeout)
+
     async def stream(self, messages: list[dict[str, str]], config: ChatRuntimeConfig) -> AsyncIterator[str]:
         self.last_usage = None
         payload = self._build_payload(messages, config)
         timeout = httpx.Timeout(120.0, connect=15.0)
+        # O protocolo sinaliza fim com `[DONE]` (ou um finish_reason). Sem essa
+        # marca, um provider que derruba a conexão no meio é indistinguível de
+        # uma resposta que acabou — e a resposta truncada seria salva como
+        # completa, que é justamente a corrupção silenciosa que o F3.1 combate.
+        saw_terminator = False
         try:
-            async with httpx.AsyncClient(timeout=timeout) as client:
+            async with self._client(timeout) as client:
                 async with client.stream(
                     "POST",
                     self._endpoint(config.base_url, "chat/completions"),
@@ -96,6 +105,7 @@ class OpenAICompatibleAdapter:
                             continue
                         data = line[5:].strip()
                         if data == "[DONE]":
+                            saw_terminator = True
                             break
                         try:
                             event = json.loads(data)
@@ -108,8 +118,11 @@ class OpenAICompatibleAdapter:
                                 "prompt_tokens": usage.get("prompt_tokens"),
                                 "completion_tokens": usage.get("completion_tokens"),
                             }
+                        choices = event.get("choices") or []
+                        if choices and choices[0].get("finish_reason"):
+                            saw_terminator = True
                         try:
-                            delta = event.get("choices", [{}])[0].get("delta", {}).get("content")
+                            delta = choices[0].get("delta", {}).get("content") if choices else None
                         except (IndexError, TypeError, AttributeError):
                             continue
                         if delta:
@@ -120,6 +133,12 @@ class OpenAICompatibleAdapter:
                 f"Não foi possível falar com o provider em {config.base_url}.",
                 provider_detail=str(exc),
             ) from exc
+
+        if not saw_terminator:
+            raise ProviderResponseError(
+                "O provider encerrou a conexão antes de terminar a resposta.",
+                provider_detail="stream sem [DONE] nem finish_reason",
+            )
 
     async def list_models(self, base_url: str, api_key: str | None) -> list[str]:
         timeout = httpx.Timeout(20.0, connect=5.0)
