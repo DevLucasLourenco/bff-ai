@@ -5,6 +5,7 @@ from app.api.deps import Db
 from app.domain.models import Conversation, ModelConfig, ProviderConfig
 from app.domain.schemas import ModelCreate, ModelRead, ModelUpdate
 from app.repositories.settings import SettingsRepository
+from app.services.llm.runtime import effective_max_tokens
 
 router = APIRouter(prefix="/models", tags=["models"])
 
@@ -18,7 +19,9 @@ def view(model: ModelConfig) -> ModelRead:
         display_name=model.display_name,
         model_id=model.model_id,
         temperature=model.temperature,
-        max_tokens=None if model.provider.kind == "nvidia_nim" or model.max_tokens <= 0 else model.max_tokens,
+        # A regra de max_tokens vem das capacidades do adapter, não de um
+        # `if kind == "nvidia_nim"` duplicado aqui.
+        max_tokens=effective_max_tokens(model.provider.kind, model.max_tokens),
         top_p=model.top_p,
     )
 

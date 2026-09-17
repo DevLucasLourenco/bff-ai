@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.core.security import SecretCipher
 from app.domain.models import Conversation, Memory, Message, ModelConfig, ProviderConfig, utcnow
-from app.services.llm.base import ChatRuntimeConfig
+from app.services.llm.runtime import build_runtime_config
 from app.services.llm.factory import create_adapter
 
 
@@ -67,17 +67,14 @@ class ChatService:
             })
         llm_messages.extend({"role": msg.role, "content": msg.content} for msg in history if msg.role in {"user", "assistant"})
 
-        config = ChatRuntimeConfig(
+        config = build_runtime_config(
+            provider_kind=provider.kind,
             base_url=provider.base_url,
-            model_id=conversation.model_config.model_id,
             api_key=self.cipher.decrypt(provider.api_key_encrypted),
+            model_id=conversation.model_config.model_id,
+            stored_max_tokens=conversation.model_config.max_tokens,
             temperature=conversation.model_config.temperature,
-            # NVIDIA reasoning models share their token budget between thinking
-            # and the visible answer. Let NVIDIA choose its provider default
-            # instead of forcing the legacy 2048-token cap.
-            max_tokens=None if provider.kind == "nvidia_nim" or conversation.model_config.max_tokens <= 0 else conversation.model_config.max_tokens,
             top_p=conversation.model_config.top_p,
-            reasoning_effort="none" if provider.kind == "nvidia_nim" else None,
         )
         adapter = create_adapter(provider.kind)
 

@@ -5,6 +5,11 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.services.llm.factory import PROVIDER_KINDS
+
+# Derivado do registry de adapters: a lista de kinds válidos existe em um lugar só.
+ProviderKind = Literal[PROVIDER_KINDS]
+
 
 class OrmModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -12,7 +17,7 @@ class OrmModel(BaseModel):
 
 class ProviderCreate(BaseModel):
     name: str = Field(min_length=1, max_length=120)
-    kind: Literal["ollama", "nvidia_nim"]
+    kind: ProviderKind
     base_url: str = Field(min_length=4, max_length=500)
     api_key: str | None = None
 
