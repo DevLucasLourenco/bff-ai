@@ -1,12 +1,13 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session, joinedload
+from starlette.concurrency import run_in_threadpool
 
 from app.api.deps import Db
 from app.domain.models import Conversation, ModelConfig, Persona
 from app.domain.schemas import ConversationCreate, ConversationRead, ConversationUpdate, MessageRead, SendMessage
 from app.repositories.settings import SettingsRepository
-from app.services.chat import ChatService
+from app.services.chat import ChatService, ConversationNotFound, ConversationUnavailable
 
 router = APIRouter(prefix="/conversations", tags=["conversations"])
 
@@ -101,13 +102,36 @@ def archive_conversation(conversation_id: int, db: Db):
     db.commit()
 
 
+SSE_HEADERS = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"}
+
+
+def _streaming(service: ChatService, turn) -> StreamingResponse:
+    return StreamingResponse(service.run(turn), media_type="text/event-stream", headers=SSE_HEADERS)
+
+
 @router.post("/{conversation_id}/messages/stream")
 async def stream_message(conversation_id: int, payload: SendMessage, db: Db):
-    if not db.get(Conversation, conversation_id):
-        raise HTTPException(404, "Conversation not found")
     service = ChatService(db)
-    return StreamingResponse(
-        service.stream_message(conversation_id, payload.content),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-    )
+    try:
+        # O preparo roda em threadpool: é I/O de banco síncrono e não pode
+        # bloquear o event loop (F3.4). Falhar aqui vira status HTTP de verdade,
+        # em vez de um 200 com evento de erro no corpo.
+        turn = await run_in_threadpool(service.prepare, conversation_id, payload.content)
+    except ConversationNotFound as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ConversationUnavailable as exc:
+        raise HTTPException(409, str(exc)) from exc
+    return _streaming(service, turn)
+
+
+@router.post("/{conversation_id}/messages/{message_id}/regenerate")
+async def regenerate_message(conversation_id: int, message_id: int, db: Db):
+    """Refaz uma resposta, descartando-a e tudo que veio depois dela (F3.5)."""
+    service = ChatService(db)
+    try:
+        turn = await run_in_threadpool(service.prepare_regeneration, conversation_id, message_id)
+    except ConversationNotFound as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ConversationUnavailable as exc:
+        raise HTTPException(409, str(exc)) from exc
+    return _streaming(service, turn)

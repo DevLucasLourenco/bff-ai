@@ -49,6 +49,8 @@ class ModelCreate(BaseModel):
     # None means that the provider chooses its own maximum.
     max_tokens: int | None = Field(default=None, ge=1)
     top_p: float = Field(default=0.95, gt=0, le=1)
+    # 0 = janela desconhecida: sem orçamento, o histórico não é truncado.
+    context_window: int = Field(default=0, ge=0)
 
 
 class ModelUpdate(BaseModel):
@@ -57,6 +59,7 @@ class ModelUpdate(BaseModel):
     temperature: float | None = Field(default=None, ge=0, le=2)
     max_tokens: int | None = Field(default=None, ge=1)
     top_p: float | None = Field(default=None, gt=0, le=1)
+    context_window: int | None = Field(default=None, ge=0)
 
 
 class ModelRead(BaseModel):
@@ -69,6 +72,7 @@ class ModelRead(BaseModel):
     temperature: float
     max_tokens: int | None
     top_p: float
+    context_window: int
 
 
 class PersonaCreate(BaseModel):
@@ -102,6 +106,11 @@ class MessageRead(OrmModel):
     id: int
     role: str
     content: str
+    # "complete" | "failed" | "cancelled": a UI marca resposta interrompida em
+    # vez de descartá-la.
+    status: str
+    error_code: str | None
+    error_message: str | None
     model_id: str | None
     provider_kind: str | None
     latency_ms: int | None
@@ -142,16 +151,25 @@ class SendMessage(BaseModel):
     content: str = Field(min_length=1, max_length=100_000)
 
 
+MemoryScopeName = Literal["global", "persona", "conversation"]
+
+
 class MemoryCreate(BaseModel):
     category: str = Field(default="general", min_length=1, max_length=80)
     content: str = Field(min_length=1, max_length=5000)
     is_active: bool = True
+    scope: MemoryScopeName = "global"
+    persona_id: int | None = None
+    conversation_id: int | None = None
 
 
 class MemoryUpdate(BaseModel):
     category: str | None = Field(default=None, min_length=1, max_length=80)
     content: str | None = Field(default=None, min_length=1, max_length=5000)
     is_active: bool | None = None
+    scope: MemoryScopeName | None = None
+    persona_id: int | None = None
+    conversation_id: int | None = None
 
 
 class MemoryRead(OrmModel):
@@ -159,6 +177,9 @@ class MemoryRead(OrmModel):
     category: str
     content: str
     is_active: bool
+    scope: str
+    persona_id: int | None
+    conversation_id: int | None
     created_at: datetime
     updated_at: datetime
 

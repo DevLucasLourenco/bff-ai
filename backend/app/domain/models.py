@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from enum import Enum
 from typing import Optional
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -11,6 +12,23 @@ from app.db.base import Base
 
 def utcnow() -> datetime:
     return datetime.now(timezone.utc)
+
+
+class MessageRole(str, Enum):
+    USER = "user"
+    ASSISTANT = "assistant"
+
+
+class MessageStatus(str, Enum):
+    """Estado de uma resposta do assistente.
+
+    Antes não existia: uma resposta interrompida no meio era descartada e a
+    conversa ficava com um turno do usuário pendurado, sem nada que explicasse.
+    """
+
+    COMPLETE = "complete"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
 
 
 class ProviderConfig(Base):
@@ -39,6 +57,9 @@ class ModelConfig(Base):
     temperature_milli: Mapped[int] = mapped_column(Integer, default=750)
     max_tokens: Mapped[int] = mapped_column(Integer, default=2048)
     top_p_milli: Mapped[int] = mapped_column(Integer, default=950)
+    # Janela de contexto do modelo. 0 = desconhecida: sem orçamento não há
+    # truncamento, e o histórico vai inteiro como antes.
+    context_window: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
@@ -91,11 +112,18 @@ class Conversation(Base):
 
 class Message(Base):
     __tablename__ = "messages"
+    __table_args__ = (
+        CheckConstraint("role in ('user', 'assistant')", name="ck_messages_role"),
+        CheckConstraint("status in ('complete', 'failed', 'cancelled')", name="ck_messages_status"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     conversation_id: Mapped[int] = mapped_column(ForeignKey("conversations.id", ondelete="CASCADE"), index=True)
     role: Mapped[str] = mapped_column(String(20))
     content: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(20), default=MessageStatus.COMPLETE.value, server_default="complete")
+    error_code: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     model_id: Mapped[Optional[str]] = mapped_column(String(240), nullable=True)
     provider_kind: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
     latency_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
@@ -106,13 +134,27 @@ class Message(Base):
     conversation: Mapped[Conversation] = relationship(back_populates="messages")
 
 
+class MemoryScope(str, Enum):
+    GLOBAL = "global"
+    PERSONA = "persona"
+    CONVERSATION = "conversation"
+
+
 class Memory(Base):
     __tablename__ = "memories"
+    __table_args__ = (
+        CheckConstraint("scope in ('global', 'persona', 'conversation')", name="ck_memories_scope"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     category: Mapped[str] = mapped_column(String(80), default="general", index=True)
     content: Mapped[str] = mapped_column(Text)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
+    # Escopo: antes toda memória ativa entrava em toda requisição, de qualquer
+    # persona e de qualquer conversa.
+    scope: Mapped[str] = mapped_column(String(20), default=MemoryScope.GLOBAL.value, server_default="global", index=True)
+    persona_id: Mapped[Optional[int]] = mapped_column(ForeignKey("personas.id", ondelete="CASCADE"), nullable=True, index=True)
+    conversation_id: Mapped[Optional[int]] = mapped_column(ForeignKey("conversations.id", ondelete="CASCADE"), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 

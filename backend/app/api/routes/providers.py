@@ -68,8 +68,8 @@ async def remote_models(provider_id: int, db: Db):
     if not provider:
         raise HTTPException(404, "Provider not found")
     adapter = create_adapter(provider.kind)
-    try:
-        key = SecretCipher().decrypt(provider.api_key_encrypted)
-        return await adapter.list_models(provider.base_url, key)
-    except Exception as exc:
-        raise HTTPException(502, str(exc)) from exc
+    key = SecretCipher().decrypt(provider.api_key_encrypted)
+    # Sem try/except abrangente: LLMError e MasterKeyError têm handler próprio no
+    # main.py, com `code` estável. Engolir tudo aqui era o que transformava
+    # "chave recusada" e "Ollama desligado" no mesmo 502 ilegível.
+    return await adapter.list_models(provider.base_url, key)

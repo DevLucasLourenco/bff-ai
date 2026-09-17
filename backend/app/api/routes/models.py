@@ -23,6 +23,7 @@ def view(model: ModelConfig) -> ModelRead:
         # `if kind == "nvidia_nim"` duplicado aqui.
         max_tokens=effective_max_tokens(model.provider.kind, model.max_tokens),
         top_p=model.top_p,
+        context_window=model.context_window,
     )
 
 
@@ -44,6 +45,7 @@ def create_model(payload: ModelCreate, db: Db):
         # SQLite keeps 0 as the internal sentinel for provider-managed limits.
         max_tokens=payload.max_tokens or 0,
         top_p_milli=round(payload.top_p * 1000),
+        context_window=payload.context_window,
     )
     db.add(row)
     db.commit()
