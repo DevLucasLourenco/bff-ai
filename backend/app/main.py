@@ -4,14 +4,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
-from app.db.base import Base
+from app.db.schema import verify_schema
 from app.db.session import SessionLocal, engine
 from app.services.bootstrap import bootstrap
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    Base.metadata.create_all(bind=engine)
+    # Migração é passo explícito de deploy (`alembic upgrade head`), nunca
+    # automática no boot: com mais de um processo, migrar no lifespan é corrida.
+    verify_schema(engine)
     with SessionLocal() as db:
         bootstrap(db)
     yield

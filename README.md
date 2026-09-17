@@ -53,13 +53,20 @@ python scripts/generate_master_key.py
 
 Copie `.env.example` para `.env` na raiz do projeto e cole a chave gerada em `APP_MASTER_KEY`.
 
+Crie/atualize o schema do banco. **Este passo é explícito e obrigatório** — o app
+não cria mais tabelas sozinho, e recusa subir se o banco estiver atrás do código:
+
+```bash
+alembic -c alembic.ini upgrade head
+```
+
 Depois:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-Na primeira inicialização o banco `backend/data/bff_ai.db` é criado e recebe:
+Na primeira inicialização o banco `backend/data/bff_ai.db` recebe:
 
 - persona `Bestie`;
 - provider Ollama em `http://localhost:11434/v1`;
@@ -92,6 +99,8 @@ Acesse `http://localhost:5173`.
 4. **Persona é dado, não código.** Prompt, greeting e identidade podem ser alterados sem editar backend.
 5. **Provider é adapter.** Adicionar outro mecanismo de LLM não exige reescrever chat, banco ou UI.
 6. **Streaming ponta a ponta.** O backend lê SSE do provider e envia SSE ao navegador.
+7. **Schema tem fonte única: Alembic.** O app não usa `create_all` e se recusa a subir
+   se o banco não estiver na revisão esperada — em vez de falhar depois com `no such column`.
 
 ## Estrutura
 
