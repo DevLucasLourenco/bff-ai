@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session, joinedload
 
-from app.db.session import get_db
+from app.api.deps import Db
 from app.domain.models import Conversation, ModelConfig, Persona
 from app.domain.schemas import ConversationCreate, ConversationRead, ConversationUpdate, MessageRead, SendMessage
 from app.repositories.settings import SettingsRepository
@@ -42,7 +42,7 @@ def view(row: Conversation, include_messages: bool = True) -> ConversationRead:
 
 
 @router.get("", response_model=list[ConversationRead])
-def list_conversations(db: Session = Depends(get_db)):
+def list_conversations(db: Db):
     rows = (
         db.query(Conversation)
         .options(joinedload(Conversation.persona), joinedload(Conversation.model_config).joinedload(ModelConfig.provider))
@@ -54,7 +54,7 @@ def list_conversations(db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=ConversationRead, status_code=201)
-def create_conversation(payload: ConversationCreate, db: Session = Depends(get_db)):
+def create_conversation(payload: ConversationCreate, db: Db):
     settings = SettingsRepository(db).get_all()
     persona_id = payload.persona_id or int(settings["active_persona_id"])
     model_config_id = payload.model_config_id or int(settings["active_model_config_id"])
@@ -69,7 +69,7 @@ def create_conversation(payload: ConversationCreate, db: Session = Depends(get_d
 
 
 @router.get("/{conversation_id}", response_model=ConversationRead)
-def get_conversation(conversation_id: int, db: Session = Depends(get_db)):
+def get_conversation(conversation_id: int, db: Db):
     row = load(db, conversation_id)
     if not row:
         raise HTTPException(404, "Conversation not found")
@@ -77,7 +77,7 @@ def get_conversation(conversation_id: int, db: Session = Depends(get_db)):
 
 
 @router.patch("/{conversation_id}", response_model=ConversationRead)
-def update_conversation(conversation_id: int, payload: ConversationUpdate, db: Session = Depends(get_db)):
+def update_conversation(conversation_id: int, payload: ConversationUpdate, db: Db):
     row = db.get(Conversation, conversation_id)
     if not row:
         raise HTTPException(404, "Conversation not found")
@@ -93,7 +93,7 @@ def update_conversation(conversation_id: int, payload: ConversationUpdate, db: S
 
 
 @router.delete("/{conversation_id}", status_code=204)
-def archive_conversation(conversation_id: int, db: Session = Depends(get_db)):
+def archive_conversation(conversation_id: int, db: Db):
     row = db.get(Conversation, conversation_id)
     if not row:
         raise HTTPException(404, "Conversation not found")
@@ -102,7 +102,7 @@ def archive_conversation(conversation_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/{conversation_id}/messages/stream")
-async def stream_message(conversation_id: int, payload: SendMessage, db: Session = Depends(get_db)):
+async def stream_message(conversation_id: int, payload: SendMessage, db: Db):
     if not db.get(Conversation, conversation_id):
         raise HTTPException(404, "Conversation not found")
     service = ChatService(db)

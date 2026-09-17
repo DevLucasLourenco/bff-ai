@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException
 
-from app.db.session import get_db
+from app.api.deps import Db
 from app.domain.models import Conversation, Persona
 from app.domain.schemas import PersonaCreate, PersonaRead, PersonaUpdate
 
@@ -9,12 +8,12 @@ router = APIRouter(prefix="/personas", tags=["personas"])
 
 
 @router.get("", response_model=list[PersonaRead])
-def list_personas(db: Session = Depends(get_db)):
+def list_personas(db: Db):
     return db.query(Persona).order_by(Persona.name.asc()).all()
 
 
 @router.post("", response_model=PersonaRead, status_code=201)
-def create_persona(payload: PersonaCreate, db: Session = Depends(get_db)):
+def create_persona(payload: PersonaCreate, db: Db):
     persona = Persona(**payload.model_dump())
     db.add(persona)
     db.commit()
@@ -23,7 +22,7 @@ def create_persona(payload: PersonaCreate, db: Session = Depends(get_db)):
 
 
 @router.patch("/{persona_id}", response_model=PersonaRead)
-def update_persona(persona_id: int, payload: PersonaUpdate, db: Session = Depends(get_db)):
+def update_persona(persona_id: int, payload: PersonaUpdate, db: Db):
     persona = db.get(Persona, persona_id)
     if not persona:
         raise HTTPException(404, "Persona not found")
@@ -35,7 +34,7 @@ def update_persona(persona_id: int, payload: PersonaUpdate, db: Session = Depend
 
 
 @router.delete("/{persona_id}", status_code=204)
-def delete_persona(persona_id: int, db: Session = Depends(get_db)):
+def delete_persona(persona_id: int, db: Db):
     persona = db.get(Persona, persona_id)
     if not persona:
         raise HTTPException(404, "Persona not found")

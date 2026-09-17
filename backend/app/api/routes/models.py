@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session, joinedload
+from fastapi import APIRouter, HTTPException
+from sqlalchemy.orm import joinedload
 
-from app.db.session import get_db
+from app.api.deps import Db
 from app.domain.models import Conversation, ModelConfig, ProviderConfig
 from app.domain.schemas import ModelCreate, ModelRead, ModelUpdate
 from app.repositories.settings import SettingsRepository
@@ -24,13 +24,13 @@ def view(model: ModelConfig) -> ModelRead:
 
 
 @router.get("", response_model=list[ModelRead])
-def list_models(db: Session = Depends(get_db)):
+def list_models(db: Db):
     rows = db.query(ModelConfig).options(joinedload(ModelConfig.provider)).order_by(ModelConfig.id.asc()).all()
     return [view(row) for row in rows]
 
 
 @router.post("", response_model=ModelRead, status_code=201)
-def create_model(payload: ModelCreate, db: Session = Depends(get_db)):
+def create_model(payload: ModelCreate, db: Db):
     if not db.get(ProviderConfig, payload.provider_id):
         raise HTTPException(404, "Provider not found")
     row = ModelConfig(
@@ -50,7 +50,7 @@ def create_model(payload: ModelCreate, db: Session = Depends(get_db)):
 
 
 @router.patch("/{model_id}", response_model=ModelRead)
-def update_model(model_id: int, payload: ModelUpdate, db: Session = Depends(get_db)):
+def update_model(model_id: int, payload: ModelUpdate, db: Db):
     row = db.get(ModelConfig, model_id)
     if not row:
         raise HTTPException(404, "Model config not found")
@@ -71,7 +71,7 @@ def update_model(model_id: int, payload: ModelUpdate, db: Session = Depends(get_
 
 
 @router.post("/{model_id}/activate", response_model=ModelRead)
-def activate_model(model_id: int, db: Session = Depends(get_db)):
+def activate_model(model_id: int, db: Db):
     row = db.query(ModelConfig).options(joinedload(ModelConfig.provider)).filter_by(id=model_id).one_or_none()
     if not row:
         raise HTTPException(404, "Model config not found")
@@ -80,7 +80,7 @@ def activate_model(model_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/{model_id}", status_code=204)
-def delete_model(model_id: int, db: Session = Depends(get_db)):
+def delete_model(model_id: int, db: Db):
     row = db.get(ModelConfig, model_id)
     if not row:
         raise HTTPException(404, "Model config not found")

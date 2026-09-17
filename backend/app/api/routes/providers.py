@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException
 
 from app.core.security import SecretCipher
-from app.db.session import get_db
+from app.api.deps import Db
 from app.domain.models import ProviderConfig
 from app.domain.schemas import ProviderCreate, ProviderRead, ProviderUpdate
 from app.services.llm.factory import create_adapter
@@ -24,12 +23,12 @@ def view(provider: ProviderConfig) -> ProviderRead:
 
 
 @router.get("", response_model=list[ProviderRead])
-def list_providers(db: Session = Depends(get_db)):
+def list_providers(db: Db):
     return [view(p) for p in db.query(ProviderConfig).order_by(ProviderConfig.id.asc()).all()]
 
 
 @router.post("", response_model=ProviderRead, status_code=201)
-def create_provider(payload: ProviderCreate, db: Session = Depends(get_db)):
+def create_provider(payload: ProviderCreate, db: Db):
     cipher = SecretCipher()
     provider = ProviderConfig(
         name=payload.name,
@@ -44,7 +43,7 @@ def create_provider(payload: ProviderCreate, db: Session = Depends(get_db)):
 
 
 @router.patch("/{provider_id}", response_model=ProviderRead)
-def update_provider(provider_id: int, payload: ProviderUpdate, db: Session = Depends(get_db)):
+def update_provider(provider_id: int, payload: ProviderUpdate, db: Db):
     provider = db.get(ProviderConfig, provider_id)
     if not provider:
         raise HTTPException(404, "Provider not found")
@@ -64,7 +63,7 @@ def update_provider(provider_id: int, payload: ProviderUpdate, db: Session = Dep
 
 
 @router.get("/{provider_id}/remote-models", response_model=list[str])
-async def remote_models(provider_id: int, db: Session = Depends(get_db)):
+async def remote_models(provider_id: int, db: Db):
     provider = db.get(ProviderConfig, provider_id)
     if not provider:
         raise HTTPException(404, "Provider not found")

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
-from app.domain.models import AppSetting, ModelConfig, Persona, ProviderConfig
+from app.domain.models import ModelConfig, Persona, ProviderConfig
+from app.repositories.settings import SettingsRepository
 
 
 DEFAULT_PERSONA_PROMPT = """Você é uma assistente virtual chamada Bestie. Sua personalidade é acolhedora, próxima, divertida e carinhosa — como uma melhor amiga confiável — sem soar infantil, artificial ou excessivamente eufórica.
@@ -60,15 +61,7 @@ def bootstrap(db: Session) -> None:
             )
         )
 
-    defaults = {
-        "app_name": "BFF AI",
-        "user_display_name": "Você",
-        "assistant_display_name": "Bestie",
-        "theme": "pink",
-        "active_persona_id": "1",
-        "active_model_config_id": "1",
-    }
-    for key, value in defaults.items():
-        if db.get(AppSetting, key) is None:
-            db.add(AppSetting(key=key, value=value))
     db.commit()
+    # Fonte única dos defaults: SettingsRepository.DEFAULT_SETTINGS. Duplicar o
+    # dicionário aqui fazia "banco novo" e "banco sem a chave" divergirem.
+    SettingsRepository(db).seed_defaults()

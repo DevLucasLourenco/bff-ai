@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException
 
-from app.db.session import get_db
+from app.api.deps import Db
 from app.domain.models import ModelConfig, Persona
 from app.domain.schemas import SettingsRead, SettingsUpdate
 from app.repositories.settings import SettingsRepository
@@ -22,14 +21,14 @@ def serialize(repo: SettingsRepository) -> SettingsRead:
 
 
 @router.get("", response_model=SettingsRead)
-def get_settings(db: Session = Depends(get_db)):
+def get_settings(db: Db):
     repo = SettingsRepository(db)
     repo.seed_defaults()
     return serialize(repo)
 
 
 @router.patch("", response_model=SettingsRead)
-def update_settings(payload: SettingsUpdate, db: Session = Depends(get_db)):
+def update_settings(payload: SettingsUpdate, db: Db):
     data = payload.model_dump(exclude_none=True)
     if "active_persona_id" in data and not db.get(Persona, data["active_persona_id"]):
         raise HTTPException(404, "Persona not found")
