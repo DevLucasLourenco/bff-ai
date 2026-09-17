@@ -126,3 +126,56 @@ button { cursor: pointer; }
   .persona-nav { flex:0 0 auto; }
   .settings-tabs { overflow:auto; }
 }
+
+/* ---------- Fase 7: markdown, resposta interrompida, escopo e contexto ---------- */
+
+/* F7.4 — markdown nas respostas (antes vinha como texto cru com crases). */
+.markdown > *:first-child { margin-top:0; }
+.markdown > *:last-child { margin-bottom:0; }
+.markdown p { margin:0 0 10px; }
+.markdown h3, .markdown h4, .markdown h5, .markdown h6 { margin:16px 0 8px; line-height:1.3; letter-spacing:-.01em; }
+.markdown h3 { font-size:17px; } .markdown h4 { font-size:15px; } .markdown h5, .markdown h6 { font-size:14px; }
+.markdown ul, .markdown ol { margin:0 0 10px; padding-left:20px; }
+.markdown li { margin:3px 0; }
+.markdown blockquote { margin:0 0 10px; padding:6px 0 6px 12px; border-left:3px solid #e6c3d6; color:#6d5a65; }
+.markdown a { color:#b6357a; text-underline-offset:2px; }
+.inline-code { background:#f4e6ee; border-radius:6px; padding:1px 5px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.9em; }
+.code-block { margin:0 0 10px; border:1px solid #e9d8e3; border-radius:12px; overflow:hidden; background:#fffafd; }
+.code-head { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:#f7eaf2; font-size:11px; color:#8c6d80; text-transform:uppercase; letter-spacing:.05em; }
+.code-head button { display:flex; gap:5px; align-items:center; border:0; background:transparent; color:#8c6d80; font-size:11px; text-transform:none; letter-spacing:0; padding:2px 4px; border-radius:6px; }
+.code-head button:hover { background:#efd9e6; }
+.code-block pre { margin:0; padding:11px 12px; overflow:auto; }
+.code-block code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; line-height:1.55; color:#42303b; }
+
+/* F3.1/F3.2 — resposta interrompida deixa de sumir da tela. */
+.message.interrupted { border-left:3px solid #e0a03f; padding-left:11px; }
+.message-notice { display:flex; align-items:center; gap:7px; margin:6px 0 0; font-size:12px; color:#9a6a2c; }
+.message-wrap.assistant .message-notice { padding-left:2px; }
+.message-meta { display:flex; gap:12px; align-items:center; margin:5px 0 0; font-size:11px; color:#a8949f; }
+.message-wrap { flex-direction:column; align-items:flex-start; }
+.message-wrap.user { align-items:flex-end; }
+.muted { color:#a8949f; font-style:italic; }
+.link-button { border:0; background:transparent; color:#b6357a; font-size:12px; display:inline-flex; gap:4px; align-items:center; padding:2px 4px; border-radius:6px; }
+.link-button:hover { background:#f7e4ee; }
+
+/* F7.2 — erro ancorado na conversa, não num toast genérico. */
+.inline-error { display:flex; gap:12px; justify-content:space-between; align-items:flex-start; border:1px solid #f0c9a8; background:#fff6ed; border-radius:14px; padding:12px 14px; margin:4px 0 18px; color:#7c4a17; font-size:13px; }
+.inline-error strong { display:block; font-size:13.5px; }
+.inline-error p { margin:5px 0 0; color:#8d6033; line-height:1.5; }
+.inline-error details { margin-top:7px; }
+.inline-error summary { cursor:pointer; font-size:12px; color:#a07341; }
+.inline-error pre { margin:6px 0 0; padding:8px; background:#fdeedd; border-radius:8px; font-size:11px; overflow:auto; max-height:160px; white-space:pre-wrap; }
+
+/* F3.2 — botão de parar no lugar do de enviar enquanto a resposta chega. */
+.composer button.stop { background:#7c4a17; }
+
+/* F4.2/F4.3 — janela de contexto e escopo de memória. */
+.model-row { display:grid; gap:8px; border:1px solid #eadce4; border-radius:14px; padding:10px; background:#fff; }
+.model-row.active { border-color:#d676a2; background:#fff4f9; }
+.model-row .model-choice { border:0; background:transparent; padding:3px 4px; }
+.model-row .model-choice.active { background:transparent; }
+.context-window { display:grid; gap:4px; font-size:11px; color:#8c7682; padding:0 4px 3px; }
+.context-window input { max-width:150px; }
+.context-window small { color:#a8949f; font-size:10.5px; }
+.scope-tag { display:inline-block; margin-left:8px; color:#6d7fa0 !important; }
+.memory-card > div { min-width:0; }

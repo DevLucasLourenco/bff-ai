@@ -1,11 +1,11 @@
 import { Check, KeyRound, Plus, RefreshCw, Save, Trash2, X } from 'lucide-react'
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { api } from '../../lib/api'
-import type { Memory, ModelConfig, Persona, Provider, Settings } from '../../lib/types'
+import type { Conversation, Memory, MemoryScope, ModelConfig, Persona, Provider, Settings } from '../../lib/types'
 
 type Tab = 'general' | 'models' | 'personas' | 'memories'
 
-export function SettingsPanel({ open, onClose, settings, personas, memories, providers, models, onChanged }: {
+export function SettingsPanel({ open, onClose, settings, personas, memories, providers, models, conversations, onChanged }: {
   open: boolean
   onClose: () => void
   settings: Settings | null
@@ -13,6 +13,7 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
   memories: Memory[]
   providers: Provider[]
   models: ModelConfig[]
+  conversations: Conversation[]
   onChanged: () => Promise<void>
 }) {
   const [tab, setTab] = useState<Tab>('general')
@@ -21,6 +22,7 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
   const [providerKeys, setProviderKeys] = useState<Record<number, string>>({})
   const [error, setError] = useState('')
   const [editingPersonaId, setEditingPersonaId] = useState<number | null>(null)
+  const [memoryScope, setMemoryScope] = useState<MemoryScope>('global')
   const editingPersona = useMemo(() => personas.find(p => p.id === editingPersonaId) ?? personas[0] ?? null, [editingPersonaId, personas])
 
   useEffect(() => {
@@ -75,9 +77,17 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
     event.preventDefault()
     const form = event.currentTarget
     const data = new FormData(form)
+    const scope = String(data.get('scope') || 'global') as MemoryScope
+    const alvo = data.get('target') ? Number(data.get('target')) : null
     run(async () => {
-      await api.createMemory({ category: String(data.get('category') || 'general'), content: String(data.get('content') || '') })
-      form.reset(); await onChanged()
+      await api.createMemory({
+        category: String(data.get('category') || 'general'),
+        content: String(data.get('content') || ''),
+        scope,
+        persona_id: scope === 'persona' ? alvo : null,
+        conversation_id: scope === 'conversation' ? alvo : null,
+      })
+      form.reset(); setMemoryScope('global'); await onChanged()
     })
   }
 
@@ -112,9 +122,25 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
             </>}
           </div>)}
           <h3>Modelos configurados</h3>
-          {models.map(model => <button key={model.id} className={`model-choice ${settings.active_model_config_id === model.id ? 'active' : ''}`} onClick={() => run(async () => { await api.activateModel(model.id); await onChanged() })}>
-            <div><strong>{model.display_name}</strong><span>{model.provider_name} · {model.model_id} · temp {model.temperature} · {model.max_tokens === null ? 'tokens automáticos' : `max ${model.max_tokens} tokens`}</span></div>{settings.active_model_config_id === model.id && <Check size={18}/>} 
-          </button>)}
+          {models.map(model => <div key={model.id} className={`model-row ${settings.active_model_config_id === model.id ? 'active' : ''}`}>
+            <button className="model-choice" onClick={() => run(async () => { await api.activateModel(model.id); await onChanged() })}>
+              <div>
+                <strong>{model.display_name}</strong>
+                <span>{model.provider_name} · {model.model_id} · temp {model.temperature} · {model.max_tokens === null ? 'tokens automáticos' : `max ${model.max_tokens} tokens`}</span>
+              </div>
+              {settings.active_model_config_id === model.id && <Check size={18}/>}
+            </button>
+            <label className="context-window">
+              Janela de contexto
+              <input
+                type="number" min={0} step={1024} defaultValue={model.context_window}
+                onBlur={e => run(async () => { await api.updateModel(model.id, { context_window: Number(e.target.value) || 0 }); await onChanged() })}
+              />
+              <small>{model.context_window > 0
+                ? 'histórico antigo é cortado automaticamente para caber'
+                : '0 = desconhecida: o histórico vai inteiro e pode estourar'}</small>
+            </label>
+          </div>)}
         </div>}
 
         {tab === 'personas' && <div className="persona-layout">
@@ -132,9 +158,28 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
         </div>}
 
         {tab === 'memories' && <div className="settings-stack">
-          <div className="setting-note">Memória é separada da persona. Somente memórias ativas são adicionadas ao contexto e elas são tratadas como fatos explicitamente fornecidos pela usuária.</div>
-          <form className="memory-form" onSubmit={addMemory}><input name="category" placeholder="categoria (ex.: preferência)" defaultValue="general"/><textarea name="content" required rows={3} placeholder="Ex.: Prefere respostas curtas quando estiver estudando."/><button className="primary-small"><Plus size={15}/> Adicionar memória</button></form>
-          <div className="memory-list">{memories.map(memory => <article className={`memory-card ${memory.is_active ? '' : 'disabled'}`} key={memory.id}><div><span>{memory.category}</span><p>{memory.content}</p></div><div className="memory-actions"><button className="secondary" onClick={() => run(async () => { await api.updateMemory(memory.id, { is_active: !memory.is_active }); await onChanged() })}>{memory.is_active ? 'Pausar' : 'Ativar'}</button><button className="icon-button" aria-label="Excluir memória" onClick={() => run(async () => { await api.deleteMemory(memory.id); await onChanged() })}><Trash2 size={16}/></button></div></article>)}</div>
+          <div className="setting-note">Memória é separada da persona. Só memórias ativas <strong>e dentro do escopo da conversa</strong> entram no contexto, e são tratadas como fatos explicitamente fornecidos pela usuária.</div>
+          <form className="memory-form" onSubmit={addMemory}>
+            <div className="inline-two">
+              <label>Categoria<input name="category" placeholder="ex.: preferência" defaultValue="general"/></label>
+              <label>Escopo
+                <select name="scope" value={memoryScope} onChange={e => setMemoryScope(e.target.value as MemoryScope)}>
+                  <option value="global">Todas as conversas</option>
+                  <option value="persona">Só uma persona</option>
+                  <option value="conversation">Só uma conversa</option>
+                </select>
+              </label>
+            </div>
+            {memoryScope === 'persona' && <label>Persona
+              <select name="target" required>{personas.map(p => <option key={p.id} value={p.id}>{p.avatar_emoji} {p.name}</option>)}</select>
+            </label>}
+            {memoryScope === 'conversation' && <label>Conversa
+              <select name="target" required>{conversations.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}</select>
+            </label>}
+            <textarea name="content" required rows={3} placeholder="Ex.: Prefere respostas curtas quando estiver estudando."/>
+            <button className="primary-small"><Plus size={15}/> Adicionar memória</button>
+          </form>
+          <div className="memory-list">{memories.map(memory => <article className={`memory-card ${memory.is_active ? '' : 'disabled'}`} key={memory.id}><div><span>{memory.category}</span><span className={`scope-tag ${memory.scope}`}>{memory.scope === 'global' ? 'todas as conversas' : memory.scope === 'persona' ? 'uma persona' : 'uma conversa'}</span><p>{memory.content}</p></div><div className="memory-actions"><button className="secondary" onClick={() => run(async () => { await api.updateMemory(memory.id, { is_active: !memory.is_active }); await onChanged() })}>{memory.is_active ? 'Pausar' : 'Ativar'}</button><button className="icon-button" aria-label="Excluir memória" onClick={() => run(async () => { await api.deleteMemory(memory.id); await onChanged() })}><Trash2 size={16}/></button></div></article>)}</div>
         </div>}
       </div>
       {busy && <div className="saving">salvando…</div>}

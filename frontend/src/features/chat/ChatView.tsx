@@ -1,43 +1,127 @@
-import { ArrowUp, LoaderCircle, Sparkles } from 'lucide-react'
-import { FormEvent, useEffect, useRef, useState } from 'react'
-import type { Conversation, Message } from '../../lib/types'
+import { ArrowUp, Sparkles, Square } from 'lucide-react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import type { StreamBuffer } from '../../lib/streamBuffer'
+import type { ApiError, Conversation } from '../../lib/types'
+import { MessageBubble } from './MessageBubble'
+import { StreamingMessage } from './StreamingMessage'
 
-export function ChatView({ conversation, sending, onSend }: {
+type Props = {
   conversation: Conversation | null
-  sending: boolean
-  onSend: (content: string) => Promise<void>
-}) {
-  const [draft, setDraft] = useState('')
-  const bottomRef = useRef<HTMLDivElement>(null)
+  streaming: boolean
+  buffer: StreamBuffer
+  /** Mensagem recém-enviada, ainda não recarregada do servidor. */
+  pendingUserMessage: string | null
+  error: ApiError | null
+  onSend: (content: string) => void
+  onStop: () => void
+  onRegenerate: (messageId: number) => void
+  onDismissError: () => void
+}
+
+/** Autoscroll que respeita quem rolou para cima e quem pediu menos movimento. */
+function useAutoScroll(dependencies: unknown[], enabled: boolean) {
+  const endRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLElement>(null)
+  const stickRef = useRef(true)
+
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [conversation?.messages, sending])
-  const submit = async (e: FormEvent) => {
-    e.preventDefault()
+    const container = containerRef.current
+    if (!container) return
+    const onScroll = () => {
+      const distance = container.scrollHeight - container.scrollTop - container.clientHeight
+      stickRef.current = distance < 120
+    }
+    container.addEventListener('scroll', onScroll, { passive: true })
+    return () => container.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    if (!enabled || !stickRef.current) return
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    endRef.current?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, dependencies)
+
+  return { endRef, containerRef }
+}
+
+export function ChatView({ conversation, streaming, buffer, pendingUserMessage, error, onSend, onStop, onRegenerate, onDismissError }: Props) {
+  const [draft, setDraft] = useState('')
+  const messageCount = conversation?.messages.length ?? 0
+  const { endRef, containerRef } = useAutoScroll([messageCount, streaming, pendingUserMessage], true)
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault()
     const content = draft.trim()
-    if (!content || sending || !conversation) return
+    if (!content || streaming || !conversation) return
     setDraft('')
-    await onSend(content)
+    onSend(content)
   }
-  if (!conversation) return <main className="chat-view empty-state"><div className="empty-orb"><Sparkles size={28}/></div><h1>Uma conversa só de vocês.</h1><p>Crie uma conversa e escolha a personalidade e o modelo nas configurações.</p></main>
+
+  if (!conversation) {
+    return <main className="chat-view empty-state">
+      <div className="empty-orb"><Sparkles size={28}/></div>
+      <h1>Uma conversa só de vocês.</h1>
+      <p>Crie uma conversa e escolha a personalidade e o modelo nas configurações.</p>
+    </main>
+  }
 
   return <main className="chat-view">
     <header className="chat-header">
-      <div><div className="persona-title"><span>{conversation.persona_emoji}</span><strong>{conversation.persona_name}</strong></div><span className="model-caption">{conversation.model_display_name} · {conversation.provider_kind}</span></div>
+      <div>
+        <div className="persona-title"><span>{conversation.persona_emoji}</span><strong>{conversation.persona_name}</strong></div>
+        <span className="model-caption">{conversation.model_display_name} · {conversation.provider_kind}</span>
+      </div>
     </header>
-    <section className="messages">
-      {conversation.messages.length === 0 && <div className="greeting-bubble">Comece falando qualquer coisa. A persona escolhida já está pronta para conversar. 💗</div>}
-      {conversation.messages.map((message: Message) => <div className={`message-wrap ${message.role}`} key={message.id}>
-        <article className={`message ${message.role}`}>{message.content}</article>
-      </div>)}
-      {sending && <div className="message-wrap assistant"><article className="message assistant typing"><LoaderCircle className="spin" size={16}/> pensando…</article></div>}
-      <div ref={bottomRef}/>
+
+    <section className="messages" ref={containerRef} aria-live="polite" aria-busy={streaming}>
+      {messageCount === 0 && !streaming && !pendingUserMessage && <div className="greeting-bubble">
+        Comece falando qualquer coisa. A persona escolhida já está pronta para conversar. 💗
+      </div>}
+
+      {conversation.messages.map(message => <MessageBubble
+        key={message.id}
+        message={message}
+        onRegenerate={message.role === 'assistant' && !streaming ? onRegenerate : undefined}
+      />)}
+
+      {pendingUserMessage && <div className="message-wrap user">
+        <article className="message user">{pendingUserMessage}</article>
+      </div>}
+
+      {streaming && <StreamingMessage buffer={buffer}/>}
+
+      {/* F7.2: erro de conversa aparece ancorado aqui, não num toast genérico. */}
+      {error && <div className="inline-error" role="alert">
+        <div>
+          <strong>{error.message}</strong>
+          {error.code === 'provider_auth' && <p>Abra Configurações → LLM e revise a API key.</p>}
+          {error.code === 'provider_unreachable' && <p>O provider não respondeu. Se for Ollama local, confira se ele está rodando.</p>}
+          {error.code === 'model_not_found' && <p>Escolha outro modelo em Configurações → LLM.</p>}
+          {error.code === 'context_overflow' && <p>Defina a janela de contexto do modelo para que o histórico antigo seja cortado automaticamente.</p>}
+          {error.providerDetail && <details><summary>detalhe do provider</summary><pre>{error.providerDetail}</pre></details>}
+        </div>
+        <button type="button" className="link-button" onClick={onDismissError}>dispensar</button>
+      </div>}
+
+      <div ref={endRef}/>
     </section>
+
     <form className="composer" onSubmit={submit}>
-      <textarea value={draft} onChange={e => setDraft(e.target.value)} placeholder="Fala comigo…" rows={1} onKeyDown={e => {
-        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); e.currentTarget.form?.requestSubmit() }
-      }}/>
-      <button aria-label="Enviar" disabled={!draft.trim() || sending}><ArrowUp size={20}/></button>
+      <textarea
+        value={draft}
+        onChange={event => setDraft(event.target.value)}
+        placeholder="Fala comigo…"
+        rows={1}
+        aria-label="Mensagem"
+        onKeyDown={event => {
+          if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit() }
+        }}
+      />
+      {streaming
+        ? <button type="button" className="stop" aria-label="Parar geração" onClick={onStop}><Square size={16} fill="currentColor"/></button>
+        : <button aria-label="Enviar" disabled={!draft.trim()}><ArrowUp size={20}/></button>}
     </form>
   </main>
 }
+

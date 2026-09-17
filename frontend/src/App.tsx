@@ -1,82 +1,91 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Sidebar } from './components/Sidebar'
 import { ChatView } from './features/chat/ChatView'
 import { SettingsPanel } from './features/settings/SettingsPanel'
-import { api, streamMessage } from './lib/api'
-import type { Conversation, Memory, ModelConfig, Persona, Provider, Settings } from './lib/types'
+import { useChatStream } from './hooks/useChatStream'
+import { useConfig } from './hooks/useConfig'
+import { useConversations } from './hooks/useConversations'
+import { BffError } from './lib/api'
+import type { ApiError } from './lib/types'
 import './styles.css'
 
+function toApiError(error: unknown): ApiError {
+  if (error instanceof BffError) return { code: error.code, message: error.message, providerDetail: error.providerDetail }
+  return { code: 'unknown', message: error instanceof Error ? error.message : String(error) }
+}
+
+/**
+ * Composição (F7.1). O estado saiu daqui para hooks por domínio — este arquivo
+ * concentrava sete useState, o carregamento, o streaming e o tratamento de erro.
+ */
 export default function App() {
-  const [settings, setSettings] = useState<Settings | null>(null)
-  const [personas, setPersonas] = useState<Persona[]>([])
-  const [providers, setProviders] = useState<Provider[]>([])
-  const [memories, setMemories] = useState<Memory[]>([])
-  const [models, setModels] = useState<ModelConfig[]>([])
-  const [conversations, setConversations] = useState<Conversation[]>([])
-  const [active, setActive] = useState<Conversation | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [sending, setSending] = useState(false)
-  const [toast, setToast] = useState('')
+  const [chatError, setChatError] = useState<ApiError | null>(null)
+  const [configError, setConfigError] = useState<ApiError | null>(null)
 
-  const refreshConfig = async () => {
-    const [s, p, mem, pr, m] = await Promise.all([api.settings(), api.personas(), api.memories(), api.providers(), api.models()])
-    setSettings(s); setPersonas(p); setMemories(mem); setProviders(pr); setModels(m)
-  }
-  const refreshConversations = async () => setConversations(await api.conversations())
+  const reportConfigError = useCallback((error: unknown) => setConfigError(toApiError(error)), [])
+  const config = useConfig(reportConfigError)
+  const conversations = useConversations(reportConfigError)
+  const { reloadActive, refreshList, setActive } = conversations
 
-  useEffect(() => {
-    let cancelled = false
+  const onSettled = useCallback(async (conversationId: number) => {
+    // Recarrega do servidor: é lá que está a verdade sobre o que foi persistido,
+    // inclusive uma resposta parcial marcada como interrompida.
+    const fresh = await reloadActive(conversationId)
+    setActive(current => (current?.id === conversationId ? fresh : current))
+    await refreshList()
+  }, [reloadActive, refreshList, setActive])
 
-    async function loadInitialData() {
-      try {
-        await Promise.all([refreshConfig(), refreshConversations()])
-      } catch (e) {
-        if (!cancelled) setToast(e instanceof Error ? e.message : String(e))
-      }
-    }
+  const chat = useChatStream({ onSettled, onError: setChatError })
 
-    void loadInitialData()
-    return () => { cancelled = true }
-  }, [])
+  const send = useCallback((content: string) => {
+    if (!conversations.active) return
+    setChatError(null)
+    void chat.send(conversations.active.id, content)
+  }, [chat, conversations.active])
 
-  const openConversation = async (id: number) => setActive(await api.conversation(id))
-  const createConversation = async () => {
-    const c = await api.createConversation()
-    await refreshConversations(); setActive(c)
-  }
-  const archive = async (id: number) => {
-    await api.archiveConversation(id)
-    if (active?.id === id) setActive(null)
-    await refreshConversations()
-  }
-  const send = async (content: string) => {
-    if (!active) return
-    const optimisticUser = { id: -Date.now(), role: 'user' as const, content }
-    const optimisticAssistant = { id: -(Date.now()+1), role: 'assistant' as const, content: '' }
-    setActive(prev => prev ? { ...prev, messages: [...prev.messages, optimisticUser, optimisticAssistant] } : prev)
-    setSending(true); setToast('')
-    let generated = ''
-    try {
-      await streamMessage(active.id, content, {
-        onToken: token => {
-          generated += token
-          setActive(prev => prev ? { ...prev, messages: prev.messages.map(m => m.id === optimisticAssistant.id ? { ...m, content: generated } : m) } : prev)
-        },
-        onDone: () => {},
-        onError: message => { throw new Error(message) },
-      })
-      setActive(await api.conversation(active.id))
-      await refreshConversations()
-    } catch (e) {
-      setToast(e instanceof Error ? e.message : String(e))
-      setActive(await api.conversation(active.id))
-    } finally { setSending(false) }
-  }
+  const regenerate = useCallback((messageId: number) => {
+    if (!conversations.active) return
+    setChatError(null)
+    void chat.regenerate(conversations.active.id, messageId)
+  }, [chat, conversations.active])
 
   return <div className="app-shell">
-    <Sidebar conversations={conversations} activeId={active?.id ?? null} appName={settings?.app_name || 'BFF AI'} onNew={createConversation} onSelect={openConversation} onArchive={archive} onOpenSettings={() => setSettingsOpen(true)}/>
-    <ChatView conversation={active} sending={sending} onSend={send}/>
-    <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} settings={settings} personas={personas} memories={memories} providers={providers} models={models} onChanged={refreshConfig}/>
-    {toast && <div className="toast" onClick={() => setToast('')}>{toast}</div>}
+    <Sidebar
+      conversations={conversations.conversations}
+      activeId={conversations.active?.id ?? null}
+      appName={config.settings?.app_name || 'BFF AI'}
+      onNew={conversations.create}
+      onSelect={conversations.open}
+      onArchive={conversations.archive}
+      onOpenSettings={() => setSettingsOpen(true)}
+    />
+
+    <ChatView
+      conversation={conversations.active}
+      streaming={chat.isStreaming}
+      buffer={chat.buffer}
+      pendingUserMessage={chat.pendingUserMessage}
+      error={chatError}
+      onSend={send}
+      onStop={chat.stop}
+      onRegenerate={regenerate}
+      onDismissError={() => setChatError(null)}
+    />
+
+    <SettingsPanel
+      open={settingsOpen}
+      onClose={() => setSettingsOpen(false)}
+      settings={config.settings}
+      personas={config.personas}
+      memories={config.memories}
+      providers={config.providers}
+      models={config.models}
+      conversations={conversations.conversations}
+      onChanged={config.refresh}
+    />
+
+    {/* Toast só para o que não pertence a uma conversa; erro de chat fica ancorado na bolha. */}
+    {configError && <div className="toast" role="status" onClick={() => setConfigError(null)}>{configError.message}</div>}
   </div>
 }
