@@ -1,0 +1,143 @@
+import { Check, KeyRound, Plus, RefreshCw, Save, Trash2, X } from 'lucide-react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
+import { api } from '../../lib/api'
+import type { Memory, ModelConfig, Persona, Provider, Settings } from '../../lib/types'
+
+type Tab = 'general' | 'models' | 'personas' | 'memories'
+
+export function SettingsPanel({ open, onClose, settings, personas, memories, providers, models, onChanged }: {
+  open: boolean
+  onClose: () => void
+  settings: Settings | null
+  personas: Persona[]
+  memories: Memory[]
+  providers: Provider[]
+  models: ModelConfig[]
+  onChanged: () => Promise<void>
+}) {
+  const [tab, setTab] = useState<Tab>('general')
+  const [busy, setBusy] = useState(false)
+  const [remote, setRemote] = useState<Record<number, string[]>>({})
+  const [providerKeys, setProviderKeys] = useState<Record<number, string>>({})
+  const [error, setError] = useState('')
+  const [editingPersonaId, setEditingPersonaId] = useState<number | null>(null)
+  const editingPersona = useMemo(() => personas.find(p => p.id === editingPersonaId) ?? personas[0] ?? null, [editingPersonaId, personas])
+
+  useEffect(() => {
+    if (!open) { setError(''); setRemote({}); setProviderKeys({}) }
+  }, [open])
+  useEffect(() => {
+    if (editingPersona && editingPersonaId === null) setEditingPersonaId(editingPersona.id)
+  }, [editingPersona, editingPersonaId])
+  if (!open || !settings) return null
+
+  const run = async (fn: () => Promise<void>) => {
+    setBusy(true); setError('')
+    try { await fn() } catch (e) { setError(e instanceof Error ? e.message : String(e)) } finally { setBusy(false) }
+  }
+  const saveSetting = (payload: Partial<Settings>) => run(async () => { await api.updateSettings(payload); await onChanged() })
+  const loadRemote = (provider: Provider) => run(async () => {
+    const data = await api.remoteModels(provider.id)
+    setRemote(r => ({ ...r, [provider.id]: data }))
+  })
+  const saveProviderKey = (provider: Provider) => run(async () => {
+    const key = providerKeys[provider.id] ?? ''
+    await api.updateProvider(provider.id, key ? { api_key: key } : { clear_api_key: true })
+    setProviderKeys(s => ({ ...s, [provider.id]: '' }))
+    await onChanged()
+  })
+  const createPersona = () => run(async () => {
+    const created = await api.createPersona({
+      name: `Nova persona ${personas.length + 1}`,
+      description: 'Nova personalidade configurável.',
+      system_prompt: 'Converse de forma natural, útil e respeitosa.',
+      greeting: 'Oi! 💗',
+      avatar_emoji: '💗',
+    })
+    await onChanged(); setEditingPersonaId(created.id)
+  })
+  const savePersona = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!editingPersona) return
+    const data = new FormData(event.currentTarget)
+    run(async () => {
+      await api.updatePersona(editingPersona.id, {
+        name: String(data.get('name') || ''),
+        description: String(data.get('description') || ''),
+        avatar_emoji: String(data.get('avatar_emoji') || '💗'),
+        greeting: String(data.get('greeting') || ''),
+        system_prompt: String(data.get('system_prompt') || ''),
+      })
+      await onChanged()
+    })
+  }
+  const addMemory = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const form = event.currentTarget
+    const data = new FormData(form)
+    run(async () => {
+      await api.createMemory({ category: String(data.get('category') || 'general'), content: String(data.get('content') || '') })
+      form.reset(); await onChanged()
+    })
+  }
+
+  return <div className="overlay" onMouseDown={e => { if (e.target === e.currentTarget) onClose() }}>
+    <section className="settings-panel">
+      <header><div><h2>Configurações</h2><p>Comportamento, modelos e memória persistidos no SQLite.</p></div><button className="icon-button" onClick={onClose}><X/></button></header>
+      <nav className="settings-tabs">
+        <button className={tab==='general'?'active':''} onClick={() => setTab('general')}>Geral</button>
+        <button className={tab==='models'?'active':''} onClick={() => setTab('models')}>LLM</button>
+        <button className={tab==='personas'?'active':''} onClick={() => setTab('personas')}>Personas</button>
+        <button className={tab==='memories'?'active':''} onClick={() => setTab('memories')}>Memórias</button>
+      </nav>
+      <div className="settings-body">
+        {error && <div className="error-box">{error}</div>}
+
+        {tab === 'general' && <div className="settings-stack">
+          <label>Nome do app<input defaultValue={settings.app_name} onBlur={e => saveSetting({ app_name: e.target.value })}/></label>
+          <label>Como chamar a usuária<input defaultValue={settings.user_display_name} onBlur={e => saveSetting({ user_display_name: e.target.value })}/></label>
+          <label>Nome da assistente<input defaultValue={settings.assistant_display_name} onBlur={e => saveSetting({ assistant_display_name: e.target.value })}/></label>
+          <div className="setting-note">O `.env` não escolhe modelo, persona ou parâmetros. Ele guarda somente a chave-mestra usada para criptografar secrets locais.</div>
+        </div>}
+
+        {tab === 'models' && <div className="settings-stack">
+          <div className="setting-note">Existe somente um modelo ativo global para novas conversas. Cada conversa guarda o modelo escolhido e não há fallback automático.</div>
+          {providers.map(provider => <div className="provider-card" key={provider.id}>
+            <div className="provider-line"><div><strong>{provider.name}</strong><span>{provider.base_url}</span></div><span className={`provider-state ${provider.is_enabled ? 'on' : ''}`}>{provider.is_enabled ? 'ativo' : 'desativado'}</span></div>
+            <div className="key-row"><KeyRound size={16}/><input type="password" value={providerKeys[provider.id] ?? ''} onChange={e => setProviderKeys(k => ({ ...k, [provider.id]: e.target.value }))} placeholder={provider.has_api_key ? '•••••••• (chave salva)' : provider.kind === 'ollama' ? 'não necessária para Ollama local' : 'cole a API key'}/><button className="secondary" onClick={() => saveProviderKey(provider)}>Salvar</button></div>
+            <button className="secondary" disabled={busy} onClick={() => loadRemote(provider)}><RefreshCw size={15}/> Consultar modelos</button>
+            {remote[provider.id] && <>
+              <div className="remote-count">{remote[provider.id].length} modelos encontrados — role para ver todos</div>
+              <div className="remote-list">{remote[provider.id].map(modelId => <button key={modelId} onClick={() => run(async () => { await api.createModel({ provider_id: provider.id, display_name: modelId.split('/').pop() || modelId, model_id: modelId, temperature: .75, max_tokens: null, top_p: .95 }); await onChanged() })}>{modelId}</button>)}</div>
+            </>}
+          </div>)}
+          <h3>Modelos configurados</h3>
+          {models.map(model => <button key={model.id} className={`model-choice ${settings.active_model_config_id === model.id ? 'active' : ''}`} onClick={() => run(async () => { await api.activateModel(model.id); await onChanged() })}>
+            <div><strong>{model.display_name}</strong><span>{model.provider_name} · {model.model_id} · temp {model.temperature} · {model.max_tokens === null ? 'tokens automáticos' : `max ${model.max_tokens} tokens`}</span></div>{settings.active_model_config_id === model.id && <Check size={18}/>} 
+          </button>)}
+        </div>}
+
+        {tab === 'personas' && <div className="persona-layout">
+          <div className="persona-rail">
+            <button className="secondary add-persona" onClick={createPersona}><Plus size={15}/> Nova</button>
+            {personas.map(persona => <button key={persona.id} className={`persona-nav ${editingPersona?.id === persona.id ? 'active' : ''}`} onClick={() => setEditingPersonaId(persona.id)}><span>{persona.avatar_emoji}</span><div><strong>{persona.name}</strong><small>{settings.active_persona_id === persona.id ? 'padrão' : 'editar'}</small></div></button>)}
+          </div>
+          {editingPersona && <form className="persona-editor" key={editingPersona.id} onSubmit={savePersona}>
+            <div className="inline-two"><label>Emoji<input name="avatar_emoji" defaultValue={editingPersona.avatar_emoji}/></label><label>Nome<input name="name" defaultValue={editingPersona.name}/></label></div>
+            <label>Descrição<input name="description" defaultValue={editingPersona.description}/></label>
+            <label>Saudação<textarea name="greeting" rows={2} defaultValue={editingPersona.greeting}/></label>
+            <label>System prompt<textarea name="system_prompt" className="prompt-area" rows={13} defaultValue={editingPersona.system_prompt}/></label>
+            <div className="editor-actions"><button type="button" className="secondary" onClick={() => saveSetting({ active_persona_id: editingPersona.id })}><Check size={15}/> Usar como padrão</button><button className="primary-small"><Save size={15}/> Salvar persona</button></div>
+          </form>}
+        </div>}
+
+        {tab === 'memories' && <div className="settings-stack">
+          <div className="setting-note">Memória é separada da persona. Somente memórias ativas são adicionadas ao contexto e elas são tratadas como fatos explicitamente fornecidos pela usuária.</div>
+          <form className="memory-form" onSubmit={addMemory}><input name="category" placeholder="categoria (ex.: preferência)" defaultValue="general"/><textarea name="content" required rows={3} placeholder="Ex.: Prefere respostas curtas quando estiver estudando."/><button className="primary-small"><Plus size={15}/> Adicionar memória</button></form>
+          <div className="memory-list">{memories.map(memory => <article className={`memory-card ${memory.is_active ? '' : 'disabled'}`} key={memory.id}><div><span>{memory.category}</span><p>{memory.content}</p></div><div className="memory-actions"><button className="secondary" onClick={() => run(async () => { await api.updateMemory(memory.id, { is_active: !memory.is_active }); await onChanged() })}>{memory.is_active ? 'Pausar' : 'Ativar'}</button><button className="icon-button" aria-label="Excluir memória" onClick={() => run(async () => { await api.deleteMemory(memory.id); await onChanged() })}><Trash2 size={16}/></button></div></article>)}</div>
+        </div>}
+      </div>
+      {busy && <div className="saving">salvando…</div>}
+    </section>
+  </div>
+}

@@ -1,0 +1,128 @@
+# BFF AI — orquestrador pessoal de LLM
+
+Aplicação full-stack para conversar com **uma única LLM selecionada por vez**, usando Ollama local ou NVIDIA NIM. Não existe fallback silencioso: se o provedor/modelo escolhido falhar, a conversa mostra o erro e para ali.
+
+## O que fica no banco
+
+SQLite é a fonte de verdade do produto:
+
+- personas e prompts de sistema;
+- providers (Ollama / NVIDIA NIM), URLs e estado;
+- API keys criptografadas;
+- modelos e parâmetros de inferência;
+- modelo ativo e persona ativa;
+- nome do app, nomes de exibição e tema;
+- conversas e mensagens;
+- metadados de execução (modelo, provider e latência).
+
+O `.env` tem **uma única responsabilidade**: guardar a chave-mestra usada para criptografar secrets do SQLite.
+
+## Arquitetura
+
+```text
+frontend (React + Vite)
+        |
+        | REST + SSE
+        v
+backend (FastAPI)
+  ├─ API routes
+  ├─ services
+  │   ├─ ChatService
+  │   └─ LLM adapters
+  │       ├─ OllamaAdapter
+  │       └─ NvidiaNimAdapter
+  ├─ repositories
+  ├─ domain models/schemas
+  └─ SQLite
+```
+
+Ollama e NVIDIA NIM expõem APIs compatíveis com OpenAI. O projeto usa `/v1/chat/completions` com streaming e `/v1/models` para descoberta. O adapter é escolhido estritamente pelo `provider.kind` salvo no banco.
+
+## Rodando localmente
+
+### 1. Backend
+
+```bash
+cd backend
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+# Linux/macOS: source .venv/bin/activate
+pip install -r requirements.txt
+python scripts/generate_master_key.py
+```
+
+Copie `.env.example` para `.env` na raiz do projeto e cole a chave gerada em `APP_MASTER_KEY`.
+
+Depois:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Na primeira inicialização o banco `backend/data/bff_ai.db` é criado e recebe:
+
+- persona `Bestie`;
+- provider Ollama em `http://localhost:11434/v1`;
+- provider NVIDIA NIM;
+- um modelo Ollama inicial `llama3.2`.
+
+Se usar Ollama, instale-o e faça pull de um modelo, por exemplo:
+
+```bash
+ollama pull llama3.2
+```
+
+Se usar NVIDIA NIM hospedado, abra **Configurações → LLM**, salve sua API key e consulte os modelos disponíveis.
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Acesse `http://localhost:5173`.
+
+## Regras deliberadas do projeto
+
+1. **Sem fallback de LLM.** `create_adapter()` retorna exatamente o provider escolhido ou lança erro.
+2. **Conversa registra o modelo selecionado.** Assim o contexto não muda silenciosamente no meio de um chat.
+3. **Secrets no banco, criptografados.** A chave-mestra não vai para o SQLite.
+4. **Persona é dado, não código.** Prompt, greeting e identidade podem ser alterados sem editar backend.
+5. **Provider é adapter.** Adicionar outro mecanismo de LLM não exige reescrever chat, banco ou UI.
+6. **Streaming ponta a ponta.** O backend lê SSE do provider e envia SSE ao navegador.
+
+## Estrutura
+
+```text
+bff-ai/
+├─ .env.example
+├─ README.md
+├─ backend/
+│  ├─ alembic/
+│  ├─ app/
+│  │  ├─ api/routes/
+│  │  ├─ core/
+│  │  ├─ db/
+│  │  ├─ domain/
+│  │  ├─ repositories/
+│  │  └─ services/llm/
+│  ├─ scripts/
+│  └─ tests/
+└─ frontend/
+   └─ src/
+      ├─ components/
+      ├─ features/chat/
+      ├─ features/settings/
+      └─ lib/
+```
+
+## Próximas extensões naturais
+
+- editor visual completo de personas;
+- memórias estruturadas por usuária/conversa;
+- anexos e multimodal;
+- ferramentas/MCP com permissões explícitas;
+- autenticação caso deixe de ser uma aplicação local;
+- PostgreSQL quando sair do modo local.
