@@ -10,12 +10,11 @@ from __future__ import annotations
 from app.services.llm.base import ChatRuntimeConfig
 from app.services.llm.factory import capabilities_for
 
-# 0 é o sentinela histórico no SQLite para "o provider decide".
-PROVIDER_MANAGED = 0
-
-
-def effective_max_tokens(provider_kind: str, stored_max_tokens: int) -> int | None:
-    if stored_max_tokens <= PROVIDER_MANAGED:
+def effective_max_tokens(provider_kind: str, stored_max_tokens: int | None) -> int | None:
+    """None = o provider escolhe. Também vira None quando o adapter declara que
+    o provider não honra o teto (caso do NIM, que divide o orçamento com o
+    raciocínio)."""
+    if stored_max_tokens is None:
         return None
     if not capabilities_for(provider_kind).honors_max_tokens:
         return None
@@ -28,7 +27,7 @@ def build_runtime_config(
     base_url: str,
     api_key: str | None,
     model_id: str,
-    stored_max_tokens: int,
+    stored_max_tokens: int | None,
     temperature: float,
     top_p: float,
 ) -> ChatRuntimeConfig:

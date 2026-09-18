@@ -29,7 +29,13 @@ def view(model: ModelConfig) -> ModelRead:
 
 @router.get("", response_model=list[ModelRead])
 def list_models(db: Db):
-    rows = db.query(ModelConfig).options(joinedload(ModelConfig.provider)).order_by(ModelConfig.id.asc()).all()
+    rows = (
+        db.query(ModelConfig)
+        .options(joinedload(ModelConfig.provider))
+        .filter(ModelConfig.is_archived.is_(False))
+        .order_by(ModelConfig.id.asc())
+        .all()
+    )
     return [view(row) for row in rows]
 
 
@@ -42,8 +48,7 @@ def create_model(payload: ModelCreate, db: Db):
         display_name=payload.display_name,
         model_id=payload.model_id,
         temperature_milli=round(payload.temperature * 1000),
-        # SQLite keeps 0 as the internal sentinel for provider-managed limits.
-        max_tokens=payload.max_tokens or 0,
+        max_tokens=payload.max_tokens,
         top_p_milli=round(payload.top_p * 1000),
         context_window=payload.context_window,
     )
@@ -66,8 +71,6 @@ def update_model(model_id: int, payload: ModelUpdate, db: Db):
         row.temperature_milli = round(data.pop("temperature") * 1000)
     if "top_p" in data:
         row.top_p_milli = round(data.pop("top_p") * 1000)
-    if "max_tokens" in data:
-        data["max_tokens"] = data["max_tokens"] or 0
     for key, value in data.items():
         setattr(row, key, value)
     db.commit()
@@ -85,11 +88,27 @@ def activate_model(model_id: int, db: Db):
 
 
 @router.delete("/{model_id}", status_code=204)
-def delete_model(model_id: int, db: Db):
+def archive_model(model_id: int, db: Db):
+    """Soft delete: some da lista, mas a linha fica.
+
+    As conversas registram qual modelo usaram; apagar de verdade quebraria esse
+    histórico ou exigiria recusar a exclusão para sempre.
+    """
     row = db.get(ModelConfig, model_id)
     if not row:
         raise HTTPException(404, "Model config not found")
-    if db.query(Conversation).filter(Conversation.model_config_id == model_id).count():
-        raise HTTPException(409, "Model config is used by conversations")
-    db.delete(row)
+
+    ativo = SettingsRepository(db).get_all().get("active_model_config_id")
+    if ativo and int(ativo) == model_id:
+        substituto = (
+            db.query(ModelConfig)
+            .filter(ModelConfig.is_archived.is_(False), ModelConfig.id != model_id)
+            .order_by(ModelConfig.id.asc())
+            .first()
+        )
+        if not substituto:
+            raise HTTPException(409, "Não dá para arquivar o único modelo disponível")
+        SettingsRepository(db).set_many({"active_model_config_id": str(substituto.id)})
+
+    row.is_archived = True
     db.commit()

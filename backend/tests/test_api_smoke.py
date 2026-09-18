@@ -7,7 +7,8 @@ def test_lifespan_verifica_schema_e_semeia_defaults(client):
 
     settings = client.get("/api/settings").json()
     assert settings["app_name"] == "BFF AI"
-    assert settings["assistant_display_name"] == "Bestie"
+    # O nome da assistente mora na persona, não em settings.
+    assert "assistant_display_name" not in settings
 
 
 def test_bootstrap_cria_persona_e_providers(client):

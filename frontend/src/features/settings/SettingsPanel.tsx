@@ -96,7 +96,6 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
         {tab === 'general' && <div className="settings-stack">
           <label>Nome do app<input defaultValue={settings.app_name} onBlur={e => saveSetting({ app_name: e.target.value })}/></label>
           <label>Como chamar a usuária<input defaultValue={settings.user_display_name} onBlur={e => saveSetting({ user_display_name: e.target.value })}/></label>
-          <label>Nome da assistente<input defaultValue={settings.assistant_display_name} onBlur={e => saveSetting({ assistant_display_name: e.target.value })}/></label>
         </div>}
 
         {tab === 'models' && <div className="settings-stack">
@@ -118,6 +117,12 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
               </div>
               {settings.active_model_config_id === model.id && <Check size={18}/>}
             </button>
+            <button
+              className="icon-button subtle model-remove"
+              aria-label={`Excluir ${model.display_name}`}
+              title="Excluir modelo"
+              onClick={() => run(async () => { await api.deleteModel(model.id); await onChanged() })}
+            ><Trash2 size={15}/></button>
             <label className="context-window">
               Janela de contexto
               <input
@@ -145,7 +150,22 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
           <div className="persona-layout">
           <div className="persona-rail">
             <button className="secondary add-persona" onClick={createPersona}><Plus size={15}/> Nova</button>
-            {personas.map(persona => <button key={persona.id} className={`persona-nav ${editingPersona?.id === persona.id ? 'active' : ''}`} onClick={() => setEditingPersonaId(persona.id)}><span>{persona.avatar_emoji}</span><div><strong>{persona.name}</strong><small>{settings.active_persona_id === persona.id ? 'padrão' : 'editar'}</small></div></button>)}
+            {personas.map(persona => <div key={persona.id} className={`persona-nav-row ${editingPersona?.id === persona.id ? 'active' : ''}`}>
+              <button className="persona-nav" onClick={() => setEditingPersonaId(persona.id)}>
+                <span>{persona.avatar_emoji}</span>
+                <div><strong>{persona.name}</strong><small>{settings.active_persona_id === persona.id ? 'padrão' : 'editar'}</small></div>
+              </button>
+              <button
+                className="icon-button subtle"
+                aria-label={`Excluir ${persona.name}`}
+                title="Excluir persona"
+                onClick={() => run(async () => {
+                  await api.deletePersona(persona.id)
+                  if (editingPersonaId === persona.id) setEditingPersonaId(null)
+                  await onChanged()
+                })}
+              ><Trash2 size={15}/></button>
+            </div>)}
           </div>
           {editingPersona && <PersonaEditor
             persona={editingPersona}

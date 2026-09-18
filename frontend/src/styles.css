@@ -193,3 +193,17 @@ button { cursor: pointer; }
 .prompt-preview { border-top:1px dashed #ead9e3; padding-top:10px; }
 .prompt-hint { margin:6px 0 8px; color:#9b8791; font-size:11.5px; line-height:1.5; }
 .prompt-preview pre { margin:0; padding:11px 12px; background:#fdf6fa; border:1px solid #f0e0ea; border-radius:12px; font-size:11.5px; line-height:1.6; white-space:pre-wrap; max-height:260px; overflow:auto; color:#4e3a46; }
+
+/* ---------- Exclusão (soft delete) de modelo e persona ---------- */
+.model-row { position:relative; }
+.model-remove { position:absolute; top:8px; right:8px; opacity:.35; }
+/* Sem isto o botão ficava esmaecido para sempre: a regra de hover original só
+   valia para .conversation-row. */
+.model-row:hover .model-remove, .model-remove:focus-visible { opacity:1; }
+.model-row .model-choice { padding-right:34px; }
+.persona-nav-row { display:flex; align-items:center; border-radius:12px; }
+.persona-nav-row.active { background:#f3dbe7; }
+.persona-nav-row .persona-nav { flex:1; min-width:0; background:transparent; }
+.persona-nav-row.active .persona-nav { background:transparent; }
+.persona-nav-row .icon-button { opacity:.4; }
+.persona-nav-row:hover .icon-button { opacity:1; }

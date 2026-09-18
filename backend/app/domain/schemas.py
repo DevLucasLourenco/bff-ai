@@ -213,7 +213,6 @@ class MemoryRead(OrmModel):
 class SettingsRead(BaseModel):
     app_name: str
     user_display_name: str
-    assistant_display_name: str
     theme: str
     active_persona_id: int
     active_model_config_id: int
@@ -224,7 +223,6 @@ class SettingsRead(BaseModel):
 class SettingsUpdate(BaseModel):
     app_name: str | None = None
     user_display_name: str | None = None
-    assistant_display_name: str | None = None
     theme: str | None = None
     active_persona_id: int | None = None
     active_model_config_id: int | None = None

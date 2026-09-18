@@ -47,6 +47,9 @@ class ProviderConfig(Base):
 
 
 class ModelConfig(Base):
+    """Um modelo configurado. Arquivar some da lista sem quebrar as conversas
+    que registraram esse modelo — a linha continua existindo."""
+
     __tablename__ = "model_configs"
     __table_args__ = (UniqueConstraint("provider_id", "model_id", name="uq_provider_model"),)
 
@@ -55,8 +58,11 @@ class ModelConfig(Base):
     display_name: Mapped[str] = mapped_column(String(120))
     model_id: Mapped[str] = mapped_column(String(240))
     temperature_milli: Mapped[int] = mapped_column(Integer, default=750)
-    max_tokens: Mapped[int] = mapped_column(Integer, default=2048)
+    # NULL = o provider escolhe o próprio limite. Era um sentinela 0, que obrigava
+    # cada leitor a saber da convenção.
+    max_tokens: Mapped[Optional[int]] = mapped_column(Integer, nullable=True, default=None)
     top_p_milli: Mapped[int] = mapped_column(Integer, default=950)
+    is_archived: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     # Janela de contexto do modelo. 0 = desconhecida: sem orçamento não há
     # truncamento, e o histórico vai inteiro como antes.
     context_window: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
@@ -98,6 +104,7 @@ class Persona(Base):
     extra_instructions: Mapped[str] = mapped_column(Text, default="", server_default="")
     greeting: Mapped[str] = mapped_column(Text, default="")
     avatar_emoji: Mapped[str] = mapped_column(String(24), default="💗")
+    is_archived: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from app.api.deps import Db
-from app.domain.models import Conversation, Persona
+from app.domain.models import Persona
 from app.domain.schemas import PersonaCreate, PersonaRead, PersonaUpdate
 from app.repositories.settings import SettingsRepository
 from app.services.persona import compose_system_prompt, traits_from_row
@@ -29,7 +29,8 @@ def regras_globais(db) -> str:
 @router.get("", response_model=list[PersonaRead])
 def list_personas(db: Db):
     regras = regras_globais(db)
-    return [view(p, regras) for p in db.query(Persona).order_by(Persona.name.asc()).all()]
+    rows = db.query(Persona).filter(Persona.is_archived.is_(False)).order_by(Persona.name.asc()).all()
+    return [view(p, regras) for p in rows]
 
 
 @router.post("", response_model=PersonaRead, status_code=201)
@@ -61,11 +62,27 @@ def update_persona(persona_id: int, payload: PersonaUpdate, db: Db):
 
 
 @router.delete("/{persona_id}", status_code=204)
-def delete_persona(persona_id: int, db: Db):
+def archive_persona(persona_id: int, db: Db):
+    """Soft delete: a persona some da lista, mas a linha continua.
+
+    Nada ligado a ela é removido — as conversas que já a usam seguem
+    funcionando, com nome, emoji e prompt intactos, e as memórias no escopo
+    dela continuam valendo para essas conversas.
+    """
     persona = db.get(Persona, persona_id)
     if not persona:
         raise HTTPException(404, "Persona not found")
-    if db.query(Conversation).filter(Conversation.persona_id == persona_id).count():
-        raise HTTPException(409, "Persona is used by conversations")
-    db.delete(persona)
+
+    restantes = db.query(Persona).filter(
+        Persona.is_archived.is_(False), Persona.id != persona_id
+    ).order_by(Persona.id.asc())
+    substituta = restantes.first()
+    if not substituta:
+        raise HTTPException(409, "Não dá para arquivar a única persona disponível")
+
+    repo = SettingsRepository(db)
+    if int(repo.get_all().get("active_persona_id", 0)) == persona_id:
+        repo.set_many({"active_persona_id": str(substituta.id)})
+
+    persona.is_archived = True
     db.commit()

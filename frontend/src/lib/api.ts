@@ -69,6 +69,7 @@ export const api = {
   models: () => json<ModelConfig[]>('/api/models'),
   createModel: (payload: Record<string, unknown>) => json<ModelConfig>('/api/models', { method: 'POST', body: JSON.stringify(payload) }),
   updateModel: (id: number, payload: Record<string, unknown>) => json<ModelConfig>(`/api/models/${id}`, { method: 'PATCH', body: JSON.stringify(payload) }),
+  deleteModel: (id: number) => json<void>(`/api/models/${id}`, { method: 'DELETE' }),
   activateModel: (id: number) => json<ModelConfig>(`/api/models/${id}/activate`, { method: 'POST' }),
   conversations: () => json<Conversation[]>('/api/conversations'),
   conversation: (id: number) => json<Conversation>(`/api/conversations/${id}`),

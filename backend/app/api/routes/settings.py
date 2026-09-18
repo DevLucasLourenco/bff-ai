@@ -13,7 +13,6 @@ def serialize(repo: SettingsRepository) -> SettingsRead:
     return SettingsRead(
         app_name=values["app_name"],
         user_display_name=values["user_display_name"],
-        assistant_display_name=values["assistant_display_name"],
         theme=values["theme"],
         active_persona_id=int(values["active_persona_id"]),
         active_model_config_id=int(values["active_model_config_id"]),
