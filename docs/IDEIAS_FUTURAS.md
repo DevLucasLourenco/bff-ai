@@ -8,6 +8,13 @@ raciocínio depois.
 
 ## Aparência da persona: avatar chibi vestível
 
+> **Saiu da fase de ideia.** Pesquisado em 2026-09-18 e virou
+> [SPEC_AVATAR_3D.md](SPEC_AVATAR_3D.md) + [PLANO_AVATAR_3D.md](PLANO_AVATAR_3D.md).
+> O texto abaixo fica como registro do raciocínio original — vale notar que a
+> intuição de "camadas em SVG" foi substituída por VRM/three.js, e que a pesquisa
+> encontrou um impedimento que a ideia não previa: malha gerada por IA vem fundida
+> e não permite trocar roupa.
+
 **A ideia.** Cada persona ganha um corpo — um personagem chibi que a usuária pode
 vestir e customizar. A aparência passa a ser parte da identidade da persona, no
 mesmo nível do nome e do jeito de falar, em vez de só um emoji.
