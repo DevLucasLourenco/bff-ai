@@ -134,3 +134,20 @@ async def test_stream_options_so_vai_quando_a_capacidade_permite():
     adapter = adapter_com(handler)
     await coletar(adapter, ChatRuntimeConfig(**{**CONFIG.__dict__, "include_usage": True}))
     assert capturado["stream_options"] == {"include_usage": True}
+
+
+@pytest.mark.asyncio
+async def test_404_de_conta_sem_acesso_tem_mensagem_propria():
+    # A NVIDIA lista no catálogo modelos que a conta não pode invocar; dizer
+    # "consulte os modelos disponíveis" seria enganoso, porque ele está na lista.
+    corpo = '{"status":404,"title":"Not Found","detail":"Function \'2b2dcd47\': Not found for account \'abc\'"}'
+    adapter = adapter_com(lambda _r: httpx.Response(404, text=corpo))
+    with pytest.raises(ModelNotFound, match="não tem acesso"):
+        await coletar(adapter)
+
+
+@pytest.mark.asyncio
+async def test_404_generico_mantem_a_orientacao_de_trocar_de_modelo():
+    adapter = adapter_com(lambda _r: httpx.Response(404, text="model does not exist"))
+    with pytest.raises(ModelNotFound, match="Consulte os modelos"):
+        await coletar(adapter)

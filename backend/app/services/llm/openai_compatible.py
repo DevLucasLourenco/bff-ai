@@ -18,6 +18,10 @@ from app.services.llm.errors import (
 # escolher a mensagem certa; nunca para decidir tentar de novo.
 _CONTEXT_HINTS = ("context length", "context_length", "too many tokens", "maximum context", "reduce the length")
 
+# Assinatura do 404 da NVIDIA quando o modelo existe no catálogo mas a conta não
+# pode invocá-lo: `Function '<uuid>': Not found for account '<id>'`.
+_SEM_ACESSO_NA_CONTA = "not found for account"
+
 
 class OpenAICompatibleAdapter:
     capabilities = ProviderCapabilities()
@@ -62,6 +66,16 @@ class OpenAICompatibleAdapter:
                 provider_detail=body,
             )
         if status == 404:
+            # A NVIDIA lista no catálogo de /v1/models muitos modelos que a conta
+            # não pode invocar: "listado" e "executável" são coisas diferentes lá.
+            # Mandar "consulte os modelos disponíveis" nesse caso é enganoso,
+            # porque o modelo *está* na lista.
+            if _SEM_ACESSO_NA_CONTA in lowered:
+                raise ModelNotFound(
+                    "Esse modelo aparece no catálogo do provider, mas a sua conta não tem acesso "
+                    "para executá-lo. Escolha outro modelo em Configurações → LLM.",
+                    provider_detail=body,
+                )
             raise ModelNotFound(
                 "O provider não encontrou esse modelo. Consulte os modelos disponíveis e escolha outro.",
                 provider_detail=body,

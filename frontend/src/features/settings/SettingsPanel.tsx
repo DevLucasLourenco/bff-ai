@@ -107,11 +107,9 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
           <label>Nome do app<input defaultValue={settings.app_name} onBlur={e => saveSetting({ app_name: e.target.value })}/></label>
           <label>Como chamar a usuária<input defaultValue={settings.user_display_name} onBlur={e => saveSetting({ user_display_name: e.target.value })}/></label>
           <label>Nome da assistente<input defaultValue={settings.assistant_display_name} onBlur={e => saveSetting({ assistant_display_name: e.target.value })}/></label>
-          <div className="setting-note">O `.env` não escolhe modelo, persona ou parâmetros. Ele guarda somente a chave-mestra usada para criptografar secrets locais.</div>
         </div>}
 
         {tab === 'models' && <div className="settings-stack">
-          <div className="setting-note">Existe somente um modelo ativo global para novas conversas. Cada conversa guarda o modelo escolhido e não há fallback automático.</div>
           {providers.map(provider => <div className="provider-card" key={provider.id}>
             <div className="provider-line"><div><strong>{provider.name}</strong><span>{provider.base_url}</span></div><span className={`provider-state ${provider.is_enabled ? 'on' : ''}`}>{provider.is_enabled ? 'ativo' : 'desativado'}</span></div>
             <div className="key-row"><KeyRound size={16}/><input type="password" value={providerKeys[provider.id] ?? ''} onChange={e => setProviderKeys(k => ({ ...k, [provider.id]: e.target.value }))} placeholder={provider.has_api_key ? '•••••••• (chave salva)' : provider.kind === 'ollama' ? 'não necessária para Ollama local' : 'cole a API key'}/><button className="secondary" onClick={() => saveProviderKey(provider)}>Salvar</button></div>
