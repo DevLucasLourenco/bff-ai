@@ -75,18 +75,35 @@ class ModelRead(BaseModel):
     context_window: int
 
 
-class PersonaCreate(BaseModel):
-    name: str
+class PersonaTraitFields(BaseModel):
+    """Os campos que descrevem a personalidade (o que varia entre personas)."""
+
+    personality: str = ""
+    humor: str = ""
+    tone: str = ""
+    energy: str = ""
+    objective: str = ""
+    avoid: str = ""
+    extra_instructions: str = ""
+
+
+class PersonaCreate(PersonaTraitFields):
+    name: str = Field(min_length=1, max_length=120)
     description: str = ""
-    system_prompt: str
     greeting: str = ""
     avatar_emoji: str = "💗"
 
 
 class PersonaUpdate(BaseModel):
-    name: str | None = None
+    name: str | None = Field(default=None, min_length=1, max_length=120)
     description: str | None = None
-    system_prompt: str | None = None
+    personality: str | None = None
+    humor: str | None = None
+    tone: str | None = None
+    energy: str | None = None
+    objective: str | None = None
+    avoid: str | None = None
+    extra_instructions: str | None = None
     greeting: str | None = None
     avatar_emoji: str | None = None
 
@@ -95,9 +112,18 @@ class PersonaRead(OrmModel):
     id: int
     name: str
     description: str
-    system_prompt: str
+    personality: str
+    humor: str
+    tone: str
+    energy: str
+    objective: str
+    avoid: str
+    extra_instructions: str
     greeting: str
     avatar_emoji: str
+    # Prompt final, montado a partir da regra global + campos + extras. A UI
+    # mostra exatamente isto, para não haver mistério sobre o que foi enviado.
+    composed_prompt: str
     created_at: datetime
     updated_at: datetime
 
@@ -191,6 +217,8 @@ class SettingsRead(BaseModel):
     theme: str
     active_persona_id: int
     active_model_config_id: int
+    # Regra que toda persona obedece, antes de qualquer traço de personalidade.
+    global_persona_rules: str
 
 
 class SettingsUpdate(BaseModel):
@@ -200,3 +228,4 @@ class SettingsUpdate(BaseModel):
     theme: str | None = None
     active_persona_id: int | None = None
     active_model_config_id: int | None = None
+    global_persona_rules: str | None = None

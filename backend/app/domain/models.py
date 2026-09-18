@@ -76,12 +76,26 @@ class ModelConfig(Base):
 
 
 class Persona(Base):
+    """Personalidade como campos, não como um bloco de texto solto.
+
+    As salvaguardas (não fingir sentimentos, admitir o que não sabe) saíram
+    daqui para a regra global em `app_settings`: não são personalidade, e uma
+    edição descuidada de persona apagava a salvaguarda sem ninguém notar.
+    """
+
     __tablename__ = "personas"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(120), unique=True)
     description: Mapped[str] = mapped_column(String(400), default="")
-    system_prompt: Mapped[str] = mapped_column(Text)
+    personality: Mapped[str] = mapped_column(Text, default="", server_default="")
+    humor: Mapped[str] = mapped_column(Text, default="", server_default="")
+    tone: Mapped[str] = mapped_column(Text, default="", server_default="")
+    energy: Mapped[str] = mapped_column(Text, default="", server_default="")
+    objective: Mapped[str] = mapped_column(Text, default="", server_default="")
+    avoid: Mapped[str] = mapped_column(Text, default="", server_default="")
+    # Válvula de escape para o que não cabe nos campos acima.
+    extra_instructions: Mapped[str] = mapped_column(Text, default="", server_default="")
     greeting: Mapped[str] = mapped_column(Text, default="")
     avatar_emoji: Mapped[str] = mapped_column(String(24), default="💗")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

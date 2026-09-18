@@ -2,6 +2,7 @@ import { Check, KeyRound, Plus, RefreshCw, Save, Trash2, X } from 'lucide-react'
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { api } from '../../lib/api'
 import type { Conversation, Memory, MemoryScope, ModelConfig, Persona, Provider, Settings } from '../../lib/types'
+import { PersonaEditor } from './PersonaEditor'
 
 type Tab = 'general' | 'models' | 'personas' | 'memories'
 
@@ -52,27 +53,16 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
     const created = await api.createPersona({
       name: `Nova persona ${personas.length + 1}`,
       description: 'Nova personalidade configurável.',
-      system_prompt: 'Converse de forma natural, útil e respeitosa.',
       greeting: 'Oi! 💗',
       avatar_emoji: '💗',
     })
     await onChanged(); setEditingPersonaId(created.id)
   })
-  const savePersona = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const savePersona = (payload: Partial<Persona>) => run(async () => {
     if (!editingPersona) return
-    const data = new FormData(event.currentTarget)
-    run(async () => {
-      await api.updatePersona(editingPersona.id, {
-        name: String(data.get('name') || ''),
-        description: String(data.get('description') || ''),
-        avatar_emoji: String(data.get('avatar_emoji') || '💗'),
-        greeting: String(data.get('greeting') || ''),
-        system_prompt: String(data.get('system_prompt') || ''),
-      })
-      await onChanged()
-    })
-  }
+    await api.updatePersona(editingPersona.id, payload)
+    await onChanged()
+  })
   const addMemory = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const form = event.currentTarget
@@ -141,18 +131,29 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
           </div>)}
         </div>}
 
-        {tab === 'personas' && <div className="persona-layout">
+        {tab === 'personas' && <div className="persona-stack">
+          <details className="global-rules">
+            <summary>Regra global — toda persona obedece</summary>
+            <p>Vem antes de qualquer traço de personalidade. É aqui que ficam as salvaguardas, fora do alcance de uma edição de persona.</p>
+            <textarea
+              rows={8}
+              defaultValue={settings.global_persona_rules}
+              onBlur={e => saveSetting({ global_persona_rules: e.target.value })}
+            />
+          </details>
+
+          <div className="persona-layout">
           <div className="persona-rail">
             <button className="secondary add-persona" onClick={createPersona}><Plus size={15}/> Nova</button>
             {personas.map(persona => <button key={persona.id} className={`persona-nav ${editingPersona?.id === persona.id ? 'active' : ''}`} onClick={() => setEditingPersonaId(persona.id)}><span>{persona.avatar_emoji}</span><div><strong>{persona.name}</strong><small>{settings.active_persona_id === persona.id ? 'padrão' : 'editar'}</small></div></button>)}
           </div>
-          {editingPersona && <form className="persona-editor" key={editingPersona.id} onSubmit={savePersona}>
-            <div className="inline-two"><label>Emoji<input name="avatar_emoji" defaultValue={editingPersona.avatar_emoji}/></label><label>Nome<input name="name" defaultValue={editingPersona.name}/></label></div>
-            <label>Descrição<input name="description" defaultValue={editingPersona.description}/></label>
-            <label>Saudação<textarea name="greeting" rows={2} defaultValue={editingPersona.greeting}/></label>
-            <label>System prompt<textarea name="system_prompt" className="prompt-area" rows={13} defaultValue={editingPersona.system_prompt}/></label>
-            <div className="editor-actions"><button type="button" className="secondary" onClick={() => saveSetting({ active_persona_id: editingPersona.id })}><Check size={15}/> Usar como padrão</button><button className="primary-small"><Save size={15}/> Salvar persona</button></div>
-          </form>}
+          {editingPersona && <PersonaEditor
+            persona={editingPersona}
+            isDefault={settings.active_persona_id === editingPersona.id}
+            onSave={savePersona}
+            onSetDefault={() => saveSetting({ active_persona_id: editingPersona.id })}
+          />}
+          </div>
         </div>}
 
         {tab === 'memories' && <div className="settings-stack">

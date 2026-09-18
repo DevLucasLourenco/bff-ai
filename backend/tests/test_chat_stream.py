@@ -138,7 +138,7 @@ def test_nvidia_nim_ignora_max_tokens_e_desliga_reasoning(client, fake_adapter, 
 # ------------------------------------------------------------ F4.1/F4.3 prompt
 
 
-def test_prompt_comeca_pela_persona_e_so_traz_memoria_no_escopo(client, fake_adapter, db):
+def test_prompt_comeca_pela_regra_global_e_so_traz_memoria_no_escopo(client, fake_adapter, db):
     conversation_id = new_conversation(client)
     outra = new_conversation(client)
     client.post("/api/memories", json={"category": "pref", "content": "gosta de café", "scope": "global"})
@@ -151,14 +151,16 @@ def test_prompt_comeca_pela_persona_e_so_traz_memoria_no_escopo(client, fake_ada
     send(client, conversation_id)
 
     system_blocks = [m["content"] for m in adapter.received_messages if m["role"] == "system"]
-    assert system_blocks[0].startswith("Você é uma assistente virtual chamada Bestie")
+    # O primeiro bloco é o prompt composto: regra global, depois a persona.
+    assert system_blocks[0].startswith("Estas regras valem para todas as personas")
+    assert "Você é Bestie." in system_blocks[0]
     assert "gosta de café" in system_blocks[1]
     assert "segredo da outra conversa" not in " ".join(system_blocks)
 
 
 def test_memoria_de_persona_nao_vaza_para_outra_persona(client, fake_adapter, db):
     outra_persona = client.post("/api/personas", json={
-        "name": "Coach", "description": "", "system_prompt": "Você é objetiva.",
+        "name": "Coach", "description": "", "personality": "objetiva e direta",
         "greeting": "", "avatar_emoji": "🎯",
     }).json()
     client.post("/api/memories", json={

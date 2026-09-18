@@ -1,5 +1,12 @@
-export type Persona = {
-  id: number; name: string; description: string; system_prompt: string; greeting: string; avatar_emoji: string;
+/** Campos que descrevem a personalidade — o que varia entre personas. */
+export type PersonaTraits = {
+  personality: string; humor: string; tone: string; energy: string;
+  objective: string; avoid: string; extra_instructions: string;
+}
+export type Persona = PersonaTraits & {
+  id: number; name: string; description: string; greeting: string; avatar_emoji: string;
+  /** Prompt final montado no servidor: regra global + campos + extras. */
+  composed_prompt: string;
 }
 export type ProviderKind = 'ollama' | 'nvidia_nim'
 export type Provider = {
@@ -28,6 +35,8 @@ export type Conversation = {
 export type Settings = {
   app_name: string; user_display_name: string; assistant_display_name: string; theme: string;
   active_persona_id: number; active_model_config_id: number;
+  /** Regra que toda persona obedece, antes de qualquer traço de personalidade. */
+  global_persona_rules: string;
 }
 
 export type MemoryScope = 'global' | 'persona' | 'conversation'

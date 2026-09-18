@@ -23,7 +23,9 @@ from app.domain.models import (
     ModelConfig,
     utcnow,
 )
+from app.repositories.settings import SettingsRepository
 from app.services.context import ContextMessage, build_messages
+from app.services.persona import compose_system_prompt, traits_from_row
 from app.services.llm.base import ChatRuntimeConfig, LLMAdapter
 from app.services.llm.errors import LLMError, ProviderResponseError
 from app.services.llm.factory import create_adapter
@@ -174,8 +176,11 @@ class ChatService:
 
     def _build_turn(self, conversation: Conversation) -> PreparedTurn:
         provider = conversation.model_config.provider
+        # O prompt é composto: regra global (uma só, obedecida por todas) +
+        # campos da persona + instruções extras.
+        regras_globais = SettingsRepository(self.db).get_all().get("global_persona_rules", "")
         context = build_messages(
-            system_prompt=conversation.persona.system_prompt,
+            system_prompt=compose_system_prompt(traits_from_row(conversation.persona), regras_globais),
             memories=self._memories_for(conversation),
             history=self._history_for(conversation.id),
             context_window=conversation.model_config.context_window,

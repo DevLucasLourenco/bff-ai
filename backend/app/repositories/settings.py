@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 from app.domain.models import AppSetting
+from app.services.persona import DEFAULT_GLOBAL_RULES
 
 DEFAULT_SETTINGS = {
     "app_name": "BFF AI",
@@ -10,6 +11,8 @@ DEFAULT_SETTINGS = {
     "theme": "pink",
     "active_persona_id": "1",
     "active_model_config_id": "1",
+    # Regra que toda persona obedece, antes de qualquer traço de personalidade.
+    "global_persona_rules": DEFAULT_GLOBAL_RULES,
 }
 
 

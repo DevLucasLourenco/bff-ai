@@ -17,6 +17,7 @@ def serialize(repo: SettingsRepository) -> SettingsRead:
         theme=values["theme"],
         active_persona_id=int(values["active_persona_id"]),
         active_model_config_id=int(values["active_model_config_id"]),
+        global_persona_rules=values["global_persona_rules"],
     )
 
 
