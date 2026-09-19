@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -90,9 +90,14 @@ class Persona(Base):
     """
 
     __tablename__ = "personas"
+    # Nome único só entre as ativas. Com UNIQUE simples, uma persona excluída
+    # (soft delete) continuava dona do nome e ninguém conseguia criar outra igual.
+    __table_args__ = (
+        Index("uq_personas_nome_ativa", "name", unique=True, sqlite_where=text("is_archived = 0")),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(120), unique=True)
+    name: Mapped[str] = mapped_column(String(120))
     description: Mapped[str] = mapped_column(String(400), default="")
     personality: Mapped[str] = mapped_column(Text, default="", server_default="")
     humor: Mapped[str] = mapped_column(Text, default="", server_default="")

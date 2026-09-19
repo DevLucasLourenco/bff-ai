@@ -9,7 +9,7 @@ from app.services.persona import compose_system_prompt, traits_from_row
 router = APIRouter(prefix="/personas", tags=["personas"])
 
 
-def view(persona: Persona, global_rules: str) -> PersonaRead:
+def view(persona: Persona, ajustes: dict) -> PersonaRead:
     return PersonaRead(
         **{campo: getattr(persona, campo) for campo in (
             "id", "name", "description", "personality", "humor", "tone",
@@ -18,30 +18,36 @@ def view(persona: Persona, global_rules: str) -> PersonaRead:
         )},
         # Montado aqui para a UI poder mostrar exatamente o que será enviado ao
         # modelo, em vez de a usuária ter que imaginar o resultado dos campos.
-        composed_prompt=compose_system_prompt(traits_from_row(persona), global_rules),
+        composed_prompt=compose_system_prompt(
+            traits_from_row(persona),
+            ajustes.get("global_persona_rules", ""),
+            user_name=ajustes.get("user_display_name", ""),
+        ),
     )
 
 
-def regras_globais(db) -> str:
-    return SettingsRepository(db).get_all().get("global_persona_rules", "")
+def ajustes_do_prompt(db) -> dict:
+    # O prompt composto depende de settings (regra global e nome da usuária),
+    # então o que a UI mostra em "ver prompt final" precisa ler as mesmas.
+    return SettingsRepository(db).get_all()
 
 
 @router.get("", response_model=list[PersonaRead])
 def list_personas(db: Db):
-    regras = regras_globais(db)
+    ajustes = ajustes_do_prompt(db)
     rows = db.query(Persona).filter(Persona.is_archived.is_(False)).order_by(Persona.name.asc()).all()
-    return [view(p, regras) for p in rows]
+    return [view(p, ajustes) for p in rows]
 
 
 @router.post("", response_model=PersonaRead, status_code=201)
 def create_persona(payload: PersonaCreate, db: Db):
-    if db.query(Persona).filter(Persona.name == payload.name).count():
+    if db.query(Persona).filter(Persona.name == payload.name, Persona.is_archived.is_(False)).count():
         raise HTTPException(409, "Já existe uma persona com esse nome")
     persona = Persona(**payload.model_dump())
     db.add(persona)
     db.commit()
     db.refresh(persona)
-    return view(persona, regras_globais(db))
+    return view(persona, ajustes_do_prompt(db))
 
 
 @router.patch("/{persona_id}", response_model=PersonaRead)
@@ -51,14 +57,14 @@ def update_persona(persona_id: int, payload: PersonaUpdate, db: Db):
         raise HTTPException(404, "Persona not found")
     data = payload.model_dump(exclude_none=True)
     if "name" in data and db.query(Persona).filter(
-        Persona.name == data["name"], Persona.id != persona_id
+        Persona.name == data["name"], Persona.id != persona_id, Persona.is_archived.is_(False)
     ).count():
         raise HTTPException(409, "Já existe uma persona com esse nome")
     for key, value in data.items():
         setattr(persona, key, value)
     db.commit()
     db.refresh(persona)
-    return view(persona, regras_globais(db))
+    return view(persona, ajustes_do_prompt(db))
 
 
 @router.delete("/{persona_id}", status_code=204)

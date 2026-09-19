@@ -48,6 +48,7 @@ function useAutoScroll(dependencies: unknown[], enabled: boolean) {
 export function ChatView({ conversation, streaming, buffer, pendingUserMessage, error, onSend, onStop, onRegenerate, onDismissError }: Props) {
   const [draft, setDraft] = useState('')
   const messageCount = conversation?.messages.length ?? 0
+  const lastMessageId = conversation?.messages.at(-1)?.id
   const { endRef, containerRef } = useAutoScroll([messageCount, streaming, pendingUserMessage], true)
 
   const submit = (event: FormEvent) => {
@@ -75,14 +76,17 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     </header>
 
     <section className="messages" ref={containerRef} aria-live="polite" aria-busy={streaming}>
+      {/* A saudação da persona era editável e nunca aparecia: aqui havia um texto fixo. */}
       {messageCount === 0 && !streaming && !pendingUserMessage && <div className="greeting-bubble">
-        Comece falando qualquer coisa. A persona escolhida já está pronta para conversar. 💗
+        {conversation.persona_greeting.trim() || 'Comece falando qualquer coisa. 💗'}
       </div>}
 
       {conversation.messages.map(message => <MessageBubble
         key={message.id}
         message={message}
-        onRegenerate={message.role === 'assistant' && !streaming ? onRegenerate : undefined}
+        // Só a última resposta pode ser regenerada: regenerar uma antiga apagaria
+        // tudo o que veio depois dela. O backend recusa com 409 também.
+        onRegenerate={message.id === lastMessageId && message.role === 'assistant' && !streaming ? onRegenerate : undefined}
       />)}
 
       {pendingUserMessage && <div className="message-wrap user">
@@ -98,6 +102,7 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
           {error.code === 'provider_auth' && <p>Abra Configurações → LLM e revise a API key.</p>}
           {error.code === 'provider_unreachable' && <p>O provider não respondeu. Se for Ollama local, confira se ele está rodando.</p>}
           {error.code === 'model_not_found' && <p>Escolha outro modelo em Configurações → LLM.</p>}
+          {error.code === 'stream_stalled' && <p>Pode ter sido a rede ou o servidor. Sua mensagem foi registrada; se a resposta não aparecer ao reabrir a conversa, peça de novo.</p>}
           {error.code === 'context_overflow' && <p>Defina a janela de contexto do modelo para que o histórico antigo seja cortado automaticamente.</p>}
           {error.providerDetail && <details><summary>detalhe do provider</summary><pre>{error.providerDetail}</pre></details>}
         </div>

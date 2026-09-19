@@ -40,6 +40,12 @@ def update_memory(memory_id: int, payload: MemoryUpdate, db: Db):
     data = payload.model_dump(exclude_none=True)
     for key, value in data.items():
         setattr(row, key, value)
+    # O alvo precisa acompanhar o escopo: voltar para "global" deixava o
+    # persona_id antigo pendurado na memória.
+    if row.scope != MemoryScope.PERSONA.value:
+        row.persona_id = None
+    if row.scope != MemoryScope.CONVERSATION.value:
+        row.conversation_id = None
     validate_scope(db, row.scope, row.persona_id, row.conversation_id)
     db.commit()
     db.refresh(row)

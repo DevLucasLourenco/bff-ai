@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import joinedload
 
-from app.api.deps import Db
-from app.domain.models import Conversation, ModelConfig, ProviderConfig
+from app.api.deps import Db, get_active
+from app.domain.models import ModelConfig, ProviderConfig
 from app.domain.schemas import ModelCreate, ModelRead, ModelUpdate
 from app.repositories.settings import SettingsRepository
 from app.services.llm.runtime import effective_max_tokens
@@ -41,20 +41,25 @@ def list_models(db: Db):
 
 @router.post("", response_model=ModelRead, status_code=201)
 def create_model(payload: ModelCreate, db: Db):
-    if not db.get(ProviderConfig, payload.provider_id):
-        raise HTTPException(404, "Provider not found")
-    row = ModelConfig(
-        provider_id=payload.provider_id,
-        display_name=payload.display_name,
-        model_id=payload.model_id,
-        temperature_milli=round(payload.temperature * 1000),
-        max_tokens=payload.max_tokens,
-        top_p_milli=round(payload.top_p * 1000),
-        context_window=payload.context_window,
-    )
-    db.add(row)
+    get_active(db, ProviderConfig, payload.provider_id, "Provider")
+    existente = db.query(ModelConfig).filter_by(provider_id=payload.provider_id, model_id=payload.model_id).one_or_none()
+    if existente and not existente.is_archived:
+        # Antes estourava IntegrityError (500) ao clicar duas vezes no mesmo modelo.
+        raise HTTPException(409, "Esse modelo já está configurado")
+
+    # Modelo excluído (soft delete) volta em vez de criar linha nova: a UNIQUE
+    # (provider, model_id) impediria, e conversas antigas continuam apontando
+    # para a mesma linha.
+    row = existente or ModelConfig(provider_id=payload.provider_id, model_id=payload.model_id)
+    row.display_name = payload.display_name
+    row.temperature_milli = round(payload.temperature * 1000)
+    row.max_tokens = payload.max_tokens
+    row.top_p_milli = round(payload.top_p * 1000)
+    row.context_window = payload.context_window
+    row.is_archived = False
+    if not existente:
+        db.add(row)
     db.commit()
-    db.refresh(row)
     row = db.query(ModelConfig).options(joinedload(ModelConfig.provider)).filter_by(id=row.id).one()
     return view(row)
 
@@ -80,9 +85,8 @@ def update_model(model_id: int, payload: ModelUpdate, db: Db):
 
 @router.post("/{model_id}/activate", response_model=ModelRead)
 def activate_model(model_id: int, db: Db):
-    row = db.query(ModelConfig).options(joinedload(ModelConfig.provider)).filter_by(id=model_id).one_or_none()
-    if not row:
-        raise HTTPException(404, "Model config not found")
+    get_active(db, ModelConfig, model_id, "Modelo")
+    row = db.query(ModelConfig).options(joinedload(ModelConfig.provider)).filter_by(id=model_id).one()
     SettingsRepository(db).set_many({"active_model_config_id": str(model_id)})
     return view(row)
 

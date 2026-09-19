@@ -95,7 +95,7 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
 
         {tab === 'general' && <div className="settings-stack">
           <label>Nome do app<input defaultValue={settings.app_name} onBlur={e => saveSetting({ app_name: e.target.value })}/></label>
-          <label>Como chamar a usuária<input defaultValue={settings.user_display_name} onBlur={e => saveSetting({ user_display_name: e.target.value })}/></label>
+          <label>Como chamar a usuária<input defaultValue={settings.user_display_name} placeholder="deixe vazio para não usar nome" onBlur={e => saveSetting({ user_display_name: e.target.value.trim() })}/></label>
           <div className="theme-picker" role="radiogroup" aria-label="Tema">
             <span>Tema</span>
             <div>

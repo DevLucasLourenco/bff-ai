@@ -61,15 +61,22 @@ def _sentences(traits: PersonaTraits) -> list[str]:
     return parts
 
 
-def compose_system_prompt(traits: PersonaTraits, global_rules: str | None = None) -> str:
-    """Monta o prompt final: regras globais → personalidade → extras."""
+def compose_system_prompt(traits: PersonaTraits, global_rules: str | None = None, user_name: str = "") -> str:
+    """Monta o prompt final: regras globais → personalidade → extras.
+
+    `user_name` vem da setting "Como chamar a usuária", que antes era salva e
+    nunca lida. Vazio = a persona não recebe instrução de nome.
+    """
     blocos: list[str] = []
 
     regras = (global_rules if global_rules is not None else DEFAULT_GLOBAL_RULES).strip()
     if regras:
         blocos.append(regras)
 
-    blocos.append(" ".join(_sentences(traits)))
+    frases = _sentences(traits)
+    if user_name.strip():
+        frases.insert(1, f"Chame a usuária de {user_name.strip()}.")
+    blocos.append(" ".join(frases))
 
     extras = traits.extra_instructions.strip()
     if extras:

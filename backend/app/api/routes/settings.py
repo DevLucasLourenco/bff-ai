@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
-from app.api.deps import Db
+from app.api.deps import Db, get_active
 from app.domain.models import ModelConfig, Persona
 from app.domain.schemas import SettingsRead, SettingsUpdate
 from app.repositories.settings import SettingsRepository
@@ -30,10 +30,10 @@ def get_settings(db: Db):
 @router.patch("", response_model=SettingsRead)
 def update_settings(payload: SettingsUpdate, db: Db):
     data = payload.model_dump(exclude_none=True)
-    if "active_persona_id" in data and not db.get(Persona, data["active_persona_id"]):
-        raise HTTPException(404, "Persona not found")
-    if "active_model_config_id" in data and not db.get(ModelConfig, data["active_model_config_id"]):
-        raise HTTPException(404, "Model config not found")
+    if "active_persona_id" in data:
+        get_active(db, Persona, data["active_persona_id"], "Persona")
+    if "active_model_config_id" in data:
+        get_active(db, ModelConfig, data["active_model_config_id"], "Modelo")
     repo = SettingsRepository(db)
     repo.set_many({key: str(value) for key, value in data.items()})
     return serialize(repo)

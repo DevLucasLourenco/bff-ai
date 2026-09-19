@@ -33,6 +33,47 @@ from app.services.llm.runtime import build_runtime_config
 
 logger = logging.getLogger(__name__)
 
+# Sinal de vida enquanto o provider não manda nada. Sem ele o navegador não tem
+# como distinguir "modelo pensando" de "conexão morta", e uma conexão que morre
+# em silêncio deixava a UI em "gerando" para sempre.
+HEARTBEAT_SECONDS = 15.0
+_PING = object()
+
+
+class _ComBatimento:
+    """Itera o stream do adapter e devolve `_PING` a cada `intervalo` de silêncio.
+
+    Usa uma Task para a próxima leitura em vez de `asyncio.wait_for`: o wait_for
+    cancelaria a leitura em andamento a cada timeout, o que derruba o stream
+    HTTP do provider no meio.
+    """
+
+    def __init__(self, fonte, intervalo: float) -> None:
+        self._it = fonte.__aiter__()
+        self._intervalo = intervalo
+        self._proxima: asyncio.Future | None = None
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self._proxima is None:
+            self._proxima = asyncio.ensure_future(self._it.__anext__())
+        feito, _ = await asyncio.wait({self._proxima}, timeout=self._intervalo)
+        if not feito:
+            return _PING
+        tarefa, self._proxima = self._proxima, None
+        return tarefa.result()  # StopAsyncIteration encerra a iteração normalmente
+
+    def cancelar(self) -> None:
+        """Síncrono de propósito: é chamado num GeneratorExit, onde não há await.
+
+        Cancelar a leitura pendente fecha o stream HTTP do provider — sem isto a
+        geração continuaria rodando depois de a usuária ter desistido.
+        """
+        if self._proxima is not None and not self._proxima.done():
+            self._proxima.cancel()
+
 
 class ConversationNotFound(LookupError):
     pass
@@ -148,7 +189,7 @@ class ChatService:
         return self._build_turn(conversation)
 
     def prepare_regeneration(self, conversation_id: int, message_id: int) -> PreparedTurn:
-        """Descarta uma resposta e tudo depois dela, e prepara outra (F3.5).
+        """Descarta a última resposta do assistente e prepara outra (F3.5).
 
         Sem isto, refazer uma resposta ruim só era possível mandando outra
         mensagem, o que polui o histórico que volta ao modelo a cada turno.
@@ -162,6 +203,13 @@ class ChatService:
             raise ConversationNotFound("Mensagem não encontrada nesta conversa")
         if target.role != MessageRole.ASSISTANT.value:
             raise ConversationUnavailable("Só respostas do assistente podem ser regeneradas")
+        # Só a última resposta. Regenerar uma antiga apagava tudo depois dela —
+        # inclusive mensagens da usuária — sem confirmação e sem volta.
+        depois = self.db.query(Message).filter(
+            Message.conversation_id == conversation.id, Message.id > message_id
+        ).count()
+        if depois:
+            raise ConversationUnavailable("Só a última resposta pode ser regenerada")
 
         self.db.query(Message).filter(
             Message.conversation_id == conversation.id, Message.id >= message_id
@@ -178,9 +226,13 @@ class ChatService:
         provider = conversation.model_config.provider
         # O prompt é composto: regra global (uma só, obedecida por todas) +
         # campos da persona + instruções extras.
-        regras_globais = SettingsRepository(self.db).get_all().get("global_persona_rules", "")
+        ajustes = SettingsRepository(self.db).get_all()
         context = build_messages(
-            system_prompt=compose_system_prompt(traits_from_row(conversation.persona), regras_globais),
+            system_prompt=compose_system_prompt(
+                traits_from_row(conversation.persona),
+                ajustes.get("global_persona_rules", ""),
+                user_name=ajustes.get("user_display_name", ""),
+            ),
             memories=self._memories_for(conversation),
             history=self._history_for(conversation.id),
             context_window=conversation.model_config.context_window,
@@ -268,11 +320,17 @@ class ChatService:
         def elapsed() -> int:
             return round((time.perf_counter() - started) * 1000)
 
+        fluxo = _ComBatimento(turn.adapter.stream(turn.messages, turn.config), HEARTBEAT_SECONDS)
         try:
-            async for chunk in turn.adapter.stream(turn.messages, turn.config):
+            async for chunk in fluxo:
+                if chunk is _PING:
+                    # Comentário SSE: o cliente ignora, mas conta como sinal de vida.
+                    yield ": ping\n\n"
+                    continue
                 chunks.append(chunk)
                 yield self._sse("token", {"text": chunk})
         except (asyncio.CancelledError, GeneratorExit):
+            fluxo.cancelar()
             # Cliente desistiu. A gravação aqui é síncrona de propósito: num
             # GeneratorExit não existe await possível, e perder o texto parcial
             # é exatamente o defeito que o F3.1 conserta.

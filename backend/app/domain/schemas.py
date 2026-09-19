@@ -164,6 +164,8 @@ class ConversationRead(BaseModel):
     persona_id: int
     persona_name: str
     persona_emoji: str
+    # Saudação da persona, mostrada na conversa vazia. Era editável e nunca aparecia.
+    persona_greeting: str
     model_config_id: int
     model_display_name: str
     provider_kind: str

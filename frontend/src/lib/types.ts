@@ -29,7 +29,7 @@ export type Message = {
   latency_ms?: number | null; prompt_tokens?: number | null; completion_tokens?: number | null; created_at?: string;
 }
 export type Conversation = {
-  id: number; title: string; persona_id: number; persona_name: string; persona_emoji: string; model_config_id: number;
+  id: number; title: string; persona_id: number; persona_name: string; persona_emoji: string; persona_greeting: string; model_config_id: number;
   model_display_name: string; provider_kind: string; is_archived: boolean; messages: Message[]; updated_at: string;
 }
 export type ThemeName = 'system' | 'light' | 'dark'

@@ -3,7 +3,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session, joinedload
 from starlette.concurrency import run_in_threadpool
 
-from app.api.deps import Db
+from app.api.deps import Db, get_active
 from app.domain.models import Conversation, ModelConfig, Persona
 from app.domain.schemas import ConversationCreate, ConversationRead, ConversationUpdate, MessageRead, SendMessage
 from app.repositories.settings import SettingsRepository
@@ -32,6 +32,7 @@ def view(row: Conversation, include_messages: bool = True) -> ConversationRead:
         persona_id=row.persona_id,
         persona_name=row.persona.name,
         persona_emoji=row.persona.avatar_emoji,
+        persona_greeting=row.persona.greeting,
         model_config_id=row.model_config_id,
         model_display_name=row.model_config.display_name,
         provider_kind=row.model_config.provider.kind,
@@ -59,10 +60,8 @@ def create_conversation(payload: ConversationCreate, db: Db):
     settings = SettingsRepository(db).get_all()
     persona_id = payload.persona_id or int(settings["active_persona_id"])
     model_config_id = payload.model_config_id or int(settings["active_model_config_id"])
-    if not db.get(Persona, persona_id):
-        raise HTTPException(404, "Persona not found")
-    if not db.get(ModelConfig, model_config_id):
-        raise HTTPException(404, "Model config not found")
+    get_active(db, Persona, persona_id, "Persona")
+    get_active(db, ModelConfig, model_config_id, "Modelo")
     row = Conversation(title=payload.title, persona_id=persona_id, model_config_id=model_config_id)
     db.add(row)
     db.commit()
@@ -83,10 +82,10 @@ def update_conversation(conversation_id: int, payload: ConversationUpdate, db: D
     if not row:
         raise HTTPException(404, "Conversation not found")
     data = payload.model_dump(exclude_none=True)
-    if "persona_id" in data and not db.get(Persona, data["persona_id"]):
-        raise HTTPException(404, "Persona not found")
-    if "model_config_id" in data and not db.get(ModelConfig, data["model_config_id"]):
-        raise HTTPException(404, "Model config not found")
+    if "persona_id" in data:
+        get_active(db, Persona, data["persona_id"], "Persona")
+    if "model_config_id" in data:
+        get_active(db, ModelConfig, data["model_config_id"], "Modelo")
     for key, value in data.items():
         setattr(row, key, value)
     db.commit()
@@ -126,7 +125,7 @@ async def stream_message(conversation_id: int, payload: SendMessage, db: Db):
 
 @router.post("/{conversation_id}/messages/{message_id}/regenerate")
 async def regenerate_message(conversation_id: int, message_id: int, db: Db):
-    """Refaz uma resposta, descartando-a e tudo que veio depois dela (F3.5)."""
+    """Refaz a última resposta do assistente (F3.5). Respostas antigas: 409."""
     service = ChatService(db)
     try:
         turn = await run_in_threadpool(service.prepare_regeneration, conversation_id, message_id)

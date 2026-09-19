@@ -5,15 +5,10 @@ import { SettingsPanel } from './features/settings/SettingsPanel'
 import { useChatStream } from './hooks/useChatStream'
 import { useConfig } from './hooks/useConfig'
 import { useConversations } from './hooks/useConversations'
-import { BffError } from './lib/api'
+import { toApiError } from './lib/api'
 import { applyTheme } from './lib/theme'
 import type { ApiError } from './lib/types'
 import './styles.css'
-
-function toApiError(error: unknown): ApiError {
-  if (error instanceof BffError) return { code: error.code, message: error.message, providerDetail: error.providerDetail }
-  return { code: 'unknown', message: error instanceof Error ? error.message : String(error) }
-}
 
 /**
  * Composição (F7.1). O estado saiu daqui para hooks por domínio — este arquivo
@@ -40,6 +35,10 @@ export default function App() {
   }, [reloadActive, refreshList, setActive])
 
   const chat = useChatStream({ onSettled, onError: setChatError })
+  // O stream só aparece na conversa a que pertence. Em outra conversa, o
+  // composer fica livre: mandar ali interrompe o stream anterior, que é salvo
+  // como "cancelled" (nada se perde).
+  const streamingHere = chat.isStreaming && chat.streamingConversationId === conversations.active?.id
 
   const send = useCallback((content: string) => {
     if (!conversations.active) return
@@ -66,9 +65,9 @@ export default function App() {
 
     <ChatView
       conversation={conversations.active}
-      streaming={chat.isStreaming}
+      streaming={streamingHere}
       buffer={chat.buffer}
-      pendingUserMessage={chat.pendingUserMessage}
+      pendingUserMessage={streamingHere ? chat.pendingUserMessage : null}
       error={chatError}
       onSend={send}
       onStop={chat.stop}

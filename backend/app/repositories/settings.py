@@ -6,7 +6,8 @@ from app.services.persona import DEFAULT_GLOBAL_RULES
 
 DEFAULT_SETTINGS = {
     "app_name": "BFF AI",
-    "user_display_name": "Você",
+    # Vazio = sem instrução de nome no prompt. "Você" era um valor que não dizia nada.
+    "user_display_name": "",
     # "system" segue o sistema operacional; "light"/"dark" forçam.
     "theme": "system",
     "active_persona_id": "1",

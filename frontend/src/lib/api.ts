@@ -35,14 +35,28 @@ export function normalizeError(body: unknown, status: number): ApiError {
   return { code: `http_${status}`, message: `Falha na requisição (HTTP ${status}).` }
 }
 
+const SERVIDOR_FORA: ApiError = {
+  code: 'server_unavailable',
+  message: 'O servidor do BFF AI não respondeu. Confira se o backend está rodando.',
+}
+
 async function readError(response: Response): Promise<BffError> {
   const text = await response.text()
   let parsed: unknown = null
   try { parsed = JSON.parse(text) } catch { /* corpo não-JSON */ }
-  const normalized = parsed
-    ? normalizeError(parsed, response.status)
-    : { code: `http_${response.status}`, message: text || `HTTP ${response.status}` }
-  return new BffError(normalized, response.status)
+  if (parsed) return new BffError(normalizeError(parsed, response.status), response.status)
+  // 5xx sem corpo JSON não veio do nosso backend (que sempre responde JSON), e
+  // sim de quem está na frente dele — o proxy devolvendo 500 porque o backend
+  // caiu. Antes isso aparecia na tela como um "HTTP 500" sem explicação.
+  if (response.status >= 500) return new BffError(SERVIDOR_FORA, response.status)
+  return new BffError({ code: `http_${response.status}`, message: text || `HTTP ${response.status}` }, response.status)
+}
+
+/** Converte qualquer falha em ApiError. `TypeError` é o "Failed to fetch" do navegador. */
+export function toApiError(error: unknown): ApiError {
+  if (error instanceof BffError) return { code: error.code, message: error.message, providerDetail: error.providerDetail }
+  if (error instanceof TypeError) return SERVIDOR_FORA
+  return { code: 'unknown', message: error instanceof Error ? error.message : String(error) }
 }
 
 async function json<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
@@ -85,6 +99,16 @@ export type StreamHandlers = {
   onError: (error: ApiError) => void
 }
 
+/**
+ * Tempo máximo sem receber NADA do servidor antes de desistir do stream.
+ *
+ * O backend manda um sinal de vida a cada 15s enquanto espera o provider, então
+ * 45s de silêncio = três sinais perdidos = conexão morta. Sem este limite, uma
+ * conexão que morria em silêncio (proxy, wi-fi) deixava a UI em "gerando" para
+ * sempre, e a única saída era apertar "parar".
+ */
+export const STREAM_IDLE_TIMEOUT_MS = 45_000
+
 async function consumeStream(response: Response, handlers: StreamHandlers) {
   if (!response.ok) throw await readError(response)
   if (!response.body) throw new BffError({ code: 'no_body', message: 'O servidor não devolveu um stream.' })
@@ -92,6 +116,13 @@ async function consumeStream(response: Response, handlers: StreamHandlers) {
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
   const parser = createSseParser()
+
+  let parado = false
+  let vigia: ReturnType<typeof setTimeout> | undefined
+  const rearmar = () => {
+    clearTimeout(vigia)
+    vigia = setTimeout(() => { parado = true; void reader.cancel() }, STREAM_IDLE_TIMEOUT_MS)
+  }
 
   const dispatch = (event: string, data: any) => {
     if (event === 'meta') handlers.onMeta?.(data)
@@ -102,10 +133,24 @@ async function consumeStream(response: Response, handlers: StreamHandlers) {
     }
   }
 
-  for (;;) {
-    const { value, done } = await reader.read()
-    if (done) break
-    for (const { event, data } of parser.push(decoder.decode(value, { stream: true }))) dispatch(event, data)
+  try {
+    rearmar()
+    for (;;) {
+      const { value, done } = await reader.read()
+      if (done) break
+      rearmar()  // qualquer byte conta, inclusive o comentário ": ping"
+      for (const { event, data } of parser.push(decoder.decode(value, { stream: true }))) dispatch(event, data)
+    }
+  } finally {
+    clearTimeout(vigia)
+  }
+  // reader.cancel() encerra a leitura como se o stream tivesse acabado bem;
+  // é a flag que distingue "terminou" de "desistimos por silêncio".
+  if (parado) {
+    throw new BffError({
+      code: 'stream_stalled',
+      message: 'A conexão parou de responder no meio da resposta.',
+    })
   }
   for (const { event, data } of parser.flush()) dispatch(event, data)
 }
