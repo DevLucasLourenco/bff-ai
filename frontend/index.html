@@ -3,8 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f7e9f1" />
+    <meta name="theme-color" content="#ece2e9" />
     <title>BFF AI</title>
+    <script>
+      // Pinta o tema salvo antes do React carregar, para quem usa o escuro não
+      // ver um lampejo claro. A chave espelha THEME_CACHE_KEY em src/lib/theme.ts.
+      try {
+        var t = localStorage.getItem('bff-ai:theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

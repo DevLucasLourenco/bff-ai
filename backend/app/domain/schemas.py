@@ -178,6 +178,7 @@ class SendMessage(BaseModel):
 
 
 MemoryScopeName = Literal["global", "persona", "conversation"]
+ThemeName = Literal["system", "light", "dark"]
 
 
 class MemoryCreate(BaseModel):
@@ -213,7 +214,7 @@ class MemoryRead(OrmModel):
 class SettingsRead(BaseModel):
     app_name: str
     user_display_name: str
-    theme: str
+    theme: ThemeName
     active_persona_id: int
     active_model_config_id: int
     # Regra que toda persona obedece, antes de qualquer traço de personalidade.
@@ -223,7 +224,7 @@ class SettingsRead(BaseModel):
 class SettingsUpdate(BaseModel):
     app_name: str | None = None
     user_display_name: str | None = None
-    theme: str | None = None
+    theme: ThemeName | None = None
     active_persona_id: int | None = None
     active_model_config_id: int | None = None
     global_persona_rules: str | None = None

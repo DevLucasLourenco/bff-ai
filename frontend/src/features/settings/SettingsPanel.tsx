@@ -1,7 +1,7 @@
 import { Check, KeyRound, Plus, RefreshCw, Save, Trash2, X } from 'lucide-react'
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { api } from '../../lib/api'
-import type { Conversation, Memory, MemoryScope, ModelConfig, Persona, Provider, Settings } from '../../lib/types'
+import type { Conversation, Memory, MemoryScope, ModelConfig, Persona, Provider, Settings, ThemeName } from '../../lib/types'
 import { PersonaEditor } from './PersonaEditor'
 
 type Tab = 'general' | 'models' | 'personas' | 'memories'
@@ -96,6 +96,20 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
         {tab === 'general' && <div className="settings-stack">
           <label>Nome do app<input defaultValue={settings.app_name} onBlur={e => saveSetting({ app_name: e.target.value })}/></label>
           <label>Como chamar a usuária<input defaultValue={settings.user_display_name} onBlur={e => saveSetting({ user_display_name: e.target.value })}/></label>
+          <div className="theme-picker" role="radiogroup" aria-label="Tema">
+            <span>Tema</span>
+            <div>
+              {([['system', 'Sistema'], ['light', 'Claro'], ['dark', 'Escuro']] as [ThemeName, string][]).map(([valor, rotulo]) =>
+                <button
+                  key={valor}
+                  type="button"
+                  role="radio"
+                  aria-checked={settings.theme === valor}
+                  className={settings.theme === valor ? 'active' : ''}
+                  onClick={() => saveSetting({ theme: valor })}
+                >{rotulo}</button>)}
+            </div>
+          </div>
         </div>}
 
         {tab === 'models' && <div className="settings-stack">

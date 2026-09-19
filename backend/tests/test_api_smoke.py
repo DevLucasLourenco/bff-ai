@@ -49,3 +49,12 @@ def test_health_ready_denuncia_chave_mestra_trocada(client, monkeypatch):
     resposta = client.get("/health/ready")
     assert resposta.status_code == 503
     assert resposta.json()["checks"]["master_key"]["ok"] is False
+
+
+def test_tema_padrao_segue_o_sistema(client):
+    assert client.get("/api/settings").json()["theme"] == "system"
+
+
+def test_tema_aceita_so_valores_conhecidos(client):
+    assert client.patch("/api/settings", json={"theme": "dark"}).json()["theme"] == "dark"
+    assert client.patch("/api/settings", json={"theme": "pink"}).status_code == 422

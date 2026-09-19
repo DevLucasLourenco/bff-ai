@@ -73,6 +73,20 @@
   --accent-strong: var(--plum-700);
   --on-accent: #ffffff;
 
+  /* --- semântica: papéis que antes eram cor crua no componente ---------- */
+  --divider: var(--pink-100);
+  --bubble-user-bg: var(--pink-400);
+  --bubble-user-text: #402c3a;
+  --code-bg: #e5d5e0;
+  --code-text: #43303c;
+  --warn: var(--amber-700);
+  --warn-strong: #8a4a12;
+  --warn-bg: var(--amber-50);
+  --warn-detail-bg: #fbe7d3;
+  --toast-bg: var(--dark-800);
+  --toast-text: #ffffff;
+  --scrim: rgba(47, 34, 44, .32);
+
   /* --- semântica: elevação ---------------------------------------------- */
   /* Em relevo = clicável. */
   --raised-1: var(--lift-1) var(--lift-1) var(--blur-1) var(--shade),
@@ -94,6 +108,7 @@
   color: var(--text);
   background: var(--surface);
   font-synthesis: none;
+  color-scheme: light;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -261,7 +276,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
   display: grid; place-items: center;
   box-shadow: var(--raised-2);
 }
-.chat-header { padding: var(--s-4) var(--s-5); border-bottom: 1px solid var(--pink-100); }
+.chat-header { padding: var(--s-4) var(--s-5); border-bottom: 1px solid var(--divider); }
 .persona-title { display: flex; align-items: center; gap: var(--s-2); font-size: 16px; }
 .model-caption { display: block; margin-top: 2px; color: var(--text-3); font-size: 12px; }
 
@@ -281,12 +296,12 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .message.user {
   padding: var(--s-3) var(--s-4);
   border-radius: var(--r-lg) var(--r-lg) var(--s-2) var(--r-lg);
-  background: var(--pink-400);
-  color: #402c3a;
+  background: var(--bubble-user-bg);
+  color: var(--bubble-user-text);
   box-shadow: var(--raised-1);
 }
 .message.assistant { color: var(--text); padding: 2px 0; }
-.message.interrupted { border-left: 3px solid var(--amber-700); padding-left: var(--s-3); }
+.message.interrupted { border-left: 3px solid var(--warn); padding-left: var(--s-3); }
 .typing { color: var(--text-3); display: flex; gap: var(--s-2); align-items: center; }
 .greeting-bubble {
   max-width: 520px; margin: 0 auto var(--s-5);
@@ -296,7 +311,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
   line-height: 1.6; text-align: center;
   box-shadow: var(--sunk-1);
 }
-.message-notice { display: flex; align-items: center; gap: var(--s-2); margin-top: var(--s-2); font-size: 12px; color: var(--amber-700); }
+.message-notice { display: flex; align-items: center; gap: var(--s-2); margin-top: var(--s-2); font-size: 12px; color: var(--warn); }
 .message-meta { display: flex; gap: var(--s-3); align-items: center; margin-top: var(--s-1); font-size: 11px; color: var(--text-3); }
 .muted { color: var(--text-3); font-style: italic; }
 
@@ -324,7 +339,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .composer button:hover:not(:disabled) { box-shadow: var(--raised-2); color: var(--accent-strong); }
 .composer button:active:not(:disabled) { box-shadow: var(--sunk-1); }
 .composer button:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
-.composer button.stop { color: var(--amber-700); }
+.composer button.stop { color: var(--warn); }
 
 /* =========================== markdown =================================== */
 
@@ -339,7 +354,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .markdown a { color: var(--accent); text-underline-offset: 2px; }
 .markdown a:hover { color: var(--accent-strong); }
 .inline-code {
-  background: #e5d5e0; color: #43303c;
+  background: var(--code-bg); color: var(--code-text);
   border-radius: var(--s-2); padding: 1px 6px;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em;
 }
@@ -352,27 +367,27 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .code-head button { display: flex; gap: 5px; align-items: center; font-size: 11px; text-transform: none; letter-spacing: 0; color: var(--text-3); padding: 2px var(--s-2); border-radius: var(--s-2); }
 .code-head button:hover { color: var(--accent); box-shadow: var(--raised-1); }
 .code-block pre { margin: 0; padding: var(--s-3); overflow: auto; }
-.code-block code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; line-height: 1.6; color: #43303c; }
+.code-block code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; line-height: 1.6; color: var(--code-text); }
 
 /* ============================= erros ==================================== */
 
 .inline-error {
   display: flex; gap: var(--s-3); justify-content: space-between; align-items: flex-start;
-  background: var(--amber-50); color: var(--amber-700);
+  background: var(--warn-bg); color: var(--warn);
   border-radius: var(--r-md); padding: var(--s-3) var(--s-4);
   margin: 0 0 var(--s-5); font-size: 13px;
   box-shadow: var(--raised-1);
 }
-.inline-error strong { display: block; font-size: 13.5px; color: #8a4a12; }
+.inline-error strong { display: block; font-size: 13.5px; color: var(--warn-strong); }
 .inline-error p { margin: var(--s-1) 0 0; line-height: 1.5; }
 .inline-error details { margin-top: var(--s-2); }
 .inline-error summary { cursor: pointer; font-size: 12px; }
-.inline-error pre { margin: var(--s-2) 0 0; padding: var(--s-2); background: #fbe7d3; border-radius: var(--s-2); font-size: 11px; overflow: auto; max-height: 160px; white-space: pre-wrap; }
-.error-box { background: var(--amber-50); color: #8a4a12; border-radius: var(--r-md); padding: var(--s-3); font-size: 13px; box-shadow: var(--sunk-1); }
+.inline-error pre { margin: var(--s-2) 0 0; padding: var(--s-2); background: var(--warn-detail-bg); border-radius: var(--s-2); font-size: 11px; overflow: auto; max-height: 160px; white-space: pre-wrap; }
+.error-box { background: var(--warn-bg); color: var(--warn-strong); border-radius: var(--r-md); padding: var(--s-3); font-size: 13px; box-shadow: var(--sunk-1); }
 .toast {
   position: fixed; left: 50%; bottom: var(--s-5); transform: translateX(-50%);
   max-width: min(640px, 90vw);
-  background: var(--dark-800); color: #fff;
+  background: var(--toast-bg); color: var(--toast-text);
   padding: var(--s-3) var(--s-4); border-radius: var(--r-md);
   box-shadow: var(--raised-3); z-index: 20; font-size: 13px; cursor: pointer;
 }
@@ -381,7 +396,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 
 .overlay {
   position: fixed; inset: 0; z-index: 30;
-  background: rgba(47, 34, 44, .32);
+  background: var(--scrim);
   backdrop-filter: blur(3px);
   display: grid; place-items: center; padding: var(--s-5);
 }
@@ -406,6 +421,13 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .settings-body { overflow: auto; padding: 0 var(--s-5) var(--s-5); }
 .settings-stack { display: grid; gap: var(--s-4); }
 .setting-note { color: var(--text-2); font-size: 12.5px; line-height: 1.55; padding: var(--s-3) var(--s-4); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--sunk-1); }
+/* Seletor segmentado: o trilho é afundado, a opção escolhida sobe em relevo —
+   a mesma semântica das abas, invertida porque aqui o fundo é o campo. */
+.theme-picker { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color: var(--text-2); }
+.theme-picker > div { display: inline-flex; gap: var(--s-1); padding: var(--s-1); border-radius: var(--r-full); background: var(--surface-sunk); box-shadow: var(--sunk-1); justify-self: start; }
+.theme-picker button { padding: var(--s-2) var(--s-4); border-radius: var(--r-full); font-size: 13px; font-weight: 600; color: var(--text-2); transition: box-shadow var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+.theme-picker button:hover { color: var(--text); }
+.theme-picker button.active { background: var(--surface); color: var(--accent-strong); box-shadow: var(--raised-1); }
 .inline-two { display: grid; grid-template-columns: 96px 1fr; gap: var(--s-3); }
 .saving { padding: var(--s-2) var(--s-5) var(--s-4); color: var(--text-3); font-size: 12px; }
 
@@ -453,7 +475,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .persona-traits textarea { font-weight: 400; resize: vertical; }
 .persona-traits textarea::placeholder { font-size: 12px; }
 .prompt-area { min-height: 220px; resize: vertical; }
-.prompt-preview { border-top: 1px solid var(--pink-100); padding-top: var(--s-3); }
+.prompt-preview { border-top: 1px solid var(--divider); padding-top: var(--s-3); }
 .prompt-hint { margin: var(--s-2) 0; color: var(--text-3); font-size: 11.5px; line-height: 1.5; }
 .prompt-preview pre { margin: 0; padding: var(--s-3); background: var(--surface-sunk); border-radius: var(--r-md); box-shadow: var(--sunk-1); font-size: 11.5px; line-height: 1.6; white-space: pre-wrap; max-height: 260px; overflow: auto; color: var(--text-2); }
 .editor-actions { display: flex; justify-content: space-between; gap: var(--s-3); padding-top: var(--s-2); }
@@ -468,6 +490,69 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .memory-card .scope-tag { margin-left: var(--s-2); color: var(--text-3); }
 .memory-card p { margin: var(--s-1) 0 0; color: var(--text-2); font-size: 13px; line-height: 1.5; }
 .memory-actions { display: flex; gap: var(--s-2); align-items: center; flex: none; }
+
+/* ============================ tema escuro ===============================
+
+   Mesmos papéis semânticos, outra paleta — por isso nenhum componente conhece
+   cor crua. Três formas de chegar aqui:
+     - data-theme="dark"  → escolha explícita nas configurações;
+     - sem data-theme ou data-theme="system" → segue o sistema operacional;
+     - data-theme="light" → força claro mesmo com o sistema escuro.
+
+   No escuro o relevo fica naturalmente mais sutil (luz/sombra 1.33 contra 2.08
+   no claro). É esperado e não custa nada: nenhuma informação depende dele. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+  --surface: #2b2129;
+  --surface-sunk: #261d24;
+  --shine: #372b34;
+  --shade: #1c151a;
+  --text: #f3e8ef;
+  --text-2: #cdbac6;
+  --text-3: #a8939f;
+  --accent: #f07fb1;
+  --accent-strong: #ffa9cc;
+  --on-accent: #2b2129;
+  --divider: #3a2d36;
+  --bubble-user-bg: #4a3443;
+  --bubble-user-text: #f7ecf2;
+  --code-bg: #3a2c36;
+  --code-text: #f0dfe9;
+  --warn: #f0b866;
+  --warn-strong: #f5c98a;
+  --warn-bg: #3d2a1a;
+  --warn-detail-bg: #33230f;
+  --toast-bg: #f3e8ef;
+  --toast-text: #2b2129;
+  --scrim: rgba(10, 6, 9, .55);
+  color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #2b2129;
+  --surface-sunk: #261d24;
+  --shine: #372b34;
+  --shade: #1c151a;
+  --text: #f3e8ef;
+  --text-2: #cdbac6;
+  --text-3: #a8939f;
+  --accent: #f07fb1;
+  --accent-strong: #ffa9cc;
+  --on-accent: #2b2129;
+  --divider: #3a2d36;
+  --bubble-user-bg: #4a3443;
+  --bubble-user-text: #f7ecf2;
+  --code-bg: #3a2c36;
+  --code-text: #f0dfe9;
+  --warn: #f0b866;
+  --warn-strong: #f5c98a;
+  --warn-bg: #3d2a1a;
+  --warn-detail-bg: #33230f;
+  --toast-bg: #f3e8ef;
+  --toast-text: #2b2129;
+  --scrim: rgba(10, 6, 9, .55);
+  color-scheme: dark;
+}
 
 /* =========================== movimento ================================== */
 
@@ -501,6 +586,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 
 /* ============================================================================
    Pares de contraste medidos (WCAG AA, alvo 4.5:1 — 3:1 para o anel de foco)
+   Tema CLARO:
 
    texto principal     #2f222c / #ece2e9  11.99      bolha usuária    8.40
    texto secundário    #5d4a56 / #ece2e9   6.44      código inline    8.64
@@ -510,6 +596,16 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
    acento/sunk         #a92d67 / #e6dce4   4.83      anel de foco     5.10
    texto em acento     #ffffff / #a92d67   6.45      texto em escuro 13.20
 
-   O contraste entre a luz e a sombra do relevo é 2.08 — deliberadamente baixo,
+   Tema ESCURO (mesmos papéis):
+
+   texto principal    13.02      bolha usuária    9.79
+   texto secundário    8.46      código inline   10.32
+   texto sutil         5.43      erro             8.81
+   texto sutil/sunk    5.72      aviso âmbar      8.69
+   acento              6.19      texto ativo      8.73
+   acento/sunk         6.52      anel de foco     6.19
+   texto em acento     6.19      toast invertido 13.02
+
+   O contraste entre a luz e a sombra do relevo é 2.08 no claro e 1.33 no escuro — deliberadamente baixo,
    porque é decoração. Nenhuma informação depende dele.
    ============================================================================ */

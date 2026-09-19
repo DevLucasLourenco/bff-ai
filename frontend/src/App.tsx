@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Sidebar } from './components/Sidebar'
 import { ChatView } from './features/chat/ChatView'
 import { SettingsPanel } from './features/settings/SettingsPanel'
@@ -6,6 +6,7 @@ import { useChatStream } from './hooks/useChatStream'
 import { useConfig } from './hooks/useConfig'
 import { useConversations } from './hooks/useConversations'
 import { BffError } from './lib/api'
+import { applyTheme } from './lib/theme'
 import type { ApiError } from './lib/types'
 import './styles.css'
 
@@ -25,6 +26,8 @@ export default function App() {
 
   const reportConfigError = useCallback((error: unknown) => setConfigError(toApiError(error)), [])
   const config = useConfig(reportConfigError)
+  const theme = config.settings?.theme
+  useEffect(() => { if (theme) applyTheme(theme) }, [theme])
   const conversations = useConversations(reportConfigError)
   const { reloadActive, refreshList, setActive } = conversations
 

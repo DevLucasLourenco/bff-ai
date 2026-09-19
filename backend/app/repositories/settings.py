@@ -7,7 +7,8 @@ from app.services.persona import DEFAULT_GLOBAL_RULES
 DEFAULT_SETTINGS = {
     "app_name": "BFF AI",
     "user_display_name": "Você",
-    "theme": "pink",
+    # "system" segue o sistema operacional; "light"/"dark" forçam.
+    "theme": "system",
     "active_persona_id": "1",
     "active_model_config_id": "1",
     # Regra que toda persona obedece, antes de qualquer traço de personalidade.

@@ -32,8 +32,9 @@ export type Conversation = {
   id: number; title: string; persona_id: number; persona_name: string; persona_emoji: string; model_config_id: number;
   model_display_name: string; provider_kind: string; is_archived: boolean; messages: Message[]; updated_at: string;
 }
+export type ThemeName = 'system' | 'light' | 'dark'
 export type Settings = {
-  app_name: string; user_display_name: string; theme: string;
+  app_name: string; user_display_name: string; theme: ThemeName;
   active_persona_id: number; active_model_config_id: number;
   /** Regra que toda persona obedece, antes de qualquer traço de personalidade. */
   global_persona_rules: string;
