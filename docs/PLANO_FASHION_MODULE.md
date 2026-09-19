@@ -150,7 +150,7 @@ P = pequeno, M = médio, G = grande. São portes relativos, não estimativas de 
 
 **Objetivo.** Permitir que imagens, produtos e referências salvas da internet façam parte da coleção Fashion, preservando sua origem e distinguindo itens possuídos, desejados e inspirações.
 
-**Estado atual.** A fase de URL direta de imagem está entregue: captura limitada e validada, cópia WebP local, proveniência, deduplicação por URL, estados de coleção e formulário no painel Fashion. Importação de página, busca, extensão e tools de sugestão externa permanecem nas fases posteriores.
+**Estado atual.** Foto anexada, URL direta e página com imagem principal identificável entram pelo chat. O backend captura a imagem, preserva a origem e envia a cópia WebP ao modelo; o resultado aparece em card editável e só é gravado após confirmação. A guia e o formulário Fashion saíram da interface. Extração sem metadados, busca de produtos e extensão permanecem como expansões posteriores.
 
 **Como.** Entregar em fases, sempre com revisão e gesto explícito da usuária:
 

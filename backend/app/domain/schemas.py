@@ -384,6 +384,7 @@ class ChatActionRequest(BaseModel):
     object_id: int = Field(gt=0)
     action_id: str = Field(min_length=1, max_length=80, pattern=r"^[a-z][a-z0-9_]*$")
     target: dict[str, Any] = Field(default_factory=dict)
+    edits: dict[str, Any] = Field(default_factory=dict)
     idempotency_key: str = Field(min_length=1, max_length=160)
 
 

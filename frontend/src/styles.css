@@ -341,11 +341,17 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .fashion-suggestion { display: flex; align-items: end; gap: var(--s-3); margin-top: var(--s-3); flex-wrap: wrap; }
 .fashion-suggestion button { min-height: 34px; padding: 0 var(--s-3); border-radius: var(--r-sm); background: var(--accent); color: white; font-size: 12px; }
 .fashion-suggestion small { width: 100%; color: var(--danger); font-size: 11px; }
+.fashion-suggestion-review { flex: 1; min-width: min(230px, 100%); display: grid; gap: var(--s-2); color: var(--text-3); font-size: 12px; }
+.fashion-uncertain { font-size: 11px; color: var(--text-3); }
+.fashion-suggestion-status { font-size: 11px; color: var(--accent-strong); font-weight: 600; }
+.fashion-suggestion-review a { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-strong); }
+.fashion-suggestion-actions { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+.fashion-suggestion-actions .secondary { background: var(--surface-sunk); color: var(--accent-strong); }
+.fashion-suggestion-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2); padding: var(--s-2); border-radius: var(--r-sm); background: var(--surface-sunk); }
+.fashion-suggestion-fields label { min-width: 0; font-size: 11px; }
+.fashion-suggestion-fields input, .fashion-suggestion-fields select { min-width: 0; width: 100%; }
 .fashion-chat-entry { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; margin-top: var(--s-3); }
 .fashion-chat-entry button { display: inline-flex; align-items: center; gap: var(--s-1); min-height: 34px; padding: 0 var(--s-3); border-radius: var(--r-sm); color: var(--accent-strong); background: var(--surface-sunk); font-size: 12px; }
-.chat-fashion-workspace { width: min(760px, 100%); margin: var(--s-3) auto; padding: var(--s-4); border-radius: var(--r-lg); background: var(--surface-sunk); box-shadow: var(--sunk-1); }
-.chat-fashion-workspace-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--s-3); color: var(--accent-strong); }
-.chat-fashion-workspace-header strong { display: inline-flex; align-items: center; gap: var(--s-1); font-size: 14px; }
 
 .composer {
   display: flex; gap: var(--s-3); align-items: flex-end;
@@ -523,41 +529,6 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .memory-card p { margin: var(--s-1) 0 0; color: var(--text-2); font-size: 13px; line-height: 1.5; }
 .memory-actions { display: flex; gap: var(--s-2); align-items: center; flex: none; }
 
-/* ============================== fashion ================================= */
-.fashion-panel { display: grid; gap: var(--s-4); }
-.fashion-title, .fashion-toolbar, .wardrobe-detail { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
-.fashion-title h3, .wardrobe-detail h4 { margin: 0; font-size: 16px; }
-.fashion-title p, .wardrobe-detail p, .fashion-profile span { margin: var(--s-1) 0 0; font-size: 12px; color: var(--text-3); }
-.fashion-add, .fashion-profile { display: grid; gap: var(--s-3); padding: var(--s-4); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--raised-1); }
-.fashion-add strong { display: flex; align-items: center; gap: var(--s-1); color: var(--accent-strong); font-size: 13px; }
-.fashion-add .primary-small { justify-self: end; }
-.fashion-help { margin: calc(var(--s-2) * -1) 0 0; color: var(--text-3); font-size: 12px; }
-.fashion-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
-.fashion-toolbar { align-items: end; font-size: 12px; color: var(--text-3); }
-.fashion-toolbar label { flex: 1; }
-.wardrobe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: var(--s-3); }
-.wardrobe-card { min-width: 0; display: grid; gap: var(--s-1); text-align: left; padding: var(--s-2); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--raised-1); color: var(--text-2); }
-.wardrobe-card:hover { box-shadow: var(--raised-2); }
-.wardrobe-card.active { box-shadow: var(--sunk-1); }
-.wardrobe-card img, .wardrobe-placeholder { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--r-sm); background: var(--surface-sunk); }
-.wardrobe-placeholder { display: grid; place-items: center; color: var(--text-3); }
-.wardrobe-card strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
-.wardrobe-card small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-3); font-size: 11px; }
-.fashion-empty { grid-column: 1 / -1; color: var(--text-3); text-align: center; padding: var(--s-5); }
-.wardrobe-detail { align-items: flex-start; padding: var(--s-4); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--sunk-1); flex-wrap: wrap; }
-.wardrobe-detail > div { display: flex; align-items: center; gap: var(--s-3); min-width: 0; }
-.wardrobe-detail img { width: 52px; height: 52px; object-fit: cover; border-radius: var(--r-sm); }
-.wardrobe-detail > p { flex: 1; min-width: 140px; }
-.wardrobe-detail-actions { display: flex; gap: var(--s-2); flex-wrap: wrap; }
-.fashion-outfit-results { display: grid; gap: var(--s-3); padding: var(--s-3); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--raised-1); }
-.fashion-outfit-results > strong { display: inline-flex; align-items: center; gap: var(--s-1); color: var(--accent-strong); font-size: 13px; }
-.fashion-outfit-results > div { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--s-2); }
-.fashion-outfit-results article { display: grid; gap: 3px; padding: var(--s-2); border-radius: var(--r-sm); background: var(--surface-sunk); }
-.fashion-outfit-results article strong { font-size: 12px; }
-.fashion-outfit-results article span { color: var(--text-3); font-size: 11px; }
-.fashion-profile { grid-template-columns: 1fr; }
-.fashion-profile strong { color: var(--text-2); font-size: 13px; }
-
 /* ============================ tema escuro ===============================
 
    Mesmos papéis semânticos, outra paleta — por isso nenhum componente conhece
@@ -649,11 +620,8 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
   .conversation-list { max-height: 180px; }
   .chat-view { height: auto; min-height: 70vh; }
   .persona-layout { grid-template-columns: 1fr; }
-  .fashion-fields { grid-template-columns: 1fr; }
 }
 .attach-button { display: grid; place-items: center; flex: none; width: 36px; height: 36px; padding: 0; border-radius: 50%; color: var(--accent-strong); background: var(--surface-sunk); }
-.fashion-chat-button { display: grid; place-items: center; flex: none; width: 36px; height: 36px; padding: 0; border-radius: 50%; color: var(--accent-strong); background: var(--surface-sunk); }
-.fashion-chat-button.active { color: var(--accent-strong); box-shadow: var(--sunk-1); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .chat-attachment { position: absolute; left: 46px; bottom: calc(100% + 4px); display: flex; align-items: center; gap: 5px; max-width: 260px; padding: 5px 8px; border-radius: var(--r-sm); background: var(--surface); box-shadow: var(--raised-1); color: var(--text-2); font-size: 11px; }
 .chat-attachment span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

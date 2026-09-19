@@ -1,10 +1,9 @@
-import { ArrowUp, Paperclip, Shirt, Sparkles, Square, X } from 'lucide-react'
+import { ArrowUp, Paperclip, Sparkles, Square, X } from 'lucide-react'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import type { StreamBuffer } from '../../lib/streamBuffer'
 import type { ApiError, Conversation } from '../../lib/types'
 import { MessageBubble } from './MessageBubble'
 import { StreamingMessage } from './StreamingMessage'
-import { FashionPanel } from '../fashion/FashionPanel'
 
 type Props = {
   conversation: Conversation | null
@@ -13,7 +12,7 @@ type Props = {
   /** Mensagem recém-enviada, ainda não recarregada do servidor. */
   pendingUserMessage: string | null
   error: ApiError | null
-  onSend: (content: string, attachment: File | null) => void
+  onSend: (content: string, attachment: File | null) => Promise<boolean>
   onStop: () => void
   onRegenerate: (messageId: number) => void
   onDismissError: () => void
@@ -49,25 +48,40 @@ function useAutoScroll(dependencies: unknown[], enabled: boolean) {
 export function ChatView({ conversation, streaming, buffer, pendingUserMessage, error, onSend, onStop, onRegenerate, onDismissError }: Props) {
   const [draft, setDraft] = useState('')
   const [attachment, setAttachment] = useState<File | null>(null)
-  const [fashionOpen, setFashionOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const attachmentInput = useRef<HTMLInputElement>(null)
+  const messageInput = useRef<HTMLTextAreaElement>(null)
   const messageCount = conversation?.messages.length ?? 0
   const lastMessageId = conversation?.messages.at(-1)?.id
   const { endRef, containerRef } = useAutoScroll([messageCount, streaming, pendingUserMessage], true)
 
   useEffect(() => {
-    const openFashion = () => setFashionOpen(true)
-    window.addEventListener('fashion:open', openFashion)
-    return () => window.removeEventListener('fashion:open', openFashion)
+    const attach = () => attachmentInput.current?.click()
+    const compose = (event: Event) => {
+      setDraft((event as CustomEvent<string>).detail)
+      messageInput.current?.focus()
+    }
+    window.addEventListener('fashion:attach', attach)
+    window.addEventListener('fashion:compose', compose)
+    return () => {
+      window.removeEventListener('fashion:attach', attach)
+      window.removeEventListener('fashion:compose', compose)
+    }
   }, [])
 
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault()
     const content = draft.trim()
-    if (!content || streaming || !conversation) return
+    if ((!content && !attachment) || streaming || submitting || !conversation) return
+    const currentAttachment = attachment
+    setSubmitting(true)
     setDraft('')
-    onSend(content, attachment)
     setAttachment(null)
+    if (attachmentInput.current) attachmentInput.current.value = ''
+    try {
+      const accepted = await onSend(content || 'Quero cadastrar a peça desta foto no meu guarda-roupa.', currentAttachment)
+      if (!accepted) { setDraft(content); setAttachment(currentAttachment) }
+    } finally { setSubmitting(false) }
   }
 
   if (!conversation) {
@@ -120,32 +134,27 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
         <button type="button" className="link-button" onClick={onDismissError}>dispensar</button>
       </div>}
 
-      {fashionOpen && <section className="chat-fashion-workspace" aria-label="Guarda-roupa no chat">
-        <div className="chat-fashion-workspace-header"><strong><Shirt size={16}/> Fashion</strong><button type="button" className="link-button" onClick={() => setFashionOpen(false)}>fechar</button></div>
-        <FashionPanel onAsk={message => { setDraft(message); setFashionOpen(false) }}/>
-      </section>}
-
       <div ref={endRef}/>
     </section>
 
     <form className="composer" onSubmit={submit}>
       <input ref={attachmentInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={event => setAttachment(event.target.files?.[0] ?? null)}/>
-      <button type="button" className={`fashion-chat-button ${fashionOpen ? 'active' : ''}`} aria-label="Abrir guarda-roupa no chat" title="Guarda-roupa" disabled={streaming} onClick={() => setFashionOpen(open => !open)}><Shirt size={17}/></button>
-      <button type="button" className="attach-button" aria-label="Anexar foto de peça" disabled={streaming} onClick={() => attachmentInput.current?.click()}><Paperclip size={17}/></button>
+      <button type="button" className="attach-button" aria-label="Anexar foto de peça" disabled={streaming || submitting} onClick={() => attachmentInput.current?.click()}><Paperclip size={17}/></button>
       <textarea
+        ref={messageInput}
         value={draft}
         onChange={event => setDraft(event.target.value)}
-        placeholder="Fala comigo…"
+        placeholder="Escreva, cole um link ou anexe uma foto…"
         rows={1}
         aria-label="Mensagem"
         onKeyDown={event => {
           if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit() }
         }}
       />
-      {attachment && <span className="chat-attachment"><span>{attachment.name}</span><button type="button" aria-label="Remover anexo" onClick={() => setAttachment(null)}><X size={13}/></button></span>}
+      {attachment && <span className="chat-attachment"><span>{attachment.name}</span><button type="button" aria-label="Remover anexo" onClick={() => { setAttachment(null); if (attachmentInput.current) attachmentInput.current.value = '' }}><X size={13}/></button></span>}
       {streaming
         ? <button type="button" className="stop" aria-label="Parar geração" onClick={onStop}><Square size={16} fill="currentColor"/></button>
-        : <button aria-label="Enviar" disabled={!draft.trim()}><ArrowUp size={20}/></button>}
+        : <button aria-label="Enviar" disabled={submitting || (!draft.trim() && !attachment)}><ArrowUp size={20}/></button>}
     </form>
   </main>
 }

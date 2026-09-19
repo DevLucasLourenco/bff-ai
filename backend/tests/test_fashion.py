@@ -6,7 +6,7 @@ import io
 
 from PIL import Image
 
-from app.fashion.external_collection import ExternalImageError, RemoteImage, fetch_remote_image
+from app.fashion.external_collection import ExternalImageError, RemoteImage, fetch_remote_image, fetch_fashion_link
 
 
 def create_item(client, **extra):
@@ -121,6 +121,34 @@ def test_external_fetch_follows_only_validated_redirect_and_limits_bytes(monkeyp
     assert image.content == b"image"
 
 
+def test_product_page_extracts_primary_image_without_browsing_other_urls(monkeypatch):
+    import app.fashion.external_collection as external
+
+    monkeypatch.setattr(external.socket, "getaddrinfo", lambda *_args, **_kwargs: [(2, 1, 6, "", ("8.8.8.8", 0))])
+
+    class Response:
+        def __init__(self, content, mime): self.status_code, self.headers, self.content = 200, {"content-type": mime}, content
+        def __enter__(self): return self
+        def __exit__(self, *_args): return False
+        def iter_bytes(self): return iter([self.content])
+
+    class Client:
+        calls = []
+        def __init__(self, **_kwargs): pass
+        def __enter__(self): return self
+        def __exit__(self, *_args): return False
+        def stream(self, _method, url, **_kwargs):
+            self.calls.append(url)
+            if url.endswith("/blazer"):
+                return Response(b'<meta property="og:image" content="/images/blazer.jpg"><title>Blazer</title>', "text/html")
+            return Response(b"image", "image/jpeg")
+
+    captured = fetch_fashion_link("https://shop.example.com/blazer", client_factory=Client)
+    assert captured.source_url == "https://shop.example.com/blazer"
+    assert captured.image.canonical_url == "https://shop.example.com/images/blazer.jpg"
+    assert Client.calls == ["https://shop.example.com/blazer", "https://shop.example.com/images/blazer.jpg"]
+
+
 def test_tools_are_typed_and_external_tools_are_honestly_unavailable(client):
     item = create_item(client)
     response = client.post("/api/fashion/tools/get_wardrobe", json={"category": "outerwear"})
@@ -131,6 +159,15 @@ def test_tools_are_typed_and_external_tools_are_honestly_unavailable(client):
     unavailable = client.post("/api/fashion/tools/search_products", json={})
     assert unavailable.status_code == 200
     assert unavailable.json()["status"] == "unavailable"
+
+
+def test_visual_proposal_asks_for_clarification_when_no_piece_is_identifiable(client):
+    response = client.post("/api/fashion/tools/propose_wardrobe_item", json={
+        "needs_clarification": True, "visual_summary": "A foto mostra várias peças sem destaque.",
+    })
+    assert response.status_code == 200
+    assert response.json()["status"] == "needs_clarification"
+    assert response.json()["ui_hints"] == []
 
 
 def test_outfit_tool_uses_only_owned_items(client):

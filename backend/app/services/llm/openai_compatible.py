@@ -59,7 +59,7 @@ class OpenAICompatibleAdapter:
             payload["stream_options"] = {"include_usage": True}
         if config.tools:
             payload["tools"] = config.tools
-            payload["tool_choice"] = "auto"
+            payload["tool_choice"] = config.tool_choice
         return payload
 
     def _raise_for_status(self, status: int, body: str) -> None:

@@ -84,30 +84,69 @@ export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
   const outfits = Array.isArray(payload.outfits) ? payload.outfits.map(asRecord)
     : object.type === 'outfit_detail' && payload.outfit ? [asRecord(payload.outfit)] : []
   const [actionState, setActionState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [savedItem, setSavedItem] = useState<Record<string, unknown> | null>(null)
   const suggestion = asRecord(payload.candidate)
+  const analysis = asRecord(payload.analysis)
+  const [editing, setEditing] = useState(false)
+  const [edits, setEdits] = useState<Record<string, unknown>>({})
   const actions = Array.isArray(envelope.actions) ? envelope.actions.map(asRecord) : []
   const saveAction = actions.find(action => action.id === 'save_candidate')
   const saveSuggestion = async () => {
-    if (!saveAction || actionState !== 'idle') return
+    if (!saveAction || actionState === 'saving' || actionState === 'saved') return
+    if (!value('name').trim() || !value('category').trim()) { setActionState('error'); setEditing(true); return }
     setActionState('saving')
     try {
-      await api.runFashionAction({
+      const response = await api.runFashionAction({
         object_id: object.id, action_id: 'save_candidate', target: saveAction.target,
+        edits,
         idempotency_key: `candidate-${object.id}`,
       })
+      setSavedItem(asRecord(response.item))
       setActionState('saved')
     } catch { setActionState('error') }
   }
-  const openFashion = () => window.dispatchEvent(new Event('fashion:open'))
+  const setField = (field: string, value: unknown) => setEdits(current => ({ ...current, [field]: value }))
+  const value = (field: string) => text(edits[field] ?? suggestion[field])
+  const tags = edits.tags ?? suggestion.tags
+  const status = text(edits.collection_status ?? suggestion.collection_status, 'owned')
+  const statusLabel = status === 'owned' ? 'Possuo' : status === 'inspiration' ? 'Inspiração' : 'Quero'
+  const attachPhoto = () => window.dispatchEvent(new Event('fashion:attach'))
+  const compose = (message: string) => window.dispatchEvent(new CustomEvent('fashion:compose', { detail: message }))
 
   return <section className="chat-object" aria-label={title} data-object-version={object.schema_version}>
     <header><Icon size={16}/><div><strong>{title}</strong>{subtitle && <span>{subtitle}</span>}</div></header>
     {wardrobeItems.length > 0 && <VisualCarousel label={title}>{wardrobeItems.map((item, index) => <ItemVisual item={item} key={String(item.id ?? index)}/>)}</VisualCarousel>}
     {outfits.length > 0 && <VisualCarousel label={title}>{outfits.map((outfit, index) => <OutfitVisual outfit={outfit} key={String(outfit.id ?? index)}/>)}</VisualCarousel>}
-    {object.type === 'wardrobe_suggestion' && Object.keys(suggestion).length > 0 && <div className="fashion-suggestion"><ItemVisual item={suggestion}/><button type="button" disabled={actionState === 'saving' || actionState === 'saved'} onClick={() => void saveSuggestion()}>{actionState === 'saved' ? 'Adicionada' : actionState === 'saving' ? 'Salvando…' : 'Adicionar ao guarda-roupa'}</button>{actionState === 'error' && <small>Não foi possível salvar. Tente de novo.</small>}</div>}
+    {object.type === 'wardrobe_suggestion' && Object.keys(suggestion).length > 0 && <div className="fashion-suggestion">
+      <ItemVisual item={savedItem ?? { ...suggestion, ...edits }}/>
+      <div className="fashion-suggestion-review">
+        <span>{text(analysis.summary, 'Revise a análise antes de salvar. Campos incertos podem ficar vazios.')}</span>
+        <span className="fashion-suggestion-status">Adicionar como: {statusLabel}</span>
+        {Array.isArray(analysis.uncertain_fields) && analysis.uncertain_fields.length > 0 && <span className="fashion-uncertain">Não confirmado: {analysis.uncertain_fields.filter((field): field is string => typeof field === 'string').join(', ')}</span>}
+        {editing && actionState !== 'saved' && <div className="fashion-suggestion-fields">
+          <label>Nome<input value={value('name')} onChange={event => setField('name', event.target.value)}/></label>
+          <label>Categoria<input value={value('category')} onChange={event => setField('category', event.target.value)}/></label>
+          <label>Cor<input value={value('color')} onChange={event => setField('color', event.target.value || null)}/></label>
+          <label>Estilo<input value={value('style')} onChange={event => setField('style', event.target.value || null)}/></label>
+          <label>Marca<input value={value('brand')} onChange={event => setField('brand', event.target.value || null)}/></label>
+          <label>Material<input value={value('material')} onChange={event => setField('material', event.target.value || null)}/></label>
+          <label>Estado<select value={status} onChange={event => setField('collection_status', event.target.value)}><option value="owned">Possuo</option><option value="wanted">Quero</option><option value="inspiration">Inspiração</option></select></label>
+          <label>Tags<input value={Array.isArray(tags) ? tags.join(', ') : ''} onChange={event => setField('tags', event.target.value.split(',').map(tag => tag.trim()).filter(Boolean))}/></label>
+        </div>}
+        <div className="fashion-suggestion-actions">
+          {actionState !== 'saved' && <button type="button" className="secondary" onClick={() => setEditing(open => !open)}>{editing ? 'Fechar edição' : 'Revisar campos'}</button>}
+          <button type="button" disabled={actionState === 'saving' || actionState === 'saved'} onClick={() => void saveSuggestion()}>{actionState === 'saved' ? 'Peça salva' : actionState === 'saving' ? 'Salvando…' : 'Salvar peça'}</button>
+          {actionState === 'saved' && <button type="button" className="secondary" onClick={() => compose('Mostre meu guarda-roupa atualizado.')}>Ver guarda-roupa</button>}
+        </div>
+        {actionState === 'error' && <small>Não foi possível salvar. Revise os campos e tente novamente.</small>}
+        {text(suggestion.source_url) && <a href={text(suggestion.source_url)} target="_blank" rel="noreferrer"><ExternalLink size={12}/> Ver fonte</a>}
+      </div>
+    </div>}
     {object.type === 'wardrobe_view' && <div className="fashion-chat-entry">
-      {wardrobeItems.length === 0 && <p className="fashion-chat-empty">Ainda não há peças cadastradas. Você pode adicionar uma foto, uma peça manual ou uma referência da internet aqui no chat.</p>}
-      <button type="button" onClick={openFashion}><Shirt size={15}/> {wardrobeItems.length ? 'Abrir meu guarda-roupa' : 'Adicionar ao guarda-roupa'}</button>
+      {wardrobeItems.length === 0 && <p className="fashion-chat-empty">Seu guarda-roupa está vazio. Envie uma foto ou cole o link de uma peça; eu preparo o cadastro para você revisar.</p>}
+      <button type="button" onClick={attachPhoto}><Shirt size={15}/> Enviar foto</button>
+      <button type="button" onClick={() => compose('Quero cadastrar esta peça do link: ')}><ExternalLink size={14}/> Colar link</button>
+      {wardrobeItems.length > 0 && <button type="button" onClick={() => compose('Mostre combinações com as peças que eu possuo.')}>Ver conjuntos</button>}
     </div>}
     {object.source.some(source => source.url) && <footer>
       {object.source.filter(source => source.url).map(source => <a key={`${source.kind}-${source.ref_id}`} href={source.url!} target="_blank" rel="noreferrer"><ExternalLink size={12}/> fonte</a>)}

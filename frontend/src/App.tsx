@@ -41,13 +41,18 @@ export default function App() {
   const streamingHere = chat.isStreaming && chat.streamingConversationId === conversations.active?.id
 
   const send = useCallback(async (content: string, attachment: File | null) => {
-    if (!conversations.active) return
+    if (!conversations.active) return false
     setChatError(null)
+    if (attachment && config.models?.find(model => model.id === conversations.active?.model_config_id)?.supports_tools === false) {
+      setChatError({ code: 'fashion_tools_disabled', message: 'Ative as ferramentas Fashion neste modelo para analisar fotos pelo chat.' })
+      return false
+    }
     try {
       const asset = attachment ? await api.uploadFashionAsset(attachment) : null
-      await chat.send(conversations.active.id, content, asset ? [asset.id] : [])
-    } catch (error) { setChatError(toApiError(error)) }
-  }, [chat, conversations.active])
+      const error = await chat.send(conversations.active.id, content, asset ? [asset.id] : [])
+      return !error || !['http_422', 'http_409', 'http_404', 'validation_error'].includes(error.code)
+    } catch (error) { setChatError(toApiError(error)); return false }
+  }, [chat, config.models, conversations.active])
 
   const regenerate = useCallback((messageId: number) => {
     if (!conversations.active) return

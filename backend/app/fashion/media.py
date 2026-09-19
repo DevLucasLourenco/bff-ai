@@ -39,7 +39,10 @@ def _safe_path(storage_key: str, *, thumbnail: bool = False) -> Path:
     return path
 
 
-def store_image(db: Session, owner_id: int, content: bytes, claimed_content_type: str | None) -> FashionAsset:
+def store_image(
+    db: Session, owner_id: int, content: bytes, claimed_content_type: str | None,
+    *, source_url: str | None = None, source_image_url: str | None = None, source_domain: str | None = None,
+) -> FashionAsset:
     if not content:
         raise InvalidFashionImage("Envie uma imagem.")
     if len(content) > MAX_UPLOAD_BYTES:
@@ -77,6 +80,9 @@ def store_image(db: Session, owner_id: int, content: bytes, claimed_content_type
         height=image.height,
         byte_size=image_path.stat().st_size,
         sha256=hashlib.sha256(content).hexdigest(),
+        source_url=source_url,
+        source_image_url=source_image_url,
+        source_domain=source_domain,
     )
     db.add(asset)
     db.commit()

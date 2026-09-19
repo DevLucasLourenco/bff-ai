@@ -171,8 +171,17 @@ class FashionService:
             prior = self.db.query(ToolRun).filter_by(idempotency_key=payload.idempotency_key).one_or_none()
             if prior and prior.tool_name == "add_wardrobe_item" and prior.result_refs:
                 return self.item_view(self._item(int(prior.result_refs[0]["id"])))
-        self._asset(payload.image_asset_id)
+        asset = self._asset(payload.image_asset_id)
+        if asset and asset.source_url:
+            existing = self.external_item_for_url(asset.source_url)
+            if existing:
+                return existing
         values = payload.model_dump(exclude={"idempotency_key"})
+        if asset and asset.source_url:
+            values.update(
+                source="external", external_url=asset.source_url,
+                external_domain=asset.source_domain, external_captured_at=asset.created_at,
+            )
         values["seasons"] = [value.strip() for value in payload.seasons if value.strip()]
         values["occasions"] = [value.strip() for value in payload.occasions if value.strip()]
         values["tags"] = [value.strip() for value in payload.tags if value.strip()]

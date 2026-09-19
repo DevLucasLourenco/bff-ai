@@ -192,6 +192,12 @@ Um item externo preserva `origin=external`, URL original, URL canônica, domíni
 4. **Resultado de busca:** após haver provedor de busca configurado, cada card de produto oferece “Salvar na coleção”.
 5. **Extensão de navegador, posterior:** captura URL, página, seleção de variante e imagem a partir do gesto explícito da usuária. Não faz scraping silencioso nem lê páginas fora do clique dela.
 
+### Fluxo conversacional entregue
+
+O chat é a entrada de cadastro: a usuária pode anexar uma foto, colar uma URL direta de imagem ou colar a URL de uma página com imagem principal em metadados. O servidor captura a imagem antes da resposta, conserva a URL de origem no asset, envia a cópia WebP ao modelo multimodal e solicita `propose_wardrobe_item`. O modelo devolve nome e atributos observáveis, um resumo visual e campos incertos. O chat mostra um card compacto com foto, edição opcional e confirmação; somente essa confirmação grava a peça. O mesmo card permite escolher `owned`, `wanted` ou `inspiration`. Um link sem imagem identificável recebe erro claro e não cria mensagem vazia. O botão Fashion e o formulário extenso deixam o composer.
+
+O prompt de visão instrui a examinar a peça principal, separar evidência de hipótese e omitir marca/material/tamanho sem prova. Para foto ambígua, sem roupa ou com várias peças sem indicação, a tool retorna `needs_clarification` e o assistente pede esclarecimento sem exibir um cadastro especulativo. O modelo configurado é responsável pela análise; o servidor valida IDs e origem e a usuária revisa o resultado antes da gravação. Se um link falhar antes de criar a mensagem, o chat preserva o texto e o anexo para correção e reenvio.
+
 ### Segurança da captura remota
 
 O servidor nunca entrega uma URL remota bruta ao navegador como imagem da coleção. Na importação, ele busca somente HTTP(S), limita redirecionamentos, tempo, bytes e dimensões, resolve DNS e bloqueia loopback, IPs privados, link-local e metadados de cloud. Valida MIME pelos bytes, remove EXIF, reencoda para WebP e armazena a cópia interna; falhas mostram erro por item. O fetch ocorre apenas após ação explícita da usuária. URL de página e créditos permanecem como link de proveniência, separados do arquivo normalizado. Base64 só pode ser usado transitoriamente para enviar anexo ao modelo multimodal, nunca em SQLite.

@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Body, File, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
+from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -51,6 +52,8 @@ def http_error(error: Exception) -> HTTPException:
         return HTTPException(422, str(error))
     if isinstance(error, ExternalImageError):
         return HTTPException(422, str(error))
+    if isinstance(error, ValidationError):
+        return HTTPException(422, "Revise os campos da peça antes de salvar.")
     raise error
 
 
@@ -134,7 +137,10 @@ def import_external_image(payload: ExternalImageImport, db: Db, owner_id: Curren
         same_source = fashion.external_item_for_url(remote.canonical_url)
         if same_source:
             return same_source
-        asset = store_image(db, owner_id, remote.content, remote.content_type)
+        asset = store_image(
+            db, owner_id, remote.content, remote.content_type,
+            source_url=remote.canonical_url, source_image_url=remote.canonical_url, source_domain=remote.domain,
+        )
         return fashion.create_external_image_item(
             payload, image_asset_id=asset.id, canonical_url=remote.canonical_url, domain=remote.domain,
             captured_at=datetime.now(timezone.utc),
@@ -264,9 +270,12 @@ def run_chat_action(payload: ChatActionRequest, db: Db, owner_id: CurrentOwner):
         candidate = payload.target.get("candidate")
         if not isinstance(candidate, dict):
             raise HTTPException(422, "Sugestão inválida")
+        editable = {"name", "category", "subcategory", "color", "material", "brand", "size", "style", "seasons", "occasions", "formality", "tags", "collection_status"}
+        if set(payload.edits) - editable:
+            raise HTTPException(422, "Campo de edição não permitido")
         try:
             item = service(db, owner_id).create_item(WardrobeItemCreate(
-                **candidate, idempotency_key=payload.idempotency_key,
+                **(candidate | payload.edits), idempotency_key=payload.idempotency_key,
             ))
             return {"item": item.model_dump(mode="json")}
         except Exception as exc:

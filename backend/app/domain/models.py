@@ -223,6 +223,9 @@ class FashionAsset(Base):
     height: Mapped[int] = mapped_column(Integer)
     byte_size: Mapped[int] = mapped_column(Integer)
     sha256: Mapped[str] = mapped_column(String(64), index=True)
+    source_url: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
+    source_image_url: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
+    source_domain: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 

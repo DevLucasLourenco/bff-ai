@@ -8,6 +8,8 @@ from app.domain.models import Conversation, MessageUiObject, ModelConfig, Person
 from app.domain.schemas import ChatUiObjectRead, ConversationCreate, ConversationRead, ConversationUpdate, MessageRead, SendMessage
 from app.repositories.settings import SettingsRepository
 from app.services.chat import ChatService, ConversationNotFound, ConversationUnavailable
+from app.fashion.external_collection import ExternalImageError
+from app.fashion.media import InvalidFashionImage
 
 router = APIRouter(prefix="/conversations", tags=["conversations"])
 
@@ -130,6 +132,8 @@ async def stream_message(conversation_id: int, payload: SendMessage, db: Db, own
         raise HTTPException(404, str(exc)) from exc
     except ConversationUnavailable as exc:
         raise HTTPException(409, str(exc)) from exc
+    except (ExternalImageError, InvalidFashionImage) as exc:
+        raise HTTPException(422, str(exc)) from exc
     return _streaming(service, turn)
 
 

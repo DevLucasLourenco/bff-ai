@@ -7,11 +7,17 @@ podem regredir em silêncio.
 from __future__ import annotations
 
 import json
+import io
+import shutil
 from collections.abc import AsyncIterator
+from pathlib import Path
+
+from PIL import Image
 
 from app.domain.models import Conversation, Message, MessageStatus, ModelConfig
 from app.services.llm.base import ProviderCapabilities
 from app.services.llm.errors import ProviderAuthError
+from app.fashion.external_collection import CapturedLink, RemoteImage, ExternalImageError
 
 
 def sse_events(raw: str) -> list[tuple[str, dict]]:
@@ -301,3 +307,71 @@ def test_fashion_tool_call_gera_objeto_sse_e_termina_a_resposta(client, monkeypa
     history = client.get(f"/api/conversations/{conversation_id}")
     assert history.status_code == 200, history.text
     assert history.json()["messages"][-1]["ui_objects"][0]["type"] == "wardrobe_view"
+
+
+def test_link_no_chat_gera_card_editavel_com_foto_e_origem(client, monkeypatch, db):
+    from app.fashion import media
+
+    buffer = io.BytesIO()
+    Image.new("RGB", (8, 8), "beige").save(buffer, format="PNG")
+    media_dir = Path(__file__).with_name(".chat-link-media")
+    media_dir.mkdir(exist_ok=True)
+    monkeypatch.setattr(media, "FASHION_MEDIA_DIR", media_dir)
+    monkeypatch.setattr("app.services.chat.fetch_fashion_link", lambda _url: CapturedLink(
+        image=RemoteImage("https://cdn.example.com/blazer.png", "cdn.example.com", buffer.getvalue(), "image/png"),
+        source_url="https://shop.example.com/blazer", source_domain="shop.example.com", title="Blazer bege",
+    ))
+
+    class VisionAdapter:
+        last_usage = None
+        last_tool_calls = []
+        calls = 0
+
+        async def stream(self, messages, config):
+            self.calls += 1
+            if self.calls == 1:
+                assert config.tool_choice["function"]["name"] == "propose_wardrobe_item"
+                assert messages[-1]["content"][1]["type"] == "image_url"
+                assert "shop.example.com/blazer" in messages[-1]["content"][0]["text"]
+                self.last_tool_calls = [{"id": "call_visual", "type": "function", "function": {
+                    "name": "propose_wardrobe_item", "arguments": json.dumps({"name": "Blazer bege", "category": "casaco", "color": "bege"}),
+                }}]
+                if False:
+                    yield ""
+                return
+            assert config.tool_choice == "auto"
+            self.last_tool_calls = []
+            yield "Revise o card e confirme se estiver correto."
+
+    db.get(ModelConfig, 1).supports_tools = True
+    db.commit()
+    monkeypatch.setattr("app.services.chat.create_adapter", lambda _kind: VisionAdapter())
+    conversation_id = new_conversation(client)
+    response = client.post(f"/api/conversations/{conversation_id}/messages/stream", json={"content": "Quero salvar https://shop.example.com/blazer"})
+    assert response.status_code == 200, response.text
+    card = next(payload for event, payload in sse_events(response.text) if event == "ui_object")
+    candidate = card["data"]["data"]["candidate"]
+    assert candidate["image"]["url"].startswith("/api/fashion/assets/")
+    assert candidate["source_url"] == "https://shop.example.com/blazer"
+    assert candidate["collection_status"] == "wanted"
+    target = card["data"]["actions"][0]["target"]
+    saved = client.post("/api/fashion/actions", json={
+        "object_id": card["id"], "action_id": "save_candidate", "target": target,
+        "edits": {"name": "Meu blazer claro", "collection_status": "owned"}, "idempotency_key": f"candidate-{card['id']}",
+    })
+    assert saved.status_code == 200, saved.text
+    item = saved.json()["item"]
+    assert (item["name"], item["collection_status"], item["source"]) == ("Meu blazer claro", "owned", "external")
+    assert item["external_url"] == "https://shop.example.com/blazer"
+    assert client.get(f"/api/conversations/{conversation_id}").status_code == 200
+    shutil.rmtree(media_dir, ignore_errors=True)
+
+
+def test_link_invalido_nao_cria_mensagem_no_chat(client, monkeypatch, db):
+    db.get(ModelConfig, 1).supports_tools = True
+    db.commit()
+    monkeypatch.setattr("app.services.chat.fetch_fashion_link", lambda _url: (_ for _ in ()).throw(ExternalImageError("Sem imagem principal")))
+    conversation_id = new_conversation(client)
+    response = send(client, conversation_id, "Quero salvar https://shop.example.com/produto")
+    assert response.status_code == 422
+    assert client.get(f"/api/conversations/{conversation_id}").json()["messages"] == []

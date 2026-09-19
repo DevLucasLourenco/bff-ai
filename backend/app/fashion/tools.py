@@ -34,6 +34,14 @@ class MixAndMatchInput(ToolInput):
     limit: int = Field(default=4, ge=1, le=6)
 
 
+class WardrobeProposalInput(WardrobeItemFields):
+    name: str | None = Field(default=None, min_length=1, max_length=180)
+    category: str | None = Field(default=None, min_length=1, max_length=60)
+    visual_summary: str | None = Field(default=None, max_length=300)
+    uncertain_fields: list[str] = Field(default_factory=list, max_length=12)
+    needs_clarification: bool = False
+
+
 class ToolUnavailable(RuntimeError):
     pass
 
@@ -110,11 +118,25 @@ def _add_wardrobe_item(service: FashionService, data: WardrobeItemCreate) -> Too
     )
 
 
-def _propose_wardrobe_item(_service: FashionService, data: WardrobeItemFields) -> ToolResult:
+def _propose_wardrobe_item(service: FashionService, data: WardrobeProposalInput) -> ToolResult:
     """Propose a newly discussed piece; the user must confirm before it is saved."""
-    candidate = data.model_dump(mode="json")
+    if data.needs_clarification or not data.name or not data.category:
+        return ToolResult(
+            status="needs_clarification",
+            data={"reason": data.visual_summary or "A peça não pôde ser identificada com segurança."},
+            facts=[], source_refs=[], ui_hints=[],
+        )
+    candidate = data.model_dump(mode="json", exclude={"visual_summary", "uncertain_fields", "needs_clarification"})
+    if data.image_asset_id:
+        asset = service._asset(data.image_asset_id)
+        candidate["image"] = {"url": f"/api/fashion/assets/{asset.id}"}
+        if asset.source_url:
+            candidate["source_url"] = asset.source_url
     return ToolResult(
-        status="proposed", data={"candidate": candidate}, facts=[], source_refs=[],
+        status="proposed", data={
+            "candidate": candidate,
+            "analysis": {"summary": data.visual_summary, "uncertain_fields": data.uncertain_fields},
+        }, facts=[], source_refs=[],
         ui_hints=[{"type": "wardrobe_suggestion", "actions": [{
             "id": "save_candidate", "label": "Adicionar ao guarda-roupa", "target": {"candidate": candidate},
         }]}],
@@ -203,7 +225,7 @@ class FashionToolRegistry:
             "get_wardrobe": ToolDefinition("get_wardrobe", GetWardrobeInput, _get_wardrobe),
             "get_wardrobe_item": ToolDefinition("get_wardrobe_item", GetWardrobeItemInput, _get_wardrobe_item),
             "add_wardrobe_item": ToolDefinition("add_wardrobe_item", WardrobeItemCreate, _add_wardrobe_item),
-            "propose_wardrobe_item": ToolDefinition("propose_wardrobe_item", WardrobeItemFields, _propose_wardrobe_item),
+            "propose_wardrobe_item": ToolDefinition("propose_wardrobe_item", WardrobeProposalInput, _propose_wardrobe_item),
             "get_style_profile": ToolDefinition("get_style_profile", ToolInput, _get_style_profile),
             "mix_and_match": ToolDefinition("mix_and_match", MixAndMatchInput, _mix_and_match),
             "save_outfit": ToolDefinition("save_outfit", OutfitCreate, _save_outfit),

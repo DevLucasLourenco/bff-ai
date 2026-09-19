@@ -79,6 +79,7 @@ export function useChatStream({ onSettled, onError }: Options) {
       }
       if (failed) onError(failed)
     }
+    return failed
   }, [buffer, onSettled, onError])
 
   const send = useCallback(

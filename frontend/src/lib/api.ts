@@ -109,7 +109,6 @@ export const api = {
   styleProfile: () => json<StyleProfile>('/api/fashion/style-profile'),
   updateStyleProfile: (payload: Record<string, unknown>) => json<StyleProfile>('/api/fashion/style-profile', { method: 'PATCH', body: JSON.stringify(payload) }),
   runFashionAction: (payload: Record<string, unknown>) => json<Record<string, unknown>>('/api/fashion/actions', { method: 'POST', body: JSON.stringify(payload) }),
-  fashionTool: (name: string, arguments_: Record<string, unknown>) => json<{ status: string; data: Record<string, unknown> }>(`/api/fashion/tools/${name}`, { method: 'POST', body: JSON.stringify(arguments_) }),
 }
 
 export type StreamHandlers = {
