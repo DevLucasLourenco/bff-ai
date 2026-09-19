@@ -131,3 +131,13 @@ def test_tools_are_typed_and_external_tools_are_honestly_unavailable(client):
     unavailable = client.post("/api/fashion/tools/search_products", json={})
     assert unavailable.status_code == 200
     assert unavailable.json()["status"] == "unavailable"
+
+
+def test_outfit_tool_uses_only_owned_items(client):
+    owned = create_item(client, name="Camisa branca")
+    wanted = create_item(client, name="Bolsa desejada", collection_status="wanted")
+    result = client.post("/api/fashion/tools/mix_and_match", json={"anchor_item_id": owned["id"], "limit": 6})
+    assert result.status_code == 200
+    assert all(wanted["id"] not in [piece["wardrobe_item_id"] for piece in outfit["items"]] for outfit in result.json()["data"]["outfits"])
+    rejected = client.post("/api/fashion/tools/mix_and_match", json={"anchor_item_id": wanted["id"]})
+    assert rejected.status_code == 409

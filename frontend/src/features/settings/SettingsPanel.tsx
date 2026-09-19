@@ -3,9 +3,8 @@ import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { api } from '../../lib/api'
 import type { Conversation, Memory, MemoryScope, ModelConfig, Persona, Provider, Settings, ThemeName } from '../../lib/types'
 import { PersonaEditor } from './PersonaEditor'
-import { FashionPanel } from '../fashion/FashionPanel'
 
-type Tab = 'general' | 'models' | 'personas' | 'memories' | 'fashion'
+type Tab = 'general' | 'models' | 'personas' | 'memories'
 
 export function SettingsPanel({ open, onClose, settings, personas, memories, providers, models, conversations, onChanged }: {
   open: boolean
@@ -90,7 +89,6 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
         <button className={tab==='models'?'active':''} onClick={() => setTab('models')}>LLM</button>
         <button className={tab==='personas'?'active':''} onClick={() => setTab('personas')}>Personas</button>
         <button className={tab==='memories'?'active':''} onClick={() => setTab('memories')}>Memórias</button>
-        <button className={tab==='fashion'?'active':''} onClick={() => setTab('fashion')}>Fashion</button>
       </nav>
       <div className="settings-body">
         {error && <div className="error-box">{error}</div>}
@@ -224,7 +222,6 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
           <div className="memory-list">{memories.map(memory => <article className={`memory-card ${memory.is_active ? '' : 'disabled'}`} key={memory.id}><div><span>{memory.category}</span><span className={`scope-tag ${memory.scope}`}>{memory.scope === 'global' ? 'todas as conversas' : memory.scope === 'persona' ? 'uma persona' : 'uma conversa'}</span><p>{memory.content}</p></div><div className="memory-actions"><button className="secondary" onClick={() => run(async () => { await api.updateMemory(memory.id, { is_active: !memory.is_active }); await onChanged() })}>{memory.is_active ? 'Pausar' : 'Ativar'}</button><button className="icon-button" aria-label="Excluir memória" onClick={() => run(async () => { await api.deleteMemory(memory.id); await onChanged() })}><Trash2 size={16}/></button></div></article>)}</div>
         </div>}
 
-        {tab === 'fashion' && <FashionPanel/>}
       </div>
       {busy && <div className="saving">salvando…</div>}
     </section>

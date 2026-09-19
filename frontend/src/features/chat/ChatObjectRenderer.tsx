@@ -98,13 +98,17 @@ export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
       setActionState('saved')
     } catch { setActionState('error') }
   }
+  const openFashion = () => window.dispatchEvent(new Event('fashion:open'))
 
   return <section className="chat-object" aria-label={title} data-object-version={object.schema_version}>
     <header><Icon size={16}/><div><strong>{title}</strong>{subtitle && <span>{subtitle}</span>}</div></header>
     {wardrobeItems.length > 0 && <VisualCarousel label={title}>{wardrobeItems.map((item, index) => <ItemVisual item={item} key={String(item.id ?? index)}/>)}</VisualCarousel>}
     {outfits.length > 0 && <VisualCarousel label={title}>{outfits.map((outfit, index) => <OutfitVisual outfit={outfit} key={String(outfit.id ?? index)}/>)}</VisualCarousel>}
     {object.type === 'wardrobe_suggestion' && Object.keys(suggestion).length > 0 && <div className="fashion-suggestion"><ItemVisual item={suggestion}/><button type="button" disabled={actionState === 'saving' || actionState === 'saved'} onClick={() => void saveSuggestion()}>{actionState === 'saved' ? 'Adicionada' : actionState === 'saving' ? 'Salvando…' : 'Adicionar ao guarda-roupa'}</button>{actionState === 'error' && <small>Não foi possível salvar. Tente de novo.</small>}</div>}
-    {object.type === 'wardrobe_view' && wardrobeItems.length === 0 && <p className="fashion-chat-empty">Ainda não há peças cadastradas. Adicione uma peça com foto em Configurações → Fashion.</p>}
+    {object.type === 'wardrobe_view' && <div className="fashion-chat-entry">
+      {wardrobeItems.length === 0 && <p className="fashion-chat-empty">Ainda não há peças cadastradas. Você pode adicionar uma foto, uma peça manual ou uma referência da internet aqui no chat.</p>}
+      <button type="button" onClick={openFashion}><Shirt size={15}/> {wardrobeItems.length ? 'Abrir meu guarda-roupa' : 'Adicionar ao guarda-roupa'}</button>
+    </div>}
     {object.source.some(source => source.url) && <footer>
       {object.source.filter(source => source.url).map(source => <a key={`${source.kind}-${source.ref_id}`} href={source.url!} target="_blank" rel="noreferrer"><ExternalLink size={12}/> fonte</a>)}
     </footer>}

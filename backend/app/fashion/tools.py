@@ -8,7 +8,7 @@ from typing import Any, Callable
 from pydantic import BaseModel, Field, ValidationError
 
 from app.domain.schemas import LookPlanCreate, OutfitCreate, WardrobeItemCreate, WardrobeItemFields, WearEventCreate
-from app.fashion.services import FashionService
+from app.fashion.services import FashionConflict, FashionService
 
 
 class ToolInput(BaseModel):
@@ -163,7 +163,9 @@ def _plan_outfit(service: FashionService, data: LookPlanCreate) -> ToolResult:
 def _mix_and_match(service: FashionService, data: MixAndMatchInput) -> ToolResult:
     """Create deterministic draft combinations anchored to one owned item."""
     anchor = service.item_view(service._item(data.anchor_item_id))
-    candidates, _ = service.list_items(limit=50)
+    if anchor.collection_status != "owned":
+        raise FashionConflict("Escolha uma peça marcada como possuída para montar conjuntos.")
+    candidates, _ = service.list_items(collection_status="owned", limit=50)
     candidates = [item for item in candidates if item.id != anchor.id]
     drafts = []
     for candidate in candidates[:data.limit]:
