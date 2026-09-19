@@ -117,6 +117,7 @@ export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
   const status = text(edits.collection_status ?? suggestion.collection_status, 'owned')
   const statusLabel = status === 'owned' ? 'Possuo' : status === 'inspiration' ? 'Inspiração' : 'Quero'
   const attachPhoto = () => window.dispatchEvent(new Event('fashion:attach'))
+  const send = (message: string) => window.dispatchEvent(new CustomEvent('fashion:send', { detail: message }))
   const compose = (message: string) => window.dispatchEvent(new CustomEvent('fashion:compose', { detail: message }))
 
   return <section className="chat-object" aria-label={title} data-object-version={object.schema_version}>
@@ -151,7 +152,7 @@ export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
         <div className="fashion-suggestion-actions">
           {actionState !== 'saved' && <button type="button" className="secondary" onClick={() => setEditing(open => !open)}>{editing ? 'Fechar edição' : 'Revisar campos'}</button>}
           <button type="button" disabled={actionState === 'saving' || actionState === 'saved'} onClick={() => void saveSuggestion()}>{actionState === 'saved' ? 'Peça salva' : actionState === 'saving' ? 'Salvando…' : 'Salvar peça'}</button>
-          {actionState === 'saved' && <button type="button" className="secondary" onClick={() => compose('Mostre meu guarda-roupa atualizado.')}>Ver guarda-roupa</button>}
+          {actionState === 'saved' && <button type="button" className="secondary" onClick={() => send('Mostre meu guarda-roupa atualizado.')}>Ver guarda-roupa</button>}
         </div>
         {actionState === 'error' && <small>Não foi possível salvar. Revise os campos e tente novamente.</small>}
         {text(suggestion.source_url) && <a href={text(suggestion.source_url)} target="_blank" rel="noreferrer"><ExternalLink size={12}/> Ver fonte</a>}
@@ -161,7 +162,7 @@ export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
       {wardrobeItems.length === 0 && <p className="fashion-chat-empty">Seu guarda-roupa está vazio. Envie uma foto ou cole o link de uma peça; eu preparo o cadastro para você revisar.</p>}
       <button type="button" onClick={attachPhoto}><Shirt size={15}/> Enviar foto</button>
       <button type="button" onClick={() => compose('Quero cadastrar esta peça do link: ')}><ExternalLink size={14}/> Colar link</button>
-      {wardrobeItems.length > 0 && <button type="button" onClick={() => compose('Mostre combinações com as peças que eu possuo.')}>Ver conjuntos</button>}
+      {wardrobeItems.length > 0 && <button type="button" onClick={() => send('Mostre combinações com as peças que eu possuo.')}>Ver conjuntos</button>}
     </div>}
     {object.source.some(source => source.url) && <footer>
       {object.source.filter(source => source.url).map(source => <a key={`${source.kind}-${source.ref_id}`} href={source.url!} target="_blank" rel="noreferrer"><ExternalLink size={12}/> fonte</a>)}

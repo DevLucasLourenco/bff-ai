@@ -79,19 +79,30 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  // Ações de cards já trazem um pedido completo. Elas entram na conversa sem
+  // ocupar nem apagar um rascunho que a pessoa esteja escrevendo no composer.
+  const sendComponentRequest = async (content: string) => {
+    if (!content.trim() || streaming || submitting || !conversation) return
+    setSubmitting(true)
+    try { await onSend(content, null) } finally { setSubmitting(false) }
+  }
+
   useEffect(() => {
     const attach = () => attachmentInput.current?.click()
     const compose = (event: Event) => {
       setDraft((event as CustomEvent<string>).detail)
       messageInput.current?.focus()
     }
+    const send = (event: Event) => { void sendComponentRequest((event as CustomEvent<string>).detail) }
     window.addEventListener('fashion:attach', attach)
     window.addEventListener('fashion:compose', compose)
+    window.addEventListener('fashion:send', send)
     return () => {
       window.removeEventListener('fashion:attach', attach)
       window.removeEventListener('fashion:compose', compose)
+      window.removeEventListener('fashion:send', send)
     }
-  }, [])
+  }, [conversation, onSend, streaming, submitting])
 
   const submit = async (event: FormEvent) => {
     event.preventDefault()
