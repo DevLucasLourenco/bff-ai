@@ -41,7 +41,6 @@ export type Settings = {
   active_persona_id: number; active_model_config_id: number;
   /** Regra que toda persona obedece, antes de qualquer traço de personalidade. */
   global_persona_rules: string;
-  fashion_enabled: boolean;
 }
 
 export type MemoryScope = 'global' | 'persona' | 'conversation'

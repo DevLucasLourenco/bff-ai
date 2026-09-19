@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from collections.abc import AsyncIterator
 
-from app.domain.models import AppSetting, Conversation, Message, MessageStatus, ModelConfig
+from app.domain.models import Conversation, Message, MessageStatus, ModelConfig
 from app.services.llm.base import ProviderCapabilities
 from app.services.llm.errors import ProviderAuthError
 
@@ -285,9 +285,8 @@ def test_fashion_tool_call_gera_objeto_sse_e_termina_a_resposta(client, monkeypa
         async def list_models(self, base_url, api_key):
             return []
 
-    # Habilitação exige tanto a configuração global quanto a confirmação do modelo.
+    # A habilitação pertence ao modelo da conversa.
     db.get(ModelConfig, 1).supports_tools = True
-    db.get(AppSetting, "fashion_enabled").value = "true"
     db.commit()
     adapter = ToolAdapter()
     monkeypatch.setattr("app.services.chat.create_adapter", lambda _kind: adapter)

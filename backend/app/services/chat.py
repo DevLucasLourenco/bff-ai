@@ -249,8 +249,9 @@ class ChatService:
             history=self._history_for(conversation.id),
             context_window=conversation.model_config.context_window,
         )
-        fashion_enabled = ajustes.get("fashion_enabled", "false").lower() == "true"
-        tools = fashion_tools.schemas() if fashion_enabled and conversation.model_config.supports_tools else None
+        # A configuração pertence ao modelo: trocar de modelo troca também a
+        # capacidade efetiva, sem uma segunda chave global para manter em sincronia.
+        tools = fashion_tools.schemas() if conversation.model_config.supports_tools else None
         if tools:
             # A schema da tool diz como chamar; esta regra diz quando ela é a
             # fonte de verdade. Assim o modelo não trata o guarda-roupa como

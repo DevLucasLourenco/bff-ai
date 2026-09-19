@@ -224,11 +224,7 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
           <div className="memory-list">{memories.map(memory => <article className={`memory-card ${memory.is_active ? '' : 'disabled'}`} key={memory.id}><div><span>{memory.category}</span><span className={`scope-tag ${memory.scope}`}>{memory.scope === 'global' ? 'todas as conversas' : memory.scope === 'persona' ? 'uma persona' : 'uma conversa'}</span><p>{memory.content}</p></div><div className="memory-actions"><button className="secondary" onClick={() => run(async () => { await api.updateMemory(memory.id, { is_active: !memory.is_active }); await onChanged() })}>{memory.is_active ? 'Pausar' : 'Ativar'}</button><button className="icon-button" aria-label="Excluir memória" onClick={() => run(async () => { await api.deleteMemory(memory.id); await onChanged() })}><Trash2 size={16}/></button></div></article>)}</div>
         </div>}
 
-        {tab === 'fashion' && <>
-          <div className="setting-note">A assistente só recebe acesso ao guarda-roupa quando este módulo e o modelo ativo estiverem habilitados.</div>
-          <label className="context-window"><input type="checkbox" checked={settings.fashion_enabled} onChange={e => saveSetting({ fashion_enabled: e.target.checked })}/> Habilitar ferramentas Fashion no chat</label>
-          <FashionPanel/>
-        </>}
+        {tab === 'fashion' && <FashionPanel/>}
       </div>
       {busy && <div className="saving">salvando…</div>}
     </section>

@@ -447,7 +447,6 @@ class SettingsRead(BaseModel):
     active_model_config_id: int
     # Regra que toda persona obedece, antes de qualquer traço de personalidade.
     global_persona_rules: str
-    fashion_enabled: bool
 
 
 class SettingsUpdate(BaseModel):
@@ -457,7 +456,6 @@ class SettingsUpdate(BaseModel):
     active_persona_id: int | None = None
     active_model_config_id: int | None = None
     global_persona_rules: str | None = None
-    fashion_enabled: bool | None = None
 
 
 MessageRead.model_rebuild()
