@@ -18,6 +18,7 @@ from app.domain.models import (
     WearEvent,
 )
 from app.domain.schemas import (
+    ExternalImageImport,
     LookPlanCreate,
     LookPlanRead,
     OutfitCreate,
@@ -106,6 +107,10 @@ class FashionService:
             tags=item.tags or [],
             image_asset_id=item.image_asset_id,
             source=item.source,
+            collection_status=item.collection_status,
+            external_url=item.external_url,
+            external_domain=item.external_domain,
+            external_captured_at=item.external_captured_at,
             attribute_confidence=item.attribute_confidence or {},
             revision=item.revision,
             is_archived=item.is_archived,
@@ -124,6 +129,7 @@ class FashionService:
         style: str | None = None,
         season: str | None = None,
         occasion: str | None = None,
+        collection_status: str | None = None,
         query: str | None = None,
         offset: int = 0,
         limit: int = 50,
@@ -138,6 +144,8 @@ class FashionService:
             rows = rows.filter(WardrobeItem.color == color)
         if style:
             rows = rows.filter(WardrobeItem.style == style)
+        if collection_status:
+            rows = rows.filter(WardrobeItem.collection_status == collection_status)
         candidates = rows.order_by(WardrobeItem.updated_at.desc(), WardrobeItem.id.desc()).all()
         normalized_query = (query or "").strip().casefold()
 
@@ -178,6 +186,45 @@ class FashionService:
                 arguments={"name": payload.name, "category": payload.category},
                 result_refs=[{"kind": "wardrobe", "id": item.id}],
                 idempotency_key=payload.idempotency_key,
+            ))
+        self.db.commit()
+        self.db.refresh(item)
+        return self.item_view(item)
+
+    def imported_external_item(self, idempotency_key: str | None) -> WardrobeItemRead | None:
+        if not idempotency_key:
+            return None
+        prior = self.db.query(ToolRun).filter_by(idempotency_key=idempotency_key).one_or_none()
+        if prior and prior.tool_name == "import_external_image" and prior.result_refs:
+            return self.item_view(self._item(int(prior.result_refs[0]["id"])))
+        return None
+
+    def external_item_for_url(self, canonical_url: str) -> WardrobeItemRead | None:
+        item = self.db.query(WardrobeItem).filter_by(
+            owner_id=self.owner_id, source="external", external_url=canonical_url,
+        ).one_or_none()
+        return self.item_view(item) if item else None
+
+    def create_external_image_item(
+        self, payload: ExternalImageImport, *, image_asset_id: int, canonical_url: str, domain: str, captured_at: datetime,
+    ) -> WardrobeItemRead:
+        prior = self.imported_external_item(payload.idempotency_key)
+        if prior:
+            return prior
+        self._asset(image_asset_id)
+        item = WardrobeItem(
+            owner_id=self.owner_id, name=payload.name, category=payload.category, color=payload.color,
+            style=payload.style, brand=payload.brand, tags=[tag.strip() for tag in payload.tags if tag.strip()],
+            image_asset_id=image_asset_id, source="external", collection_status=payload.collection_status,
+            external_url=canonical_url, external_domain=domain, external_captured_at=captured_at,
+        )
+        self.db.add(item)
+        self.db.flush()
+        if payload.idempotency_key:
+            self.db.add(ToolRun(
+                owner_id=self.owner_id, tool_name="import_external_image",
+                arguments={"url": canonical_url, "name": payload.name},
+                result_refs=[{"kind": "wardrobe", "id": item.id}], idempotency_key=payload.idempotency_key,
             ))
         self.db.commit()
         self.db.refresh(item)
@@ -261,7 +308,9 @@ class FashionService:
         self.db.flush()
         for position, entry in enumerate(payload.items):
             if entry.wardrobe_item_id:
-                self._item(entry.wardrobe_item_id)
+                item = self._item(entry.wardrobe_item_id)
+                if item.collection_status != "owned":
+                    raise FashionConflict("Só peças marcadas como possuídas entram em um look salvo.")
             if entry.wardrobe_item_id is None and entry.external_snapshot is None:
                 raise FashionConflict("Cada slot precisa de uma peça ou de uma lacuna externa")
             self.db.add(OutfitItem(

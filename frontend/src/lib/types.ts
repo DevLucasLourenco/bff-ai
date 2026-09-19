@@ -78,6 +78,8 @@ export type WardrobeItem = {
   material: string | null; brand: string | null; size: string | null; style: string | null;
   seasons: string[]; occasions: string[]; formality: number | null; tags: string[];
   image_asset_id: number | null; image: FashionAsset | null; source: string;
+  collection_status: 'owned' | 'wanted' | 'inspiration' | 'retired';
+  external_url: string | null; external_domain: string | null; external_captured_at: string | null;
   attribute_confidence: Record<string, unknown>; revision: number; is_archived: boolean;
   wear_count: number; last_worn_at: string | null; created_at: string; updated_at: string;
 }

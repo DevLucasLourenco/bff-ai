@@ -99,6 +99,7 @@ export const api = {
   wardrobe: (query = '') => json<WardrobePage>(`/api/fashion/wardrobe${query ? `?${query}` : ''}`),
   wardrobeItem: (id: number) => json<WardrobeItem>(`/api/fashion/wardrobe/${id}`),
   createWardrobeItem: (payload: Record<string, unknown>) => json<WardrobeItem>('/api/fashion/wardrobe', { method: 'POST', body: JSON.stringify(payload) }),
+  importExternalImage: (payload: Record<string, unknown>) => json<WardrobeItem>('/api/fashion/external-images', { method: 'POST', body: JSON.stringify(payload) }),
   updateWardrobeItem: (id: number, payload: Record<string, unknown>) => json<WardrobeItem>(`/api/fashion/wardrobe/${id}`, { method: 'PATCH', body: JSON.stringify(payload) }),
   archiveWardrobeItem: (id: number, revision: number) => json<WardrobeItem>(`/api/fashion/wardrobe/${id}?expected_revision=${revision}`, { method: 'DELETE' }),
   uploadFashionAsset: (file: File) => {

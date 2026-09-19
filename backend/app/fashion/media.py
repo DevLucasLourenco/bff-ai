@@ -51,7 +51,7 @@ def store_image(db: Session, owner_id: int, content: bytes, claimed_content_type
             source.verify()
         with Image.open(io.BytesIO(content)) as source:
             image = ImageOps.exif_transpose(source).convert("RGB")
-    except (UnidentifiedImageError, OSError, ValueError) as exc:
+    except (UnidentifiedImageError, OSError, ValueError, SyntaxError) as exc:
         raise InvalidFashionImage("O arquivo não contém uma imagem válida.") from exc
     if image.width <= 0 or image.height <= 0 or image.width * image.height > MAX_PIXELS:
         raise InvalidFashionImage("A imagem excede as dimensões permitidas.")

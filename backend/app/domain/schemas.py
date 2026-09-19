@@ -214,6 +214,7 @@ class WardrobeItemFields(BaseModel):
     formality: int | None = Field(default=None, ge=1, le=5)
     tags: list[str] = Field(default_factory=list, max_length=30)
     image_asset_id: int | None = Field(default=None, gt=0)
+    collection_status: Literal["owned", "wanted", "inspiration", "retired"] = "owned"
 
 
 class WardrobeItemCreate(WardrobeItemFields):
@@ -235,11 +236,15 @@ class WardrobeItemUpdate(BaseModel):
     formality: int | None = Field(default=None, ge=1, le=5)
     tags: list[str] | None = Field(default=None, max_length=30)
     image_asset_id: int | None = Field(default=None, gt=0)
+    collection_status: Literal["owned", "wanted", "inspiration", "retired"] | None = None
 
 
 class WardrobeItemRead(WardrobeItemFields, OrmModel):
     id: int
     source: str
+    external_url: str | None = None
+    external_domain: str | None = None
+    external_captured_at: datetime | None = None
     attribute_confidence: dict[str, Any]
     revision: int
     is_archived: bool
@@ -254,6 +259,18 @@ class WardrobePage(BaseModel):
     items: list[WardrobeItemRead]
     total: int
     next_cursor: str | None = None
+
+
+class ExternalImageImport(BaseModel):
+    image_url: str = Field(min_length=8, max_length=2048)
+    name: str = Field(min_length=1, max_length=180)
+    category: str = Field(min_length=1, max_length=60)
+    color: str | None = Field(default=None, max_length=80)
+    style: str | None = Field(default=None, max_length=100)
+    brand: str | None = Field(default=None, max_length=120)
+    collection_status: Literal["owned", "wanted", "inspiration"] = "wanted"
+    tags: list[str] = Field(default_factory=list, max_length=30)
+    idempotency_key: str | None = Field(default=None, min_length=1, max_length=120)
 
 
 class StyleProfileUpdate(BaseModel):

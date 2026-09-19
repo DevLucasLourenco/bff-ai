@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Body, File, HTTPException, Query, UploadFile
 from fastapi.responses import FileResponse
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.deps import CurrentOwner, Db
@@ -12,6 +13,7 @@ from app.domain.schemas import (
     ChatActionRequest,
     ChatUiObjectRead,
     FashionAssetRead,
+    ExternalImageImport,
     LookPlanCreate,
     LookPlanRead,
     OutfitCreate,
@@ -26,6 +28,7 @@ from app.domain.schemas import (
     WearEventCreate,
     WearEventRead,
 )
+from app.fashion.external_collection import ExternalImageError, fetch_remote_image
 from app.fashion.media import InvalidFashionImage, MAX_UPLOAD_BYTES, _safe_path, remove_asset, resolve_asset, store_image
 from app.fashion.services import FashionConflict, FashionNotFound, FashionService
 from app.fashion.tools import ToolUnavailable, fashion_tools
@@ -45,6 +48,8 @@ def http_error(error: Exception) -> HTTPException:
     if isinstance(error, FashionConflict):
         return HTTPException(409, str(error))
     if isinstance(error, InvalidFashionImage):
+        return HTTPException(422, str(error))
+    if isinstance(error, ExternalImageError):
         return HTTPException(422, str(error))
     raise error
 
@@ -96,12 +101,13 @@ def list_wardrobe(
     style: str | None = None,
     season: str | None = None,
     occasion: str | None = None,
+    collection_status: str | None = Query(default=None, pattern="^(owned|wanted|inspiration|retired)$"),
     query: str | None = None,
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=30, ge=1, le=50),
 ):
     items, total = service(db, owner_id).list_items(
-        category=category, color=color, style=style, season=season, occasion=occasion,
+        category=category, color=color, style=style, season=season, occasion=occasion, collection_status=collection_status,
         query=query, offset=offset, limit=limit,
     )
     next_cursor = str(offset + limit) if offset + limit < total else None
@@ -113,6 +119,38 @@ def create_wardrobe_item(payload: WardrobeItemCreate, db: Db, owner_id: CurrentO
     try:
         return service(db, owner_id).create_item(payload)
     except Exception as exc:
+        raise http_error(exc) from exc
+
+
+@router.post("/external-images", response_model=WardrobeItemRead, status_code=201)
+def import_external_image(payload: ExternalImageImport, db: Db, owner_id: CurrentOwner):
+    fashion = service(db, owner_id)
+    asset: FashionAsset | None = None
+    try:
+        prior = fashion.imported_external_item(payload.idempotency_key)
+        if prior:
+            return prior
+        remote = fetch_remote_image(payload.image_url)
+        same_source = fashion.external_item_for_url(remote.canonical_url)
+        if same_source:
+            return same_source
+        asset = store_image(db, owner_id, remote.content, remote.content_type)
+        return fashion.create_external_image_item(
+            payload, image_asset_id=asset.id, canonical_url=remote.canonical_url, domain=remote.domain,
+            captured_at=datetime.now(timezone.utc),
+        )
+    except Exception as exc:
+        if isinstance(exc, IntegrityError):
+            db.rollback()
+        if asset:
+            try:
+                remove_asset(db, owner_id, asset.id)
+            except Exception:
+                pass
+        if isinstance(exc, IntegrityError):
+            same_source = fashion.external_item_for_url(remote.canonical_url) if "remote" in locals() else None
+            if same_source:
+                return same_source
         raise http_error(exc) from exc
 
 

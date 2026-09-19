@@ -150,6 +150,8 @@ P = pequeno, M = médio, G = grande. São portes relativos, não estimativas de 
 
 **Objetivo.** Permitir que imagens, produtos e referências salvas da internet façam parte da coleção Fashion, preservando sua origem e distinguindo itens possuídos, desejados e inspirações.
 
+**Estado atual.** A fase de URL direta de imagem está entregue: captura limitada e validada, cópia WebP local, proveniência, deduplicação por URL, estados de coleção e formulário no painel Fashion. Importação de página, busca, extensão e tools de sugestão externa permanecem nas fases posteriores.
+
 **Como.** Entregar em fases, sempre com revisão e gesto explícito da usuária:
 
 1. Criar migration para a proveniência externa: estado de coleção, URL original e canônica, domínio, método de entrada, asset interno, observações de produto datadas e vínculo opcional entre item do guarda-roupa e produto externo. Indexar por dono e URL canônica; usar hash da imagem como sinal adicional de duplicidade.

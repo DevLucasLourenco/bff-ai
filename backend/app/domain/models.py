@@ -231,6 +231,9 @@ class WardrobeItem(Base):
     __table_args__ = (
         Index("ix_wardrobe_items_owner_category", "owner_id", "category"),
         Index("ix_wardrobe_items_owner_archived", "owner_id", "is_archived"),
+        Index("ix_wardrobe_items_owner_collection_status", "owner_id", "collection_status"),
+        Index("ix_wardrobe_items_owner_external_url", "owner_id", "external_url"),
+        UniqueConstraint("owner_id", "external_url", name="uq_wardrobe_items_owner_external_url"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -249,6 +252,10 @@ class WardrobeItem(Base):
     tags: Mapped[list[str]] = mapped_column(JSON, default=list)
     image_asset_id: Mapped[Optional[int]] = mapped_column(ForeignKey("fashion_assets.id", ondelete="SET NULL"), nullable=True)
     source: Mapped[str] = mapped_column(String(20), default="manual", server_default="manual")
+    collection_status: Mapped[str] = mapped_column(String(20), default="owned", server_default="owned")
+    external_url: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
+    external_domain: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    external_captured_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     attribute_confidence: Mapped[dict] = mapped_column(JSON, default=dict)
     revision: Mapped[int] = mapped_column(Integer, default=1, server_default="1")
     is_archived: Mapped[bool] = mapped_column(Boolean, default=False, index=True)

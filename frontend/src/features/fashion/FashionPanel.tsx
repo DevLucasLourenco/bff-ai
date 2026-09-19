@@ -1,4 +1,4 @@
-import { Archive, ImagePlus, Plus, RefreshCw, Shirt } from 'lucide-react'
+import { Archive, ImagePlus, Link, Plus, RefreshCw, Shirt } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
 import { api } from '../../lib/api'
 import type { StyleProfile, WardrobeItem, WardrobePage } from '../../lib/types'
@@ -52,6 +52,25 @@ export function FashionPanel() {
     } finally { setBusy(false) }
   }
 
+  const importImage = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    setBusy(true); setError('')
+    try {
+      await api.importExternalImage({
+        image_url: String(data.get('image_url') || ''), name: String(data.get('name') || ''),
+        category: String(data.get('category') || ''), color: String(data.get('color') || '') || null,
+        brand: String(data.get('brand') || '') || null, style: String(data.get('style') || '') || null,
+        collection_status: String(data.get('collection_status') || 'wanted'),
+        tags: splitValues(String(data.get('tags') || '')),
+      })
+      event.currentTarget.reset()
+      await load()
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : String(cause))
+    } finally { setBusy(false) }
+  }
+
   const archive = async (item: WardrobeItem) => {
     setBusy(true); setError('')
     try {
@@ -84,6 +103,22 @@ export function FashionPanel() {
       <button className="primary-small" disabled={busy}><ImagePlus size={15}/> Salvar peça</button>
     </form>
 
+    <form className="fashion-add" onSubmit={importImage}>
+      <strong><Link size={15}/> Salvar imagem da internet</strong>
+      <p className="fashion-help">A imagem é baixada, validada e salva localmente. A fonte fica vinculada à peça.</p>
+      <div className="fashion-fields">
+        <label>URL da imagem<input required name="image_url" type="url" placeholder="https://site.com/peca.jpg"/></label>
+        <label>Nome<input required name="name" placeholder="Blazer bege"/></label>
+        <label>Categoria<input required name="category" placeholder="casaco, calça, calçado…"/></label>
+        <label>Estado<select name="collection_status" defaultValue="wanted"><option value="wanted">Quero</option><option value="owned">Possuo</option><option value="inspiration">Inspiração</option></select></label>
+        <label>Marca<input name="brand" placeholder="opcional"/></label>
+        <label>Cor<input name="color" placeholder="opcional"/></label>
+        <label>Estilo<input name="style" placeholder="opcional"/></label>
+        <label>Tags<input name="tags" placeholder="denim, oversized"/></label>
+      </div>
+      <button className="primary-small" disabled={busy}><ImagePlus size={15}/> Salvar na coleção</button>
+    </form>
+
     <div className="fashion-toolbar">
       <label>Buscar<input value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); void load(query) } }} placeholder="nome, cor, marca ou tag"/></label>
       <span>{page?.total ?? 0} peças</span>
@@ -92,7 +127,7 @@ export function FashionPanel() {
     <div className="wardrobe-grid">
       {page?.items.map(item => <button className={`wardrobe-card ${selected?.id === item.id ? 'active' : ''}`} key={item.id} onClick={() => setSelected(item)}>
         {item.image ? <img src={item.image.url} alt=""/> : <span className="wardrobe-placeholder"><Shirt size={26}/></span>}
-        <strong>{item.name}</strong><small>{[item.color, item.category].filter(Boolean).join(' · ')}</small>
+        <strong>{item.name}</strong><small>{[item.collection_status === 'owned' ? 'Possuo' : item.collection_status === 'wanted' ? 'Quero' : 'Inspiração', item.color, item.category].filter(Boolean).join(' · ')}</small>
       </button>)}
       {page && page.items.length === 0 && <div className="fashion-empty">Nenhuma peça encontrada.</div>}
     </div>
@@ -100,6 +135,7 @@ export function FashionPanel() {
     {selected && <article className="wardrobe-detail">
       <div>{selected.image ? <img src={selected.image.url} alt=""/> : <Shirt size={30}/>}<div><h4>{selected.name}</h4><p>{selected.category}{selected.style ? ` · ${selected.style}` : ''}</p></div></div>
       <p>{selected.tags.length ? selected.tags.join(' · ') : 'Sem tags'} · usada {selected.wear_count} vez(es)</p>
+      {selected.external_url && <a href={selected.external_url} target="_blank" rel="noreferrer">Abrir fonte{selected.external_domain ? ` · ${selected.external_domain}` : ''}</a>}
       <button className="secondary" disabled={busy} onClick={() => void archive(selected)}><Archive size={15}/> Arquivar</button>
     </article>}
 
