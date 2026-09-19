@@ -266,6 +266,8 @@ class ChatService:
                     "para cadastrá-la pela descrição. "
                     "Quando a usuária estiver conversando sobre uma peça nova, use propose_wardrobe_item para exibir "
                     "uma sugestão interativa; não use add_wardrobe_item até ela confirmar a ação. "
+                    "Ao propor uma peça a partir de uma imagem anexada, use o asset_id informado no texto como image_asset_id "
+                    "para manter a foto na sugestão e no cadastro. "
                     "Só crie, registre uso ou salve um look quando a usuária pedir explicitamente. "
                     "Nunca apresente uma peça não consultada como se pertencesse ao guarda-roupa dela."
                 ),
