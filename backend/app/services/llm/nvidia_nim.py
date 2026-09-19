@@ -10,6 +10,7 @@ class NvidiaNimAdapter(OpenAICompatibleAdapter):
         honors_max_tokens=False,
         default_reasoning_effort="none",
         supports_usage_in_stream=True,
+        supports_tool_calls=True,
     )
 
     def __init__(self) -> None:

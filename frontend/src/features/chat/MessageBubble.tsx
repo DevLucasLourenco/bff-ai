@@ -2,6 +2,7 @@ import { AlertTriangle, CircleSlash, RefreshCw } from 'lucide-react'
 import { memo } from 'react'
 import type { Message } from '../../lib/types'
 import { Markdown } from './Markdown'
+import { ChatObjectRenderer } from './ChatObjectRenderer'
 
 /**
  * Uma mensagem já persistida. `memo` porque o pai rerenderiza a cada resposta
@@ -19,6 +20,7 @@ export const MessageBubble = memo(function MessageBubble({ message, onRegenerate
       {message.role === 'assistant' ? <Markdown text={message.content}/> : message.content}
       {!message.content && interrupted && <span className="muted">(nada foi gerado)</span>}
     </article>
+    {message.ui_objects?.map(object => <ChatObjectRenderer key={object.id} object={object}/>)}
 
     {interrupted && <div className="message-notice">
       {cancelled

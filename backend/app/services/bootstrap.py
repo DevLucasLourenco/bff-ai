@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.domain.models import ModelConfig, Persona, ProviderConfig
+from app.domain.models import ModelConfig, Persona, ProviderConfig, User
 from app.repositories.settings import SettingsRepository
 
 
@@ -17,6 +17,11 @@ BESTIE = {
 
 
 def bootstrap(db: Session) -> None:
+    # O app ainda é local. A dona inicial torna os dados Fashion preparados para
+    # isolamento futuro, sem expor seleção de usuário por API antes de existir auth.
+    if db.get(User, 1) is None:
+        db.add(User(id=1, display_name="Você"))
+
     if db.query(Persona).count() == 0:
         db.add(
             Persona(
@@ -55,6 +60,7 @@ def bootstrap(db: Session) -> None:
                 temperature_milli=750,
                 max_tokens=2048,
                 top_p_milli=950,
+                supports_tools=False,
             )
         )
 

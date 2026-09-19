@@ -13,13 +13,14 @@ Regras deste arquivo:
 from __future__ import annotations
 
 import os
-import tempfile
 from pathlib import Path
 
 from cryptography.fernet import Fernet
 
-_TMP_DIR = Path(tempfile.mkdtemp(prefix="bff-ai-tests-"))
-_TMP_DB = _TMP_DIR / "test.db"
+# Arquivo temporário explícito dentro da própria suíte: alguns ambientes
+# sandboxed criam subdiretórios temporários com ACLs que o SQLite não reabre.
+_TMP_DB = Path(__file__).with_name(".test.db")
+_TMP_DB.unlink(missing_ok=True)
 
 # Precede qualquer import de app.*  — load_dotenv() não sobrescreve o que já está
 # no ambiente, então a chave real do .env nunca entra nos testes.
@@ -35,18 +36,38 @@ from app.db.session import SessionLocal, engine  # noqa: E402
 from app.domain.models import (  # noqa: E402
     AppSetting,
     Conversation,
+    FashionAsset,
+    ExternalServiceConfig,
+    LookPlan,
     Memory,
     Message,
+    MessageUiObject,
     ModelConfig,
+    Outfit,
+    OutfitFeedback,
+    OutfitItem,
     Persona,
+    ProductObservation,
     ProviderConfig,
+    StyleProfile,
+    StyleSignal,
+    ToolRun,
+    TrendObservation,
+    User,
+    WardrobeItem,
+    WearEvent,
 )
 from app.main import app  # noqa: E402
 from app.services.bootstrap import bootstrap  # noqa: E402
 from tests.fakes import FakeAdapter  # noqa: E402
 
 # Ordem de deleção respeita as FKs (filhos primeiro).
-_TABLES_IN_FK_ORDER = (Message, Conversation, ModelConfig, ProviderConfig, Persona, Memory, AppSetting)
+_TABLES_IN_FK_ORDER = (
+    MessageUiObject, ToolRun, TrendObservation, ProductObservation, LookPlan, WearEvent,
+    OutfitItem, OutfitFeedback, Outfit, StyleSignal, StyleProfile, WardrobeItem, FashionAsset,
+    ExternalServiceConfig, Message, Conversation, ModelConfig, ProviderConfig, Persona,
+    Memory, AppSetting, User,
+)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -58,6 +79,7 @@ def _migrated_database():
     command.upgrade(alembic_config(), "head")
     yield
     engine.dispose()
+    _TMP_DB.unlink(missing_ok=True)
 
 
 @pytest.fixture(autouse=True)

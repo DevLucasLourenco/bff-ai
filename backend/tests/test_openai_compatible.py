@@ -137,6 +137,26 @@ async def test_stream_options_so_vai_quando_a_capacidade_permite():
 
 
 @pytest.mark.asyncio
+async def test_tool_calls_fragmentados_sao_reconstruidos_e_enviados_no_payload():
+    captured: dict = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured.update(json.loads(request.content))
+        frames = sse(
+            json.dumps({"choices": [{"delta": {"tool_calls": [{"index": 0, "id": "call_1", "function": {"name": "get_", "arguments": "{\"limit\":"}}]}}]}),
+            json.dumps({"choices": [{"delta": {"tool_calls": [{"index": 0, "function": {"name": "wardrobe", "arguments": "2}"}}]}}]}),
+            "[DONE]",
+        )
+        return httpx.Response(200, content=frames)
+
+    adapter = adapter_com(handler)
+    config = ChatRuntimeConfig(**{**CONFIG.__dict__, "tools": [{"type": "function", "function": {"name": "get_wardrobe"}}]})
+    assert await coletar(adapter, config) == []
+    assert captured["tools"] == config.tools
+    assert adapter.last_tool_calls == [{"id": "call_1", "type": "function", "function": {"name": "get_wardrobe", "arguments": "{\"limit\":2}"}}]
+
+
+@pytest.mark.asyncio
 async def test_404_de_conta_sem_acesso_tem_mensagem_propria():
     # A NVIDIA lista no catálogo modelos que a conta não pode invocar; dizer
     # "consulte os modelos disponíveis" seria enganoso, porque ele está na lista.

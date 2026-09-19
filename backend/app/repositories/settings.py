@@ -14,6 +14,7 @@ DEFAULT_SETTINGS = {
     "active_model_config_id": "1",
     # Regra que toda persona obedece, antes de qualquer traço de personalidade.
     "global_persona_rules": DEFAULT_GLOBAL_RULES,
+    "fashion_enabled": "false",
 }
 
 

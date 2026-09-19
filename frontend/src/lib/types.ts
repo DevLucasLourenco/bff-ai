@@ -17,6 +17,7 @@ export type ModelConfig = {
   temperature: number; max_tokens: number | null; top_p: number;
   /** 0 = janela desconhecida; sem orçamento o histórico não é truncado. */
   context_window: number;
+  supports_tools: boolean;
 }
 
 /** "complete" | "failed" | "cancelled" — resposta interrompida deixa de sumir. */
@@ -27,6 +28,7 @@ export type Message = {
   error_code?: string | null; error_message?: string | null;
   model_id?: string | null; provider_kind?: string | null;
   latency_ms?: number | null; prompt_tokens?: number | null; completion_tokens?: number | null; created_at?: string;
+  ui_objects?: ChatUiObject[];
 }
 export type Conversation = {
   id: number; title: string; persona_id: number; persona_name: string; persona_emoji: string; persona_greeting: string; model_config_id: number;
@@ -38,6 +40,7 @@ export type Settings = {
   active_persona_id: number; active_model_config_id: number;
   /** Regra que toda persona obedece, antes de qualquer traço de personalidade. */
   global_persona_rules: string;
+  fashion_enabled: boolean;
 }
 
 export type MemoryScope = 'global' | 'persona' | 'conversation'
@@ -55,4 +58,34 @@ export type ApiError = {
   code: string
   message: string
   providerDetail?: string | null
+}
+
+export type ChatUiObject = {
+  id: number
+  type: string
+  schema_version: number
+  data: Record<string, unknown>
+  source: Array<{ kind: string; ref_id: string; observed_at?: string | null; url?: string | null }>
+  created_at: string
+}
+
+export type FashionAsset = {
+  id: number; mime_type: string; width: number; height: number; byte_size: number; created_at: string; url: string
+}
+
+export type WardrobeItem = {
+  id: number; name: string; category: string; subcategory: string | null; color: string | null;
+  material: string | null; brand: string | null; size: string | null; style: string | null;
+  seasons: string[]; occasions: string[]; formality: number | null; tags: string[];
+  image_asset_id: number | null; image: FashionAsset | null; source: string;
+  attribute_confidence: Record<string, unknown>; revision: number; is_archived: boolean;
+  wear_count: number; last_worn_at: string | null; created_at: string; updated_at: string;
+}
+
+export type WardrobePage = { items: WardrobeItem[]; total: number; next_cursor: string | null }
+
+export type StyleProfile = {
+  id: number; explicit_preferences: Record<string, unknown>; inferred_preferences: Record<string, unknown>;
+  restrictions: Record<string, unknown>; default_budget: string | null; default_currency: string;
+  revision: number; updated_at: string;
 }

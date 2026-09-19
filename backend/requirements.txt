@@ -8,3 +8,5 @@ cryptography>=44
 python-dotenv>=1.0
 pytest>=8.3
 pytest-asyncio>=0.25
+pillow>=11
+python-multipart>=0.0.20

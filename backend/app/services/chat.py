@@ -21,8 +21,12 @@ from app.domain.models import (
     MessageRole,
     MessageStatus,
     ModelConfig,
+    ToolRun,
     utcnow,
 )
+from app.fashion.services import FashionNotFound, FashionService
+from app.fashion.tools import ToolUnavailable, ToolResult, fashion_tools
+from app.fashion.ui_objects import persist_objects
 from app.repositories.settings import SettingsRepository
 from app.services.context import ContextMessage, build_messages
 from app.services.persona import compose_system_prompt, traits_from_row
@@ -92,6 +96,7 @@ class PreparedTurn:
     """
 
     conversation_id: int
+    owner_id: int
     provider_kind: str
     config: ChatRuntimeConfig
     adapter: LLMAdapter
@@ -101,9 +106,10 @@ class PreparedTurn:
 
 
 class ChatService:
-    def __init__(self, db: Session, cipher: SecretCipher | None = None) -> None:
+    def __init__(self, db: Session, cipher: SecretCipher | None = None, owner_id: int = 1) -> None:
         self.db = db
         self.cipher = cipher or SecretCipher()
+        self.owner_id = owner_id
 
     # ------------------------------------------------------------------ leitura
 
@@ -114,7 +120,7 @@ class ChatService:
                 joinedload(Conversation.persona),
                 joinedload(Conversation.model_config).joinedload(ModelConfig.provider),
             )
-            .filter(Conversation.id == conversation_id)
+            .filter(Conversation.id == conversation_id, Conversation.owner_id == self.owner_id)
             .one_or_none()
         )
         if not conversation:
@@ -237,6 +243,8 @@ class ChatService:
             history=self._history_for(conversation.id),
             context_window=conversation.model_config.context_window,
         )
+        fashion_enabled = ajustes.get("fashion_enabled", "false").lower() == "true"
+        tools = fashion_tools.schemas() if fashion_enabled and conversation.model_config.supports_tools else None
         config = build_runtime_config(
             provider_kind=provider.kind,
             base_url=provider.base_url,
@@ -245,9 +253,11 @@ class ChatService:
             stored_max_tokens=conversation.model_config.max_tokens,
             temperature=conversation.model_config.temperature,
             top_p=conversation.model_config.top_p,
+            tools=tools,
         )
         return PreparedTurn(
             conversation_id=conversation.id,
+            owner_id=conversation.owner_id,
             provider_kind=provider.kind,
             config=config,
             adapter=create_adapter(provider.kind),
@@ -271,7 +281,8 @@ class ChatService:
         status: MessageStatus,
         error: LLMError | None = None,
         usage: dict[str, int | None] | None = None,
-    ) -> int | None:
+        tool_results: list[ToolResult] | None = None,
+    ) -> tuple[int | None, list[dict]]:
         """Grava a resposta do assistente numa sessão própria e curta.
 
         Sessão nova de propósito: a sessão da requisição morre junto com o
@@ -297,11 +308,67 @@ class ChatService:
                 completion_tokens=usage.get("completion_tokens"),
             )
             db.add(message)
+            db.flush()
+            objects = []
+            for result in tool_results or []:
+                objects.extend(item.model_dump(by_alias=True, mode="json") for item in persist_objects(db, message.id, result))
             conversation = db.get(Conversation, turn.conversation_id)
             if conversation:
                 conversation.updated_at = utcnow()
             db.commit()
-            return message.id
+            return message.id, objects
+
+    @staticmethod
+    def _tool_message(call: dict, result: ToolResult) -> dict:
+        return {"role": "tool", "tool_call_id": call["id"], "content": json.dumps(result.as_model_content(), ensure_ascii=False)}
+
+    def _execute_tool(self, turn: PreparedTurn, call: dict) -> ToolResult:
+        """Run only registered, server-validated tools and leave an audit row."""
+        name = str(call.get("function", {}).get("name", ""))
+        raw = call.get("function", {}).get("arguments", "{}")
+        try:
+            arguments = json.loads(raw or "{}")
+            if not isinstance(arguments, dict):
+                raise ValueError("arguments must be an object")
+        except (TypeError, ValueError, json.JSONDecodeError):
+            return ToolResult("error", {"code": "invalid_tool_arguments"}, [], [], [])
+        # Mutating commands use the provider call id as an idempotency key, so a
+        # repeated streamed call cannot duplicate a wardrobe item or outfit.
+        if name in {"add_wardrobe_item", "save_outfit", "record_wear"}:
+            arguments.setdefault("idempotency_key", f"chat:{turn.conversation_id}:{call['id']}")
+        started = time.perf_counter()
+        with SessionLocal() as db:
+            prior = db.query(ToolRun).filter_by(idempotency_key=f"toolcall:{turn.conversation_id}:{call['id']}").one_or_none()
+            if prior:
+                stored = next((entry for entry in prior.result_refs if entry.get("kind") == "tool_result"), None)
+                if stored:
+                    payload = stored.get("payload", {})
+                    return ToolResult(
+                        payload.get("status", "ok"), payload.get("data", {}), payload.get("facts", []),
+                        payload.get("source_refs", []), stored.get("ui_hints", []),
+                    )
+                # Legacy audit rows do not contain a complete result. Do not
+                # execute a mutation a second time merely to fill the gap.
+                return ToolResult("already_completed", {"source_refs": prior.result_refs}, [], prior.result_refs, [])
+            try:
+                result = fashion_tools.execute(name, arguments, FashionService(db, turn.owner_id))
+                status, error_code = result.status, None
+            except (ToolUnavailable, FashionNotFound) as exc:
+                result = ToolResult("error", {"code": "tool_rejected", "message": str(exc)}, [], [], [])
+                status, error_code = "rejected", "tool_rejected"
+            except Exception:
+                logger.exception("fashion tool failed conversation=%s tool=%s", turn.conversation_id, name)
+                result = ToolResult("error", {"code": "tool_failed"}, [], [], [])
+                status, error_code = "failed", "tool_failed"
+            db.add(ToolRun(
+                owner_id=turn.owner_id, conversation_id=turn.conversation_id, tool_name=name or "unknown",
+                status=status, arguments=arguments,
+                result_refs=[{"kind": "tool_result", "payload": result.as_model_content(), "ui_hints": result.ui_hints}],
+                idempotency_key=f"toolcall:{turn.conversation_id}:{call['id']}", error_code=error_code,
+                duration_ms=round((time.perf_counter() - started) * 1000),
+            ))
+            db.commit()
+        return result
 
     async def run(self, turn: PreparedTurn) -> AsyncIterator[str]:
         yield self._sse(
@@ -316,55 +383,85 @@ class ChatService:
         )
         started = time.perf_counter()
         chunks: list[str] = []
+        tool_results: list[ToolResult] = []
+        messages = list(turn.messages)
+        tool_rounds = 0
+        tool_calls_total = 0
 
         def elapsed() -> int:
             return round((time.perf_counter() - started) * 1000)
 
-        fluxo = _ComBatimento(turn.adapter.stream(turn.messages, turn.config), HEARTBEAT_SECONDS)
         try:
-            async for chunk in fluxo:
-                if chunk is _PING:
-                    # Comentário SSE: o cliente ignora, mas conta como sinal de vida.
-                    yield ": ping\n\n"
-                    continue
-                chunks.append(chunk)
-                yield self._sse("token", {"text": chunk})
+            while True:
+                fluxo = _ComBatimento(turn.adapter.stream(messages, turn.config), HEARTBEAT_SECONDS)
+                async for chunk in fluxo:
+                    if chunk is _PING:
+                        # Comentário SSE: o cliente ignora, mas conta como sinal de vida.
+                        yield ": ping\n\n"
+                        continue
+                    chunks.append(chunk)
+                    yield self._sse("token", {"text": chunk})
+                calls = list(getattr(turn.adapter, "last_tool_calls", []) or [])
+                if not calls:
+                    break
+                tool_rounds += 1
+                tool_calls_total += len(calls)
+                if tool_rounds > 4 or tool_calls_total > 8:
+                    raise ProviderResponseError("O modelo excedeu o limite de chamadas de ferramenta.")
+                messages.append({"role": "assistant", "content": None, "tool_calls": calls})
+                for call in calls:
+                    result = await run_in_threadpool(self._execute_tool, turn, call)
+                    tool_results.append(result)
+                    messages.append(self._tool_message(call, result))
         except (asyncio.CancelledError, GeneratorExit):
             fluxo.cancelar()
             # Cliente desistiu. A gravação aqui é síncrona de propósito: num
             # GeneratorExit não existe await possível, e perder o texto parcial
             # é exatamente o defeito que o F3.1 conserta.
-            self._persist(turn, chunks=chunks, latency_ms=elapsed(), status=MessageStatus.CANCELLED)
+            self._persist(turn, chunks=chunks, latency_ms=elapsed(), status=MessageStatus.CANCELLED, tool_results=tool_results)
             logger.info("chat cancelado conversation=%s chars=%s", turn.conversation_id, len("".join(chunks)))
             raise
         except LLMError as exc:
-            self._persist(turn, chunks=chunks, latency_ms=elapsed(), status=MessageStatus.FAILED, error=exc)
+            _, objects = self._persist(
+                turn, chunks=chunks, latency_ms=elapsed(), status=MessageStatus.FAILED,
+                error=exc, tool_results=tool_results,
+            )
             logger.error(
                 "chat falhou conversation=%s provider=%s code=%s detail=%s",
                 turn.conversation_id, turn.provider_kind, exc.code, exc.provider_detail,
             )
             # Sem segunda tentativa e sem outro provider: a regra 1 é terminal.
-            yield self._sse("error", {**exc.as_payload(), "partial_chars": len("".join(chunks))})
+            for item in objects:
+                yield self._sse("ui_object", item)
+            yield self._sse("error", {**exc.as_payload(), "partial_chars": len("".join(chunks)), "ui_object_ids": [item["id"] for item in objects]})
             return
         except Exception as exc:  # pragma: no cover - rede de segurança
             wrapped = ProviderResponseError("Falha inesperada ao falar com o provider.", provider_detail=str(exc))
-            self._persist(turn, chunks=chunks, latency_ms=elapsed(), status=MessageStatus.FAILED, error=wrapped)
+            _, objects = self._persist(
+                turn, chunks=chunks, latency_ms=elapsed(), status=MessageStatus.FAILED,
+                error=wrapped, tool_results=tool_results,
+            )
             logger.exception("chat falhou de forma inesperada conversation=%s", turn.conversation_id)
-            yield self._sse("error", {**wrapped.as_payload(), "partial_chars": len("".join(chunks))})
+            for item in objects:
+                yield self._sse("ui_object", item)
+            yield self._sse("error", {**wrapped.as_payload(), "partial_chars": len("".join(chunks)), "ui_object_ids": [item["id"] for item in objects]})
             return
 
         latency_ms = elapsed()
         usage = getattr(turn.adapter, "last_usage", None)
-        message_id = await run_in_threadpool(
+        message_id, objects = await run_in_threadpool(
             self._persist,
             turn,
             chunks=chunks,
             latency_ms=latency_ms,
             status=MessageStatus.COMPLETE,
             usage=usage,
+            tool_results=tool_results,
         )
         logger.info(
             "chat ok conversation=%s provider=%s model=%s latency_ms=%s usage=%s",
             turn.conversation_id, turn.provider_kind, turn.config.model_id, latency_ms, usage,
         )
-        yield self._sse("done", {"message_id": message_id, "latency_ms": latency_ms, "usage": usage})
+        for item in objects:
+            yield self._sse("ui_object", item)
+        yield self._sse("done", {"message_id": message_id, "latency_ms": latency_ms, "usage": usage, "ui_object_ids": [item["id"] for item in objects]})

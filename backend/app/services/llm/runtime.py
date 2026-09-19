@@ -8,6 +8,7 @@ provider — o que obrigava a editar chat e rota a cada provider novo.
 from __future__ import annotations
 
 from app.services.llm.base import ChatRuntimeConfig
+from typing import Any
 from app.services.llm.factory import capabilities_for
 
 def effective_max_tokens(provider_kind: str, stored_max_tokens: int | None) -> int | None:
@@ -30,6 +31,7 @@ def build_runtime_config(
     stored_max_tokens: int | None,
     temperature: float,
     top_p: float,
+    tools: list[dict[str, Any]] | None = None,
 ) -> ChatRuntimeConfig:
     capabilities = capabilities_for(provider_kind)
     return ChatRuntimeConfig(
@@ -41,4 +43,5 @@ def build_runtime_config(
         top_p=top_p,
         reasoning_effort=capabilities.default_reasoning_effort,
         include_usage=capabilities.supports_usage_in_stream,
+        tools=tools if capabilities.supports_tool_calls else None,
     )

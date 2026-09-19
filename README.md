@@ -15,6 +15,12 @@ SQLite é a fonte de verdade do produto:
 - conversas e mensagens;
 - metadados de execução (modelo, provider e latência).
 
+O Fashion Module acrescenta, na migration `0003`, um guarda-roupa pessoal local,
+fotos normalizadas, looks, uso, calendário, perfil de estilo, resultados externos
+datados e objetos visuais persistidos por mensagem. Ele começa com uma dona local
+fixa (`users.id = 1`); não exponha o backend para mais pessoas antes de adicionar
+autenticação e trocar esse resolvedor por uma sessão real.
+
 O `.env` tem **uma única responsabilidade**: guardar a chave-mestra usada para criptografar secrets do SQLite.
 
 ## Arquitetura
@@ -144,6 +150,19 @@ bff-ai/
       ├─ hooks/            useConfig, useConversations, useChatStream
       └─ lib/              api, sse, streamBuffer
 ```
+
+## Fashion Module
+
+Em **Configurações → Fashion**, é possível cadastrar peças manualmente, com foto
+opcional, buscar no guarda-roupa e arquivar itens. As rotas ficam sob
+`/api/fashion/`; o contrato e as próximas etapas estão em
+[docs/SPEC_FASHION_MODULE.md](docs/SPEC_FASHION_MODULE.md) e
+[docs/PLANO_FASHION_MODULE.md](docs/PLANO_FASHION_MODULE.md).
+
+As Fashion Tools têm schemas tipados e retornam apenas dados registrados no banco.
+Pesquisa de produtos, tendências e análise visual retornam `unavailable` enquanto
+nenhum serviço externo real estiver configurado. Assim o app não apresenta preços,
+estoque ou atributos de roupa como se tivessem sido verificados.
 
 ## Diagnóstico e saúde
 

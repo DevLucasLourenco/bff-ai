@@ -24,6 +24,7 @@ def view(model: ModelConfig) -> ModelRead:
         max_tokens=effective_max_tokens(model.provider.kind, model.max_tokens),
         top_p=model.top_p,
         context_window=model.context_window,
+        supports_tools=model.supports_tools,
     )
 
 
@@ -56,6 +57,7 @@ def create_model(payload: ModelCreate, db: Db):
     row.max_tokens = payload.max_tokens
     row.top_p_milli = round(payload.top_p * 1000)
     row.context_window = payload.context_window
+    row.supports_tools = payload.supports_tools
     row.is_archived = False
     if not existente:
         db.add(row)

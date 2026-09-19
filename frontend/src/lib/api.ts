@@ -1,5 +1,5 @@
 import { createSseParser } from './sse'
-import type { ApiError, Conversation, Memory, ModelConfig, Persona, Provider, Settings } from './types'
+import type { ApiError, ChatUiObject, Conversation, FashionAsset, Memory, ModelConfig, Persona, Provider, Settings, StyleProfile, WardrobeItem, WardrobePage } from './types'
 
 /** Erro tipado: carrega o `code` do backend para a UI decidir o que oferecer. */
 export class BffError extends Error {
@@ -66,6 +66,12 @@ async function json<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
   return response.json() as Promise<T>
 }
 
+async function upload<T>(input: RequestInfo, body: FormData): Promise<T> {
+  const response = await fetch(input, { method: 'POST', body })
+  if (!response.ok) throw await readError(response)
+  return response.json() as Promise<T>
+}
+
 export const api = {
   settings: () => json<Settings>('/api/settings'),
   updateSettings: (payload: Partial<Settings>) => json<Settings>('/api/settings', { method: 'PATCH', body: JSON.stringify(payload) }),
@@ -90,12 +96,24 @@ export const api = {
   createConversation: (payload: Record<string, unknown> = {}) => json<Conversation>('/api/conversations', { method: 'POST', body: JSON.stringify(payload) }),
   updateConversation: (id: number, payload: Record<string, unknown>) => json<Conversation>(`/api/conversations/${id}`, { method: 'PATCH', body: JSON.stringify(payload) }),
   archiveConversation: (id: number) => json<void>(`/api/conversations/${id}`, { method: 'DELETE' }),
+  wardrobe: (query = '') => json<WardrobePage>(`/api/fashion/wardrobe${query ? `?${query}` : ''}`),
+  wardrobeItem: (id: number) => json<WardrobeItem>(`/api/fashion/wardrobe/${id}`),
+  createWardrobeItem: (payload: Record<string, unknown>) => json<WardrobeItem>('/api/fashion/wardrobe', { method: 'POST', body: JSON.stringify(payload) }),
+  updateWardrobeItem: (id: number, payload: Record<string, unknown>) => json<WardrobeItem>(`/api/fashion/wardrobe/${id}`, { method: 'PATCH', body: JSON.stringify(payload) }),
+  archiveWardrobeItem: (id: number, revision: number) => json<WardrobeItem>(`/api/fashion/wardrobe/${id}?expected_revision=${revision}`, { method: 'DELETE' }),
+  uploadFashionAsset: (file: File) => {
+    const body = new FormData(); body.set('file', file)
+    return upload<FashionAsset>('/api/fashion/assets', body)
+  },
+  styleProfile: () => json<StyleProfile>('/api/fashion/style-profile'),
+  updateStyleProfile: (payload: Record<string, unknown>) => json<StyleProfile>('/api/fashion/style-profile', { method: 'PATCH', body: JSON.stringify(payload) }),
 }
 
 export type StreamHandlers = {
   onMeta?: (meta: { model: string; provider: string; context_trimmed: number }) => void
   onToken: (token: string) => void
   onDone: (done: { message_id: number; latency_ms: number }) => void
+  onUiObject?: (object: ChatUiObject) => void
   onError: (error: ApiError) => void
 }
 
@@ -128,6 +146,7 @@ async function consumeStream(response: Response, handlers: StreamHandlers) {
     if (event === 'meta') handlers.onMeta?.(data)
     else if (event === 'token') handlers.onToken(data.text)
     else if (event === 'done') handlers.onDone(data)
+    else if (event === 'ui_object') handlers.onUiObject?.(data)
     else if (event === 'error') {
       handlers.onError({ code: data.code ?? 'llm_error', message: data.message, providerDetail: data.provider_detail })
     }

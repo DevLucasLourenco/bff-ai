@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -51,6 +51,7 @@ class ModelCreate(BaseModel):
     top_p: float = Field(default=0.95, gt=0, le=1)
     # 0 = janela desconhecida: sem orçamento, o histórico não é truncado.
     context_window: int = Field(default=0, ge=0)
+    supports_tools: bool = False
 
 
 class ModelUpdate(BaseModel):
@@ -60,6 +61,7 @@ class ModelUpdate(BaseModel):
     max_tokens: int | None = Field(default=None, ge=1)
     top_p: float | None = Field(default=None, gt=0, le=1)
     context_window: int | None = Field(default=None, ge=0)
+    supports_tools: bool | None = None
 
 
 class ModelRead(BaseModel):
@@ -73,6 +75,7 @@ class ModelRead(BaseModel):
     max_tokens: int | None
     top_p: float
     context_window: int
+    supports_tools: bool
 
 
 class PersonaTraitFields(BaseModel):
@@ -143,6 +146,227 @@ class MessageRead(OrmModel):
     prompt_tokens: int | None
     completion_tokens: int | None
     created_at: datetime
+    # Objetos são persistidos fora do texto da mensagem para que o frontend não
+    # precise tentar extrair JSON do conteúdo produzido pelo modelo.
+    ui_objects: list["ChatUiObjectRead"] = []
+
+
+# Fashion Module -------------------------------------------------------------
+
+FashionObjectType = Literal[
+    "wardrobe_view", "wardrobe_item", "outfit_carousel", "outfit_detail",
+    "product_carousel", "trend_board", "look_calendar",
+]
+
+
+class SourceRef(BaseModel):
+    kind: Literal["wardrobe", "outfit", "product", "trend", "tool_run", "web"]
+    ref_id: str = Field(min_length=1, max_length=120)
+    observed_at: datetime | None = None
+    url: str | None = Field(default=None, max_length=2048)
+
+
+class ChatAction(BaseModel):
+    id: str = Field(min_length=1, max_length=80, pattern=r"^[a-z][a-z0-9_]*$")
+    label: str = Field(min_length=1, max_length=120)
+    target: dict[str, Any] = Field(default_factory=dict)
+
+
+class ChatUiPayload(BaseModel):
+    title: str = Field(min_length=1, max_length=180)
+    subtitle: str = Field(default="", max_length=300)
+    data: dict[str, Any] = Field(default_factory=dict)
+    actions: list[ChatAction] = Field(default_factory=list, max_length=12)
+    metadata: dict[str, str] = Field(default_factory=dict)
+
+
+class ChatUiObjectRead(OrmModel):
+    id: int
+    type: FashionObjectType = Field(validation_alias="object_type", serialization_alias="type")
+    schema_version: int
+    data: ChatUiPayload = Field(validation_alias="payload", serialization_alias="data")
+    source: list[SourceRef] = Field(validation_alias="source_refs", serialization_alias="source")
+    created_at: datetime
+
+
+class FashionAssetRead(OrmModel):
+    id: int
+    mime_type: str
+    width: int
+    height: int
+    byte_size: int
+    created_at: datetime
+    url: str
+
+
+class WardrobeItemFields(BaseModel):
+    name: str = Field(min_length=1, max_length=180)
+    category: str = Field(min_length=1, max_length=60)
+    subcategory: str | None = Field(default=None, max_length=80)
+    color: str | None = Field(default=None, max_length=80)
+    material: str | None = Field(default=None, max_length=100)
+    brand: str | None = Field(default=None, max_length=120)
+    size: str | None = Field(default=None, max_length=40)
+    style: str | None = Field(default=None, max_length=100)
+    seasons: list[str] = Field(default_factory=list, max_length=12)
+    occasions: list[str] = Field(default_factory=list, max_length=20)
+    formality: int | None = Field(default=None, ge=1, le=5)
+    tags: list[str] = Field(default_factory=list, max_length=30)
+    image_asset_id: int | None = Field(default=None, gt=0)
+
+
+class WardrobeItemCreate(WardrobeItemFields):
+    idempotency_key: str | None = Field(default=None, min_length=1, max_length=120)
+
+
+class WardrobeItemUpdate(BaseModel):
+    expected_revision: int = Field(ge=1)
+    name: str | None = Field(default=None, min_length=1, max_length=180)
+    category: str | None = Field(default=None, min_length=1, max_length=60)
+    subcategory: str | None = Field(default=None, max_length=80)
+    color: str | None = Field(default=None, max_length=80)
+    material: str | None = Field(default=None, max_length=100)
+    brand: str | None = Field(default=None, max_length=120)
+    size: str | None = Field(default=None, max_length=40)
+    style: str | None = Field(default=None, max_length=100)
+    seasons: list[str] | None = Field(default=None, max_length=12)
+    occasions: list[str] | None = Field(default=None, max_length=20)
+    formality: int | None = Field(default=None, ge=1, le=5)
+    tags: list[str] | None = Field(default=None, max_length=30)
+    image_asset_id: int | None = Field(default=None, gt=0)
+
+
+class WardrobeItemRead(WardrobeItemFields, OrmModel):
+    id: int
+    source: str
+    attribute_confidence: dict[str, Any]
+    revision: int
+    is_archived: bool
+    created_at: datetime
+    updated_at: datetime
+    image: FashionAssetRead | None = None
+    wear_count: int = 0
+    last_worn_at: datetime | None = None
+
+
+class WardrobePage(BaseModel):
+    items: list[WardrobeItemRead]
+    total: int
+    next_cursor: str | None = None
+
+
+class StyleProfileUpdate(BaseModel):
+    expected_revision: int | None = Field(default=None, ge=1)
+    explicit_preferences: dict[str, Any] | None = None
+    restrictions: dict[str, Any] | None = None
+    default_budget: str | None = Field(default=None, max_length=32)
+    default_currency: str | None = Field(default=None, min_length=3, max_length=3)
+
+
+class StyleSignalRead(OrmModel):
+    id: int
+    signal_type: str
+    entity_type: str
+    entity_id: int | None
+    attribute: str | None
+    value: str | None
+    weight: int
+    confidence: int
+    is_revoked: bool
+    created_at: datetime
+
+
+class StyleProfileRead(OrmModel):
+    id: int
+    explicit_preferences: dict[str, Any]
+    inferred_preferences: dict[str, Any]
+    restrictions: dict[str, Any]
+    default_budget: str | None
+    default_currency: str
+    revision: int
+    updated_at: datetime
+    signals: list[StyleSignalRead] = []
+
+
+class OutfitItemInput(BaseModel):
+    slot: str = Field(min_length=1, max_length=50)
+    wardrobe_item_id: int | None = Field(default=None, gt=0)
+    external_snapshot: dict[str, Any] | None = None
+
+
+class OutfitCreate(BaseModel):
+    title: str = Field(min_length=1, max_length=180)
+    style: str | None = Field(default=None, max_length=100)
+    occasion: str | None = Field(default=None, max_length=100)
+    explanation: str = Field(default="", max_length=5000)
+    items: list[OutfitItemInput] = Field(min_length=1, max_length=12)
+    idempotency_key: str | None = Field(default=None, min_length=1, max_length=120)
+
+
+class OutfitItemRead(OutfitItemInput, OrmModel):
+    id: int
+    position: int
+    wardrobe_item: WardrobeItemRead | None = None
+
+
+class OutfitRead(OrmModel):
+    id: int
+    title: str
+    style: str | None
+    occasion: str | None
+    explanation: str
+    source: str
+    revision: int
+    is_archived: bool
+    created_at: datetime
+    updated_at: datetime
+    items: list[OutfitItemRead]
+
+
+class OutfitFeedbackCreate(BaseModel):
+    liked: bool
+    reason: str | None = Field(default=None, max_length=500)
+
+
+class WearEventCreate(BaseModel):
+    item_ids: list[int] = Field(default_factory=list, max_length=12)
+    outfit_id: int | None = Field(default=None, gt=0)
+    worn_at: datetime | None = None
+    idempotency_key: str | None = Field(default=None, min_length=1, max_length=120)
+
+
+class WearEventRead(OrmModel):
+    id: int
+    outfit_id: int | None
+    item_ids: list[int]
+    worn_at: datetime
+
+
+class LookPlanCreate(BaseModel):
+    planned_for: datetime
+    timezone: str = Field(default="America/Sao_Paulo", min_length=1, max_length=64)
+    event_name: str = Field(default="", max_length=180)
+    occasion: str | None = Field(default=None, max_length=100)
+    outfit_id: int | None = Field(default=None, gt=0)
+
+
+class LookPlanRead(OrmModel):
+    id: int
+    outfit_id: int | None
+    planned_for: datetime
+    timezone: str
+    event_name: str
+    occasion: str | None
+    status: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class ChatActionRequest(BaseModel):
+    object_id: int = Field(gt=0)
+    action_id: str = Field(min_length=1, max_length=80, pattern=r"^[a-z][a-z0-9_]*$")
+    target: dict[str, Any] = Field(default_factory=dict)
+    idempotency_key: str = Field(min_length=1, max_length=160)
 
 
 class ConversationCreate(BaseModel):
@@ -221,6 +445,7 @@ class SettingsRead(BaseModel):
     active_model_config_id: int
     # Regra que toda persona obedece, antes de qualquer traço de personalidade.
     global_persona_rules: str
+    fashion_enabled: bool
 
 
 class SettingsUpdate(BaseModel):
@@ -230,3 +455,7 @@ class SettingsUpdate(BaseModel):
     active_persona_id: int | None = None
     active_model_config_id: int | None = None
     global_persona_rules: str | None = None
+    fashion_enabled: bool | None = None
+
+
+MessageRead.model_rebuild()

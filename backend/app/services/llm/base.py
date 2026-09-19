@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import AsyncIterator, Protocol
+from typing import Any, AsyncIterator, Protocol
 
 
 @dataclass(frozen=True)
@@ -27,6 +27,10 @@ class ProviderCapabilities:
     # a regra 1 ("sem fallback") proíbe tentar de novo sem o campo.
     supports_usage_in_stream: bool = False
 
+    # Tool calls are opt-in: providers that have not been verified keep the
+    # Fashion tools out of their payload altogether.
+    supports_tool_calls: bool = False
+
 
 @dataclass(frozen=True)
 class ChatRuntimeConfig:
@@ -38,6 +42,7 @@ class ChatRuntimeConfig:
     top_p: float
     reasoning_effort: str | None = None
     include_usage: bool = False
+    tools: list[dict[str, Any]] | None = None
 
 
 @dataclass(frozen=True)
@@ -49,6 +54,6 @@ class StreamUsage:
 class LLMAdapter(Protocol):
     capabilities: ProviderCapabilities
 
-    async def stream(self, messages: list[dict[str, str]], config: ChatRuntimeConfig) -> AsyncIterator[str]: ...
+    async def stream(self, messages: list[dict[str, Any]], config: ChatRuntimeConfig) -> AsyncIterator[str]: ...
 
     async def list_models(self, base_url: str, api_key: str | None) -> list[str]: ...

@@ -7,8 +7,10 @@ podem regredir em silêncio.
 from __future__ import annotations
 
 import json
+from collections.abc import AsyncIterator
 
-from app.domain.models import Conversation, Message, MessageStatus
+from app.domain.models import AppSetting, Conversation, Message, MessageStatus, ModelConfig
+from app.services.llm.base import ProviderCapabilities
 from app.services.llm.errors import ProviderAuthError
 
 
@@ -257,3 +259,42 @@ def test_provider_desativado_vira_409(client, fake_adapter, db):
     client.patch(f"/api/providers/{ollama['id']}", json={"is_enabled": False})
     conversation_id = new_conversation(client)
     assert send(client, conversation_id).status_code == 409
+
+
+def test_fashion_tool_call_gera_objeto_sse_e_termina_a_resposta(client, monkeypatch, db):
+    class ToolAdapter:
+        capabilities = ProviderCapabilities(supports_tool_calls=True)
+        last_usage = None
+
+        def __init__(self):
+            self.calls = 0
+            self.last_tool_calls = []
+
+        async def stream(self, messages, config) -> AsyncIterator[str]:
+            self.calls += 1
+            if self.calls == 1:
+                assert config.tools
+                self.last_tool_calls = [{"id": "call_wardrobe", "type": "function", "function": {"name": "get_wardrobe", "arguments": "{\"limit\": 2}"}}]
+                if False:
+                    yield ""
+                return
+            assert messages[-1]["role"] == "tool"
+            self.last_tool_calls = []
+            yield "Encontrei as peças cadastradas."
+
+        async def list_models(self, base_url, api_key):
+            return []
+
+    # Habilitação exige tanto a configuração global quanto a confirmação do modelo.
+    db.get(ModelConfig, 1).supports_tools = True
+    db.get(AppSetting, "fashion_enabled").value = "true"
+    db.commit()
+    adapter = ToolAdapter()
+    monkeypatch.setattr("app.services.chat.create_adapter", lambda _kind: adapter)
+    client.post("/api/fashion/wardrobe", json={"name": "Blazer", "category": "outerwear"})
+    conversation_id = new_conversation(client)
+
+    events = sse_events(send(client, conversation_id, "o que eu tenho?").text)
+    assert any(name == "ui_object" and payload["type"] == "wardrobe_view" for name, payload in events)
+    assert events[-1][0] == "done"
+    assert adapter.calls == 2

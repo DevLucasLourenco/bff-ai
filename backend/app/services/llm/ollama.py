@@ -11,6 +11,7 @@ class OllamaAdapter(OpenAICompatibleAdapter):
         honors_max_tokens=True,
         default_reasoning_effort=None,
         supports_usage_in_stream=False,
+        supports_tool_calls=True,
     )
 
     def __init__(self) -> None:

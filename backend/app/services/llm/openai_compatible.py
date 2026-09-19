@@ -31,6 +31,7 @@ class OpenAICompatibleAdapter:
         # Preenchido ao fim de um stream quando o provider devolve `usage`.
         # Seguro porque create_adapter() devolve uma instância por requisição.
         self.last_usage: dict[str, int] | None = None
+        self.last_tool_calls: list[dict[str, Any]] = []
 
     def _headers(self, api_key: str | None) -> dict[str, str]:
         headers = {"Content-Type": "application/json"}
@@ -42,7 +43,7 @@ class OpenAICompatibleAdapter:
     def _endpoint(base_url: str, path: str) -> str:
         return f"{base_url.rstrip('/')}/{path.lstrip('/')}"
 
-    def _build_payload(self, messages: list[dict[str, str]], config: ChatRuntimeConfig) -> dict:
+    def _build_payload(self, messages: list[dict[str, Any]], config: ChatRuntimeConfig) -> dict:
         payload: dict = {
             "model": config.model_id,
             "messages": messages,
@@ -56,6 +57,9 @@ class OpenAICompatibleAdapter:
             payload["reasoning_effort"] = config.reasoning_effort
         if config.include_usage:
             payload["stream_options"] = {"include_usage": True}
+        if config.tools:
+            payload["tools"] = config.tools
+            payload["tool_choice"] = "auto"
         return payload
 
     def _raise_for_status(self, status: int, body: str) -> None:
@@ -94,8 +98,10 @@ class OpenAICompatibleAdapter:
         # Isolado para os testes poderem injetar um transporte falso.
         return httpx.AsyncClient(timeout=timeout)
 
-    async def stream(self, messages: list[dict[str, str]], config: ChatRuntimeConfig) -> AsyncIterator[str]:
+    async def stream(self, messages: list[dict[str, Any]], config: ChatRuntimeConfig) -> AsyncIterator[str]:
         self.last_usage = None
+        self.last_tool_calls = []
+        tool_calls: dict[int, dict[str, Any]] = {}
         payload = self._build_payload(messages, config)
         timeout = httpx.Timeout(120.0, connect=15.0)
         # O protocolo sinaliza fim com `[DONE]` (ou um finish_reason). Sem essa
@@ -136,9 +142,23 @@ class OpenAICompatibleAdapter:
                         if choices and choices[0].get("finish_reason"):
                             saw_terminator = True
                         try:
-                            delta = choices[0].get("delta", {}).get("content") if choices else None
+                            choice = choices[0] if choices else {}
+                            delta_data = choice.get("delta", {})
+                            delta = delta_data.get("content")
                         except (IndexError, TypeError, AttributeError):
                             continue
+                        for fragment in delta_data.get("tool_calls", []) or []:
+                            if not isinstance(fragment, dict):
+                                continue
+                            index = int(fragment.get("index", 0))
+                            call = tool_calls.setdefault(index, {"id": "", "type": "function", "function": {"name": "", "arguments": ""}})
+                            if fragment.get("id"):
+                                call["id"] = fragment["id"]
+                            function = fragment.get("function") or {}
+                            if function.get("name"):
+                                call["function"]["name"] += function["name"]
+                            if function.get("arguments"):
+                                call["function"]["arguments"] += function["arguments"]
                         if delta:
                             yield delta
         except httpx.HTTPError as exc:
@@ -153,6 +173,7 @@ class OpenAICompatibleAdapter:
                 "O provider encerrou a conexão antes de terminar a resposta.",
                 provider_detail="stream sem [DONE] nem finish_reason",
             )
+        self.last_tool_calls = [call for _, call in sorted(tool_calls.items()) if call["id"] and call["function"]["name"]]
 
     async def list_models(self, base_url: str, api_key: str | None) -> list[str]:
         timeout = httpx.Timeout(20.0, connect=5.0)
