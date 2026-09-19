@@ -245,6 +245,20 @@ class ChatService:
         )
         fashion_enabled = ajustes.get("fashion_enabled", "false").lower() == "true"
         tools = fashion_tools.schemas() if fashion_enabled and conversation.model_config.supports_tools else None
+        if tools:
+            # A schema da tool diz como chamar; esta regra diz quando ela é a
+            # fonte de verdade. Assim o modelo não trata o guarda-roupa como
+            # conhecimento implícito nem inventa uma peça como sendo da usuária.
+            context.messages.insert(1, {
+                "role": "system",
+                "content": (
+                    "Você tem ferramentas Fashion para dados pessoais da usuária. "
+                    "Para recomendações, combinações, disponibilidade ou histórico de peças dela, "
+                    "consulte primeiro get_wardrobe ou get_wardrobe_item. "
+                    "Só crie, registre uso ou salve um look quando a usuária pedir explicitamente. "
+                    "Nunca apresente uma peça não consultada como se pertencesse ao guarda-roupa dela."
+                ),
+            })
         config = build_runtime_config(
             provider_kind=provider.kind,
             base_url=provider.base_url,
