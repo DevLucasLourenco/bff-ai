@@ -1,4 +1,4 @@
-import { CalendarDays, ChevronLeft, ChevronRight, ExternalLink, PackageSearch, Shirt, Sparkles, WandSparkles } from 'lucide-react'
+import { CalendarDays, Check, ChevronLeft, ChevronRight, ExternalLink, PackageSearch, Pencil, Shirt, Sparkles, Trash2, WandSparkles, X } from 'lucide-react'
 import { useRef, useState, type ReactNode } from 'react'
 import { api } from '../../lib/api'
 import type { ChatUiObject } from '../../lib/types'
@@ -44,6 +44,86 @@ function ItemVisual({ item }: { item: Record<string, unknown> }) {
     {image ? <img src={image} alt={name}/> : <span className="fashion-chat-placeholder"><Shirt size={28}/></span>}
     <strong>{name}</strong>
     {detail && <span>{detail}</span>}
+  </article>
+}
+
+function itemEditorValues(item: Record<string, unknown>): Record<string, string> {
+  return {
+    name: text(item.name), category: text(item.category), subcategory: text(item.subcategory), color: text(item.color),
+    material: text(item.material), brand: text(item.brand), size: text(item.size), style: text(item.style),
+    seasons: strings(item.seasons).join(', '), occasions: strings(item.occasions).join(', '),
+    tags: strings(item.tags).join(', '), formality: typeof item.formality === 'number' ? String(item.formality) : '',
+    collection_status: text(item.collection_status, 'owned'),
+  }
+}
+
+function WardrobeItemCard({ item }: { item: Record<string, unknown> }) {
+  const [current, setCurrent] = useState(item)
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState(() => itemEditorValues(item))
+  const [state, setState] = useState<'idle' | 'saving' | 'deleting' | 'error' | 'deleted'>('idle')
+  const id = typeof current.id === 'number' ? current.id : null
+  const revision = typeof current.revision === 'number' ? current.revision : null
+  const image = imageUrl(current)
+  const name = text(current.name, 'Peça')
+  const detail = [text(current.color), text(current.category), text(current.style)].filter(Boolean).join(' · ')
+  const setField = (field: string, value: string) => setDraft(values => ({ ...values, [field]: value }))
+  const startEditing = () => { setDraft(itemEditorValues(current)); setEditing(true); setState('idle') }
+  const save = async () => {
+    if (!id || !revision || !draft.name.trim() || !draft.category.trim()) { setState('error'); return }
+    setState('saving')
+    try {
+      const updated = await api.updateWardrobeItem(id, {
+        expected_revision: revision,
+        name: draft.name.trim(), category: draft.category.trim(),
+        subcategory: draft.subcategory.trim() || null, color: draft.color.trim() || null,
+        material: draft.material.trim() || null, brand: draft.brand.trim() || null, size: draft.size.trim() || null,
+        style: draft.style.trim() || null, seasons: draft.seasons.split(',').map(value => value.trim()).filter(Boolean),
+        occasions: draft.occasions.split(',').map(value => value.trim()).filter(Boolean),
+        tags: draft.tags.split(',').map(value => value.trim()).filter(Boolean),
+        formality: draft.formality ? Number(draft.formality) : null, collection_status: draft.collection_status,
+      })
+      setCurrent(updated as unknown as Record<string, unknown>)
+      setEditing(false)
+      setState('idle')
+    } catch { setState('error') }
+  }
+  const archive = async () => {
+    if (!id || !revision || !window.confirm(`Excluir “${text(current.name, 'esta peça')}” do guarda-roupa?`)) return
+    setState('deleting')
+    try {
+      await api.archiveWardrobeItem(id, revision)
+      setState('deleted')
+    } catch { setState('error') }
+  }
+
+  if (state === 'deleted') return <article className="fashion-chat-card fashion-item-deleted"><Shirt size={24}/><span>Peça excluída</span></article>
+
+  return <article className={`fashion-chat-card fashion-item-card ${editing ? 'editing' : ''}`}>
+    {image ? <img src={image} alt={name}/> : <span className="fashion-chat-placeholder"><Shirt size={28}/></span>}
+    <strong>{name}</strong>
+    {detail && <span>{detail}</span>}
+    {editing ? <div className="fashion-item-card-editor">
+      <label>Nome<input value={draft.name} onChange={event => setField('name', event.target.value)}/></label>
+      <label>Categoria<input value={draft.category} onChange={event => setField('category', event.target.value)}/></label>
+      <label>Subcategoria<input value={draft.subcategory} onChange={event => setField('subcategory', event.target.value)}/></label>
+      <label>Cor<input value={draft.color} onChange={event => setField('color', event.target.value)}/></label>
+      <label>Material<input value={draft.material} onChange={event => setField('material', event.target.value)}/></label>
+      <label>Marca<input value={draft.brand} onChange={event => setField('brand', event.target.value)}/></label>
+      <label>Tamanho<input value={draft.size} onChange={event => setField('size', event.target.value)}/></label>
+      <label>Estilo<input value={draft.style} onChange={event => setField('style', event.target.value)}/></label>
+      <label>Estações<input value={draft.seasons} onChange={event => setField('seasons', event.target.value)}/></label>
+      <label>Ocasiões<input value={draft.occasions} onChange={event => setField('occasions', event.target.value)}/></label>
+      <label>Tags<input value={draft.tags} onChange={event => setField('tags', event.target.value)}/></label>
+      <label>Formalidade<select value={draft.formality} onChange={event => setField('formality', event.target.value)}><option value="">Não informar</option>{[1, 2, 3, 4, 5].map(value => <option key={value} value={value}>{value}</option>)}</select></label>
+      <label>Estado<select value={draft.collection_status} onChange={event => setField('collection_status', event.target.value)}><option value="owned">Possuo</option><option value="wanted">Quero</option><option value="inspiration">Inspiração</option><option value="retired">Arquivei</option></select></label>
+    </div> : null}
+    <div className="fashion-item-card-actions">
+      {editing
+        ? <><button type="button" aria-label="Salvar alterações" title="Salvar" disabled={state === 'saving'} onClick={() => void save()}><Check size={14}/><span>{state === 'saving' ? 'Salvando…' : 'Salvar'}</span></button><button type="button" aria-label="Cancelar edição" title="Cancelar" disabled={state === 'saving'} onClick={() => { setEditing(false); setState('idle') }}><X size={14}/></button></>
+        : <><button type="button" aria-label={`Editar ${text(current.name, 'peça')}`} title="Editar" disabled={state === 'deleting'} onClick={startEditing}><Pencil size={14}/><span>Editar</span></button><button type="button" className="danger" aria-label={`Excluir ${text(current.name, 'peça')}`} title="Excluir" disabled={state === 'deleting'} onClick={() => void archive()}><Trash2 size={14}/><span>{state === 'deleting' ? 'Excluindo…' : 'Excluir'}</span></button></>}
+    </div>
+    {state === 'error' && <small className="fashion-item-card-error">Não foi possível concluir. Atualize o guarda-roupa e tente de novo.</small>}
   </article>
 }
 
@@ -122,7 +202,7 @@ export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
 
   return <section className="chat-object" aria-label={title} data-object-version={object.schema_version}>
     <header><Icon size={16}/><div><strong>{title}</strong>{subtitle && <span>{subtitle}</span>}</div></header>
-    {wardrobeItems.length > 0 && <VisualCarousel label={title}>{wardrobeItems.map((item, index) => <ItemVisual item={item} key={String(item.id ?? index)}/>)}</VisualCarousel>}
+    {wardrobeItems.length > 0 && <VisualCarousel label={title}>{wardrobeItems.map((item, index) => <WardrobeItemCard item={item} key={String(item.id ?? index)}/>)}</VisualCarousel>}
     {outfits.length > 0 && <VisualCarousel label={title}>{outfits.map((outfit, index) => <OutfitVisual outfit={outfit} key={String(outfit.id ?? index)}/>)}</VisualCarousel>}
     {object.type === 'wardrobe_suggestion' && Object.keys(suggestion).length > 0 && <div className="fashion-suggestion">
       <ItemVisual item={savedItem ?? { ...suggestion, ...edits }}/>
