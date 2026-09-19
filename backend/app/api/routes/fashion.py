@@ -216,6 +216,24 @@ def run_chat_action(payload: ChatActionRequest, db: Db, owner_id: CurrentOwner):
         raise HTTPException(404, "Objeto do chat não encontrado")
     refs = row.source_refs or []
 
+    if payload.action_id == "save_candidate":
+        if row.object_type != "wardrobe_suggestion":
+            raise HTTPException(422, "Ação inválida para este objeto")
+        actions = (row.payload or {}).get("actions", [])
+        action = next((entry for entry in actions if entry.get("id") == "save_candidate"), None)
+        if action is None or action.get("target") != payload.target:
+            raise HTTPException(422, "A sugestão não confere com o objeto do chat")
+        candidate = payload.target.get("candidate")
+        if not isinstance(candidate, dict):
+            raise HTTPException(422, "Sugestão inválida")
+        try:
+            item = service(db, owner_id).create_item(WardrobeItemCreate(
+                **candidate, idempotency_key=payload.idempotency_key,
+            ))
+            return {"item": item.model_dump(mode="json")}
+        except Exception as exc:
+            raise http_error(exc) from exc
+
     def has_ref(kind: str, value: int) -> bool:
         return any(ref.get("kind") == kind and ref.get("ref_id") == str(value) for ref in refs)
 

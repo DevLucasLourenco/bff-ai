@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import base64
 import json
 import logging
 import time
@@ -27,6 +28,7 @@ from app.domain.models import (
 from app.fashion.services import FashionNotFound, FashionService
 from app.fashion.tools import ToolUnavailable, ToolResult, fashion_tools
 from app.fashion.ui_objects import persist_objects
+from app.fashion.media import _safe_path, resolve_asset
 from app.repositories.settings import SettingsRepository
 from app.services.context import ContextMessage, build_messages
 from app.services.persona import compose_system_prompt, traits_from_row
@@ -167,7 +169,7 @@ class ChatService:
 
     # ----------------------------------------------------------------- preparo
 
-    def prepare(self, conversation_id: int, user_content: str) -> PreparedTurn:
+    def prepare(self, conversation_id: int, user_content: str, attachment_asset_ids: list[int] | None = None) -> PreparedTurn:
         """Etapa síncrona: valida, persiste o turno da usuária e monta o prompt.
 
         Roda **antes** de a resposta de streaming começar, para que erros virem
@@ -179,12 +181,16 @@ class ChatService:
             raise ConversationUnavailable("O provider selecionado está desativado")
 
         existing = self.db.query(Message).filter(Message.conversation_id == conversation.id).count()
+        attachment_asset_ids = list(dict.fromkeys(attachment_asset_ids or []))
+        for asset_id in attachment_asset_ids:
+            resolve_asset(self.db, self.owner_id, asset_id)
         self.db.add(
             Message(
                 conversation_id=conversation.id,
                 role=MessageRole.USER.value,
                 content=user_content,
                 status=MessageStatus.COMPLETE.value,
+                attachment_asset_ids=attachment_asset_ids,
             )
         )
         conversation.updated_at = utcnow()
@@ -192,7 +198,7 @@ class ChatService:
             conversation.title = user_content.strip().replace("\n", " ")[:70] or "Nova conversa"
         self.db.commit()
 
-        return self._build_turn(conversation)
+        return self._build_turn(conversation, current_attachment_ids=attachment_asset_ids)
 
     def prepare_regeneration(self, conversation_id: int, message_id: int) -> PreparedTurn:
         """Descarta a última resposta do assistente e prepara outra (F3.5).
@@ -228,7 +234,7 @@ class ChatService:
             raise ConversationUnavailable("Não sobrou nenhuma mensagem para responder")
         return self._build_turn(conversation)
 
-    def _build_turn(self, conversation: Conversation) -> PreparedTurn:
+    def _build_turn(self, conversation: Conversation, current_attachment_ids: list[int] | None = None) -> PreparedTurn:
         provider = conversation.model_config.provider
         # O prompt é composto: regra global (uma só, obedecida por todas) +
         # campos da persona + instruções extras.
@@ -258,10 +264,20 @@ class ChatService:
                     "Se o guarda-roupa estiver vazio ou a usuária pedir fotos de peças sem imagem cadastrada, "
                     "explique que ela pode adicionar uma peça com foto em Configurações → Fashion e ofereça ajuda "
                     "para cadastrá-la pela descrição. "
+                    "Quando a usuária estiver conversando sobre uma peça nova, use propose_wardrobe_item para exibir "
+                    "uma sugestão interativa; não use add_wardrobe_item até ela confirmar a ação. "
                     "Só crie, registre uso ou salve um look quando a usuária pedir explicitamente. "
                     "Nunca apresente uma peça não consultada como se pertencesse ao guarda-roupa dela."
                 ),
             })
+        if current_attachment_ids:
+            ids = ", ".join(str(asset_id) for asset_id in current_attachment_ids)
+            parts: list[dict] = [{"type": "text", "text": f"{context.messages[-1]['content']}\n[Imagem Fashion anexada; asset_id: {ids}]"}]
+            for asset_id in current_attachment_ids:
+                asset = resolve_asset(self.db, self.owner_id, asset_id)
+                encoded = base64.b64encode(_safe_path(asset.storage_key).read_bytes()).decode("ascii")
+                parts.append({"type": "image_url", "image_url": {"url": f"data:{asset.mime_type};base64,{encoded}"}})
+            context.messages[-1] = {"role": "user", "content": parts}
         config = build_runtime_config(
             provider_kind=provider.kind,
             base_url=provider.base_url,

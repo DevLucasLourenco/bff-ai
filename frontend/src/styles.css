@@ -313,6 +313,8 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 }
 .message-notice { display: flex; align-items: center; gap: var(--s-2); margin-top: var(--s-2); font-size: 12px; color: var(--warn); }
 .message-meta { display: flex; gap: var(--s-3); align-items: center; margin-top: var(--s-1); font-size: 11px; color: var(--text-3); }
+.message-attachments { display: flex; gap: var(--s-2); margin-top: var(--s-2); }
+.message-attachments img { width: 96px; height: 96px; object-fit: cover; border-radius: var(--r-sm); }
 .muted { color: var(--text-3); font-style: italic; }
 .chat-object { width: min(620px, 100%); margin-top: var(--s-3); padding: var(--s-3); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--raised-1); }
 .chat-object header { display: flex; gap: var(--s-2); align-items: flex-start; color: var(--accent-strong); }
@@ -336,6 +338,9 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .fashion-chat-look-images img, .fashion-chat-look-images span { width: 100%; height: 100%; object-fit: cover; background: color-mix(in srgb, var(--accent) 9%, var(--surface)); }
 .fashion-chat-look-images span { display: grid; place-items: center; color: var(--text-3); }
 .fashion-chat-empty { margin: var(--s-3) 0 0; color: var(--text-3); font-size: 12px; line-height: 1.45; }
+.fashion-suggestion { display: flex; align-items: end; gap: var(--s-3); margin-top: var(--s-3); flex-wrap: wrap; }
+.fashion-suggestion button { min-height: 34px; padding: 0 var(--s-3); border-radius: var(--r-sm); background: var(--accent); color: white; font-size: 12px; }
+.fashion-suggestion small { width: 100%; color: var(--danger); font-size: 11px; }
 
 .composer {
   display: flex; gap: var(--s-3); align-items: flex-end;
@@ -633,6 +638,11 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
   .persona-layout { grid-template-columns: 1fr; }
   .fashion-fields { grid-template-columns: 1fr; }
 }
+.attach-button { display: grid; place-items: center; flex: none; width: 36px; height: 36px; padding: 0; border-radius: 50%; color: var(--accent-strong); background: var(--surface-sunk); }
+.chat-attachment { position: absolute; left: 46px; bottom: calc(100% + 4px); display: flex; align-items: center; gap: 5px; max-width: 260px; padding: 5px 8px; border-radius: var(--r-sm); background: var(--surface); box-shadow: var(--raised-1); color: var(--text-2); font-size: 11px; }
+.chat-attachment span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-attachment button { display: grid; place-items: center; padding: 0; color: var(--text-3); }
+.composer { position: relative; }
 
 /* ============================================================================
    Pares de contraste medidos (WCAG AA, alvo 4.5:1 — 3:1 para o anel de foco)

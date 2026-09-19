@@ -145,6 +145,7 @@ class MessageRead(OrmModel):
     latency_ms: int | None
     prompt_tokens: int | None
     completion_tokens: int | None
+    attachment_asset_ids: list[int] = []
     created_at: datetime
     # Objetos são persistidos fora do texto da mensagem para que o frontend não
     # precise tentar extrair JSON do conteúdo produzido pelo modelo.
@@ -155,7 +156,7 @@ class MessageRead(OrmModel):
 
 FashionObjectType = Literal[
     "wardrobe_view", "wardrobe_item", "outfit_carousel", "outfit_detail",
-    "product_carousel", "trend_board", "look_calendar",
+    "product_carousel", "trend_board", "look_calendar", "wardrobe_suggestion",
 ]
 
 
@@ -401,6 +402,7 @@ class ConversationRead(BaseModel):
 
 class SendMessage(BaseModel):
     content: str = Field(min_length=1, max_length=100_000)
+    attachment_asset_ids: list[int] = Field(default_factory=list, max_length=4)
 
 
 MemoryScopeName = Literal["global", "persona", "conversation"]

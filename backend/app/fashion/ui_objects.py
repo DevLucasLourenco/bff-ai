@@ -17,7 +17,7 @@ def build_objects(result: ToolResult) -> list[dict[str, Any]]:
         object_type = hint.get("type")
         if object_type not in {
             "wardrobe_view", "wardrobe_item", "outfit_carousel", "outfit_detail",
-            "product_carousel", "trend_board", "look_calendar",
+            "product_carousel", "trend_board", "look_calendar", "wardrobe_suggestion",
         }:
             continue
         payload = {
@@ -29,6 +29,7 @@ def build_objects(result: ToolResult) -> list[dict[str, Any]]:
                 "product_carousel": "Produtos encontrados",
                 "trend_board": "Tendências",
                 "look_calendar": "Agenda de looks",
+                "wardrobe_suggestion": "Nova peça sugerida",
             }[object_type],
             "subtitle": "Dados atualizados agora",
             "data": result.data,

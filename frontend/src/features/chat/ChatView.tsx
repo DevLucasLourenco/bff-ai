@@ -1,4 +1,4 @@
-import { ArrowUp, Sparkles, Square } from 'lucide-react'
+import { ArrowUp, Paperclip, Sparkles, Square, X } from 'lucide-react'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import type { StreamBuffer } from '../../lib/streamBuffer'
 import type { ApiError, Conversation } from '../../lib/types'
@@ -12,7 +12,7 @@ type Props = {
   /** Mensagem recém-enviada, ainda não recarregada do servidor. */
   pendingUserMessage: string | null
   error: ApiError | null
-  onSend: (content: string) => void
+  onSend: (content: string, attachment: File | null) => void
   onStop: () => void
   onRegenerate: (messageId: number) => void
   onDismissError: () => void
@@ -47,6 +47,8 @@ function useAutoScroll(dependencies: unknown[], enabled: boolean) {
 
 export function ChatView({ conversation, streaming, buffer, pendingUserMessage, error, onSend, onStop, onRegenerate, onDismissError }: Props) {
   const [draft, setDraft] = useState('')
+  const [attachment, setAttachment] = useState<File | null>(null)
+  const attachmentInput = useRef<HTMLInputElement>(null)
   const messageCount = conversation?.messages.length ?? 0
   const lastMessageId = conversation?.messages.at(-1)?.id
   const { endRef, containerRef } = useAutoScroll([messageCount, streaming, pendingUserMessage], true)
@@ -56,7 +58,8 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     const content = draft.trim()
     if (!content || streaming || !conversation) return
     setDraft('')
-    onSend(content)
+    onSend(content, attachment)
+    setAttachment(null)
   }
 
   if (!conversation) {
@@ -113,6 +116,8 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     </section>
 
     <form className="composer" onSubmit={submit}>
+      <input ref={attachmentInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={event => setAttachment(event.target.files?.[0] ?? null)}/>
+      <button type="button" className="attach-button" aria-label="Anexar foto de peça" disabled={streaming} onClick={() => attachmentInput.current?.click()}><Paperclip size={17}/></button>
       <textarea
         value={draft}
         onChange={event => setDraft(event.target.value)}
@@ -123,6 +128,7 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
           if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); event.currentTarget.form?.requestSubmit() }
         }}
       />
+      {attachment && <span className="chat-attachment"><span>{attachment.name}</span><button type="button" aria-label="Remover anexo" onClick={() => setAttachment(null)}><X size={13}/></button></span>}
       {streaming
         ? <button type="button" className="stop" aria-label="Parar geração" onClick={onStop}><Square size={16} fill="currentColor"/></button>
         : <button aria-label="Enviar" disabled={!draft.trim()}><ArrowUp size={20}/></button>}

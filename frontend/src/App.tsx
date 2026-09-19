@@ -5,7 +5,7 @@ import { SettingsPanel } from './features/settings/SettingsPanel'
 import { useChatStream } from './hooks/useChatStream'
 import { useConfig } from './hooks/useConfig'
 import { useConversations } from './hooks/useConversations'
-import { toApiError } from './lib/api'
+import { api, toApiError } from './lib/api'
 import { applyTheme } from './lib/theme'
 import type { ApiError } from './lib/types'
 import './styles.css'
@@ -40,10 +40,13 @@ export default function App() {
   // como "cancelled" (nada se perde).
   const streamingHere = chat.isStreaming && chat.streamingConversationId === conversations.active?.id
 
-  const send = useCallback((content: string) => {
+  const send = useCallback(async (content: string, attachment: File | null) => {
     if (!conversations.active) return
     setChatError(null)
-    void chat.send(conversations.active.id, content)
+    try {
+      const asset = attachment ? await api.uploadFashionAsset(attachment) : null
+      await chat.send(conversations.active.id, content, asset ? [asset.id] : [])
+    } catch (error) { setChatError(toApiError(error)) }
   }, [chat, conversations.active])
 
   const regenerate = useCallback((messageId: number) => {

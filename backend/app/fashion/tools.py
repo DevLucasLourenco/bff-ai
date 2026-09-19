@@ -7,7 +7,7 @@ from typing import Any, Callable
 
 from pydantic import BaseModel, Field, ValidationError
 
-from app.domain.schemas import LookPlanCreate, OutfitCreate, WardrobeItemCreate, WearEventCreate
+from app.domain.schemas import LookPlanCreate, OutfitCreate, WardrobeItemCreate, WardrobeItemFields, WearEventCreate
 from app.fashion.services import FashionService
 
 
@@ -110,6 +110,17 @@ def _add_wardrobe_item(service: FashionService, data: WardrobeItemCreate) -> Too
     )
 
 
+def _propose_wardrobe_item(_service: FashionService, data: WardrobeItemFields) -> ToolResult:
+    """Propose a newly discussed piece; the user must confirm before it is saved."""
+    candidate = data.model_dump(mode="json")
+    return ToolResult(
+        status="proposed", data={"candidate": candidate}, facts=[], source_refs=[],
+        ui_hints=[{"type": "wardrobe_suggestion", "actions": [{
+            "id": "save_candidate", "label": "Adicionar ao guarda-roupa", "target": {"candidate": candidate},
+        }]}],
+    )
+
+
 def _get_style_profile(service: FashionService, _data: ToolInput) -> ToolResult:
     """Read explicit preferences and attributable inferred signals."""
     profile = service.profile()
@@ -190,6 +201,7 @@ class FashionToolRegistry:
             "get_wardrobe": ToolDefinition("get_wardrobe", GetWardrobeInput, _get_wardrobe),
             "get_wardrobe_item": ToolDefinition("get_wardrobe_item", GetWardrobeItemInput, _get_wardrobe_item),
             "add_wardrobe_item": ToolDefinition("add_wardrobe_item", WardrobeItemCreate, _add_wardrobe_item),
+            "propose_wardrobe_item": ToolDefinition("propose_wardrobe_item", WardrobeItemFields, _propose_wardrobe_item),
             "get_style_profile": ToolDefinition("get_style_profile", ToolInput, _get_style_profile),
             "mix_and_match": ToolDefinition("mix_and_match", MixAndMatchInput, _mix_and_match),
             "save_outfit": ToolDefinition("save_outfit", OutfitCreate, _save_outfit),

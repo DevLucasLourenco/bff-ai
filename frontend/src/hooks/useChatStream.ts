@@ -82,9 +82,9 @@ export function useChatStream({ onSettled, onError }: Options) {
   }, [buffer, onSettled, onError])
 
   const send = useCallback(
-    (conversationId: number, content: string) => {
+    (conversationId: number, content: string, attachmentAssetIds: number[] = []) => {
       setPendingUserMessage(content)
-      return run(conversationId, (handlers, signal) => streamMessage(conversationId, content, handlers, signal))
+      return run(conversationId, (handlers, signal) => streamMessage(conversationId, content, handlers, signal, attachmentAssetIds))
     },
     [run],
   )

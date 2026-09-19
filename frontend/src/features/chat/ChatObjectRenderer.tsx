@@ -1,5 +1,6 @@
 import { CalendarDays, ChevronLeft, ChevronRight, ExternalLink, PackageSearch, Shirt, Sparkles, WandSparkles } from 'lucide-react'
-import { useRef, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
+import { api } from '../../lib/api'
 import type { ChatUiObject } from '../../lib/types'
 
 const ICONS = {
@@ -82,11 +83,27 @@ export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
     : Array.isArray(payload.items) ? payload.items.map(asRecord) : []
   const outfits = Array.isArray(payload.outfits) ? payload.outfits.map(asRecord)
     : object.type === 'outfit_detail' && payload.outfit ? [asRecord(payload.outfit)] : []
+  const [actionState, setActionState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const suggestion = asRecord(payload.candidate)
+  const actions = Array.isArray(envelope.actions) ? envelope.actions.map(asRecord) : []
+  const saveAction = actions.find(action => action.id === 'save_candidate')
+  const saveSuggestion = async () => {
+    if (!saveAction || actionState !== 'idle') return
+    setActionState('saving')
+    try {
+      await api.runFashionAction({
+        object_id: object.id, action_id: 'save_candidate', target: saveAction.target,
+        idempotency_key: `candidate-${object.id}`,
+      })
+      setActionState('saved')
+    } catch { setActionState('error') }
+  }
 
   return <section className="chat-object" aria-label={title} data-object-version={object.schema_version}>
     <header><Icon size={16}/><div><strong>{title}</strong>{subtitle && <span>{subtitle}</span>}</div></header>
     {wardrobeItems.length > 0 && <VisualCarousel label={title}>{wardrobeItems.map((item, index) => <ItemVisual item={item} key={String(item.id ?? index)}/>)}</VisualCarousel>}
     {outfits.length > 0 && <VisualCarousel label={title}>{outfits.map((outfit, index) => <OutfitVisual outfit={outfit} key={String(outfit.id ?? index)}/>)}</VisualCarousel>}
+    {object.type === 'wardrobe_suggestion' && Object.keys(suggestion).length > 0 && <div className="fashion-suggestion"><ItemVisual item={suggestion}/><button type="button" disabled={actionState === 'saving' || actionState === 'saved'} onClick={() => void saveSuggestion()}>{actionState === 'saved' ? 'Adicionada' : actionState === 'saving' ? 'Salvando…' : 'Adicionar ao guarda-roupa'}</button>{actionState === 'error' && <small>Não foi possível salvar. Tente de novo.</small>}</div>}
     {object.type === 'wardrobe_view' && wardrobeItems.length === 0 && <p className="fashion-chat-empty">Ainda não há peças cadastradas. Adicione uma peça com foto em Configurações → Fashion.</p>}
     {object.source.some(source => source.url) && <footer>
       {object.source.filter(source => source.url).map(source => <a key={`${source.kind}-${source.ref_id}`} href={source.url!} target="_blank" rel="noreferrer"><ExternalLink size={12}/> fonte</a>)}

@@ -122,7 +122,7 @@ async def stream_message(conversation_id: int, payload: SendMessage, db: Db, own
         # O preparo roda em threadpool: é I/O de banco síncrono e não pode
         # bloquear o event loop (F3.4). Falhar aqui vira status HTTP de verdade,
         # em vez de um 200 com evento de erro no corpo.
-        turn = await run_in_threadpool(service.prepare, conversation_id, payload.content)
+        turn = await run_in_threadpool(service.prepare, conversation_id, payload.content, payload.attachment_asset_ids)
     except ConversationNotFound as exc:
         raise HTTPException(404, str(exc)) from exc
     except ConversationUnavailable as exc:

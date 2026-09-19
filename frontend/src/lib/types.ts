@@ -28,6 +28,7 @@ export type Message = {
   error_code?: string | null; error_message?: string | null;
   model_id?: string | null; provider_kind?: string | null;
   latency_ms?: number | null; prompt_tokens?: number | null; completion_tokens?: number | null; created_at?: string;
+  attachment_asset_ids?: number[];
   ui_objects?: ChatUiObject[];
 }
 export type Conversation = {

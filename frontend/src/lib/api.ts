@@ -107,6 +107,7 @@ export const api = {
   },
   styleProfile: () => json<StyleProfile>('/api/fashion/style-profile'),
   updateStyleProfile: (payload: Record<string, unknown>) => json<StyleProfile>('/api/fashion/style-profile', { method: 'PATCH', body: JSON.stringify(payload) }),
+  runFashionAction: (payload: Record<string, unknown>) => json<Record<string, unknown>>('/api/fashion/actions', { method: 'POST', body: JSON.stringify(payload) }),
 }
 
 export type StreamHandlers = {
@@ -175,9 +176,9 @@ async function consumeStream(response: Response, handlers: StreamHandlers) {
 }
 
 /** Envia uma mensagem. `signal` permite parar a geração (F3.2). */
-export async function streamMessage(conversationId: number, content: string, handlers: StreamHandlers, signal?: AbortSignal) {
+export async function streamMessage(conversationId: number, content: string, handlers: StreamHandlers, signal?: AbortSignal, attachmentAssetIds: number[] = []) {
   const response = await fetch(`/api/conversations/${conversationId}/messages/stream`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content }), signal,
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content, attachment_asset_ids: attachmentAssetIds }), signal,
   })
   await consumeStream(response, handlers)
 }
