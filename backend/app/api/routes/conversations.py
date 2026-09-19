@@ -28,7 +28,10 @@ def load(db: Session, conversation_id: int, owner_id: int) -> Conversation | Non
 def message_view(db: Session, message) -> MessageRead:
     data = MessageRead.model_validate(message).model_dump()
     objects = db.query(MessageUiObject).filter_by(message_id=message.id).order_by(MessageUiObject.position).all()
-    data["ui_objects"] = [ChatUiObjectRead.model_validate(item).model_dump(by_alias=True, mode="json") for item in objects]
+    # Passamos modelos tipados, sem serialização intermediária. Neste projeto o
+    # `model_dump()` já usa os aliases de saída (`type`, `data`, `source`), mas
+    # `MessageRead` recebe os nomes internos de ChatUiObjectRead.
+    data["ui_objects"] = [ChatUiObjectRead.model_validate(item) for item in objects]
     return MessageRead.model_validate(data)
 
 

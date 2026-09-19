@@ -297,3 +297,7 @@ def test_fashion_tool_call_gera_objeto_sse_e_termina_a_resposta(client, monkeypa
     assert any(name == "ui_object" and payload["type"] == "wardrobe_view" for name, payload in events)
     assert events[-1][0] == "done"
     assert adapter.calls == 2
+    # O card emitido no SSE também precisa sobreviver ao reload da conversa.
+    history = client.get(f"/api/conversations/{conversation_id}")
+    assert history.status_code == 200, history.text
+    assert history.json()["messages"][-1]["ui_objects"][0]["type"] == "wardrobe_view"
