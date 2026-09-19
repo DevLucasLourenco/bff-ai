@@ -161,8 +161,14 @@ def _mix_and_match(service: FashionService, data: MixAndMatchInput) -> ToolResul
             "style": anchor.style or candidate.style,
             "occasion": (anchor.occasions or candidate.occasions or [None])[0],
             "items": [
-                {"slot": "base", "wardrobe_item_id": anchor.id},
-                {"slot": "combination", "wardrobe_item_id": candidate.id},
+                {
+                    "slot": "base", "wardrobe_item_id": anchor.id,
+                    "wardrobe_item": anchor.model_dump(mode="json"),
+                },
+                {
+                    "slot": "combination", "wardrobe_item_id": candidate.id,
+                    "wardrobe_item": candidate.model_dump(mode="json"),
+                },
             ],
             "reason": "Combinação baseada em peças cadastradas no seu guarda-roupa.",
         })

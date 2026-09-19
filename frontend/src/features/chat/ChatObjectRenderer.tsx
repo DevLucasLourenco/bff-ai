@@ -1,4 +1,5 @@
-import { CalendarDays, ExternalLink, PackageSearch, Shirt, Sparkles, WandSparkles } from 'lucide-react'
+import { CalendarDays, ChevronLeft, ChevronRight, ExternalLink, PackageSearch, Shirt, Sparkles, WandSparkles } from 'lucide-react'
+import { useRef, type ReactNode } from 'react'
 import type { ChatUiObject } from '../../lib/types'
 
 const ICONS = {
@@ -21,24 +22,72 @@ function asRecord(value: unknown): Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
 }
 
+function text(value: unknown, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback
+}
+
+function imageUrl(item: Record<string, unknown>): string | null {
+  const image = asRecord(item.image)
+  return text(image.url) || null
+}
+
+function ItemVisual({ item }: { item: Record<string, unknown> }) {
+  const image = imageUrl(item)
+  const name = text(item.name, 'Peça')
+  const detail = [text(item.color), text(item.category), text(item.style)].filter(Boolean).join(' · ')
+  return <article className="fashion-chat-card">
+    {image ? <img src={image} alt={name}/> : <span className="fashion-chat-placeholder"><Shirt size={28}/></span>}
+    <strong>{name}</strong>
+    {detail && <span>{detail}</span>}
+  </article>
+}
+
+function OutfitVisual({ outfit }: { outfit: Record<string, unknown> }) {
+  const pieces = Array.isArray(outfit.items) ? outfit.items.map(asRecord).map(piece => asRecord(piece.wardrobe_item)).filter(item => Object.keys(item).length) : []
+  const title = text(outfit.title, 'Combinação')
+  const detail = [text(outfit.style), text(outfit.occasion)].filter(Boolean).join(' · ')
+  return <article className="fashion-chat-card outfit">
+    <div className="fashion-chat-look-images">
+      {pieces.slice(0, 3).map((item, index) => {
+        const image = imageUrl(item)
+        return image ? <img key={index} src={image} alt={text(item.name, 'Peça do look')}/> : <span key={index}><Shirt size={18}/></span>
+      })}
+      {!pieces.length && <span><WandSparkles size={22}/></span>}
+    </div>
+    <strong>{title}</strong>
+    {detail && <span>{detail}</span>}
+  </article>
+}
+
+function VisualCarousel({ children, label }: { children: ReactNode; label: string }) {
+  const rail = useRef<HTMLDivElement>(null)
+  const scroll = (direction: number) => rail.current?.scrollBy({ left: direction * 240, behavior: 'smooth' })
+  return <div className="fashion-chat-carousel" aria-label={label}>
+    <div className="fashion-chat-carousel-actions">
+      <button type="button" onClick={() => scroll(-1)} aria-label="Ver itens anteriores"><ChevronLeft size={16}/></button>
+      <button type="button" onClick={() => scroll(1)} aria-label="Ver próximos itens"><ChevronRight size={16}/></button>
+    </div>
+    <div className="fashion-chat-rail" ref={rail}>{children}</div>
+  </div>
+}
+
 export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
   const envelope = asRecord(object.data)
   const payload = asRecord(envelope.data)
   const Icon = isKnownObjectType(object.type) ? ICONS[object.type] : PackageSearch
   const title = typeof envelope.title === 'string' ? envelope.title : object.type.replaceAll('_', ' ')
   const subtitle = typeof envelope.subtitle === 'string' ? envelope.subtitle : ''
-  const items = Array.isArray(payload.items) ? payload.items : Array.isArray(payload.outfits) ? payload.outfits : []
+  const wardrobeItems = object.type === 'wardrobe_item'
+    ? [payload.item].filter(Boolean).map(asRecord)
+    : Array.isArray(payload.items) ? payload.items.map(asRecord) : []
+  const outfits = Array.isArray(payload.outfits) ? payload.outfits.map(asRecord)
+    : object.type === 'outfit_detail' && payload.outfit ? [asRecord(payload.outfit)] : []
 
   return <section className="chat-object" aria-label={title} data-object-version={object.schema_version}>
     <header><Icon size={16}/><div><strong>{title}</strong>{subtitle && <span>{subtitle}</span>}</div></header>
-    {items.length > 0 && <div className="chat-object-list">
-      {items.slice(0, 6).map((entry, index) => {
-        const row = asRecord(entry)
-        const name = typeof row.name === 'string' ? row.name : typeof row.title === 'string' ? row.title : `Item ${index + 1}`
-        const detail = typeof row.category === 'string' ? row.category : typeof row.style === 'string' ? row.style : ''
-        return <div key={index}><strong>{name}</strong>{detail && <span>{detail}</span>}</div>
-      })}
-    </div>}
+    {wardrobeItems.length > 0 && <VisualCarousel label={title}>{wardrobeItems.map((item, index) => <ItemVisual item={item} key={String(item.id ?? index)}/>)}</VisualCarousel>}
+    {outfits.length > 0 && <VisualCarousel label={title}>{outfits.map((outfit, index) => <OutfitVisual outfit={outfit} key={String(outfit.id ?? index)}/>)}</VisualCarousel>}
+    {object.type === 'wardrobe_view' && wardrobeItems.length === 0 && <p className="fashion-chat-empty">Ainda não há peças cadastradas. Adicione uma peça com foto em Configurações → Fashion.</p>}
     {object.source.some(source => source.url) && <footer>
       {object.source.filter(source => source.url).map(source => <a key={`${source.kind}-${source.ref_id}`} href={source.url!} target="_blank" rel="noreferrer"><ExternalLink size={12}/> fonte</a>)}
     </footer>}

@@ -322,6 +322,20 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .chat-object-list > div { min-width: 0; padding: var(--s-2); border-radius: var(--r-sm); background: var(--surface-sunk); }
 .chat-object footer { display: flex; gap: var(--s-2); margin-top: var(--s-3); }
 .chat-object footer a { display: inline-flex; align-items: center; gap: 4px; color: var(--accent); font-size: 11px; }
+.fashion-chat-carousel { position: relative; margin-top: var(--s-3); }
+.fashion-chat-carousel-actions { display: flex; justify-content: end; gap: 4px; margin-bottom: 4px; }
+.fashion-chat-carousel-actions button { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; border-radius: 999px; color: var(--accent-strong); background: var(--surface-sunk); }
+.fashion-chat-rail { display: flex; gap: var(--s-2); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; padding-bottom: 3px; }
+.fashion-chat-card { flex: 0 0 154px; min-width: 0; display: grid; gap: 6px; scroll-snap-align: start; padding: var(--s-2); border-radius: var(--r-sm); background: var(--surface-sunk); color: var(--text-2); }
+.fashion-chat-card > img, .fashion-chat-placeholder { width: 100%; height: 122px; border-radius: calc(var(--r-sm) - 2px); object-fit: cover; background: color-mix(in srgb, var(--accent) 9%, var(--surface)); }
+.fashion-chat-placeholder { display: grid; place-items: center; color: var(--text-3); }
+.fashion-chat-card strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+.fashion-chat-card > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-3); font-size: 11px; }
+.fashion-chat-card.outfit { flex-basis: 190px; }
+.fashion-chat-look-images { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; height: 88px; overflow: hidden; border-radius: calc(var(--r-sm) - 2px); }
+.fashion-chat-look-images img, .fashion-chat-look-images span { width: 100%; height: 100%; object-fit: cover; background: color-mix(in srgb, var(--accent) 9%, var(--surface)); }
+.fashion-chat-look-images span { display: grid; place-items: center; color: var(--text-3); }
+.fashion-chat-empty { margin: var(--s-3) 0 0; color: var(--text-3); font-size: 12px; line-height: 1.45; }
 
 .composer {
   display: flex; gap: var(--s-3); align-items: flex-end;
