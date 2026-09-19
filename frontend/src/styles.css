@@ -344,6 +344,9 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .fashion-suggestion-review { flex: 1; min-width: min(230px, 100%); display: grid; gap: var(--s-2); color: var(--text-3); font-size: 12px; }
 .fashion-uncertain { font-size: 11px; color: var(--text-3); }
 .fashion-suggestion-status { font-size: 11px; color: var(--accent-strong); font-weight: 600; }
+.fashion-suggestion-attributes { display: grid; grid-template-columns: auto 1fr; gap: 2px var(--s-2); margin: 0; font-size: 11px; line-height: 1.35; }
+.fashion-suggestion-attributes dt { color: var(--text-3); }
+.fashion-suggestion-attributes dd { margin: 0; color: var(--text-2); }
 .fashion-suggestion-review a { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-strong); }
 .fashion-suggestion-actions { display: flex; gap: var(--s-2); flex-wrap: wrap; }
 .fashion-suggestion-actions .secondary { background: var(--surface-sunk); color: var(--accent-strong); }

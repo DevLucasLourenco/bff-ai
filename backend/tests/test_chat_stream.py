@@ -334,7 +334,11 @@ def test_link_no_chat_gera_card_editavel_com_foto_e_origem(client, monkeypatch, 
                 assert messages[-1]["content"][1]["type"] == "image_url"
                 assert "shop.example.com/blazer" in messages[-1]["content"][0]["text"]
                 self.last_tool_calls = [{"id": "call_visual", "type": "function", "function": {
-                    "name": "propose_wardrobe_item", "arguments": json.dumps({"name": "Blazer bege", "category": "casaco", "color": "bege"}),
+                    "name": "propose_wardrobe_item", "arguments": json.dumps({
+                        "name": "Blazer bege", "category": "casaco", "color": "bege",
+                        "material": "tecido estruturado aparente", "seasons": ["outono", "inverno"],
+                        "occasions": ["trabalho", "evento"], "tags": ["alfaiataria", "neutro", "blazer"],
+                    }),
                 }}]
                 if False:
                     yield ""
@@ -354,6 +358,10 @@ def test_link_no_chat_gera_card_editavel_com_foto_e_origem(client, monkeypatch, 
     assert candidate["image"]["url"].startswith("/api/fashion/assets/")
     assert candidate["source_url"] == "https://shop.example.com/blazer"
     assert candidate["collection_status"] == "wanted"
+    assert candidate["material"] == "tecido estruturado aparente"
+    assert candidate["seasons"] == ["outono", "inverno"]
+    assert candidate["occasions"] == ["trabalho", "evento"]
+    assert candidate["tags"] == ["alfaiataria", "neutro", "blazer"]
     target = card["data"]["actions"][0]["target"]
     saved = client.post("/api/fashion/actions", json={
         "object_id": card["id"], "action_id": "save_candidate", "target": target,

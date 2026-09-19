@@ -27,6 +27,10 @@ function text(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value : fallback
 }
 
+function strings(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string' && Boolean(item.trim())) : []
+}
+
 function imageUrl(item: Record<string, unknown>): string | null {
   const image = asRecord(item.image)
   return text(image.url) || null
@@ -108,6 +112,8 @@ export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
   const setField = (field: string, value: unknown) => setEdits(current => ({ ...current, [field]: value }))
   const value = (field: string) => text(edits[field] ?? suggestion[field])
   const tags = edits.tags ?? suggestion.tags
+  const seasons = edits.seasons ?? suggestion.seasons
+  const occasions = edits.occasions ?? suggestion.occasions
   const status = text(edits.collection_status ?? suggestion.collection_status, 'owned')
   const statusLabel = status === 'owned' ? 'Possuo' : status === 'inspiration' ? 'Inspiração' : 'Quero'
   const attachPhoto = () => window.dispatchEvent(new Event('fashion:attach'))
@@ -122,6 +128,12 @@ export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
       <div className="fashion-suggestion-review">
         <span>{text(analysis.summary, 'Revise a análise antes de salvar. Campos incertos podem ficar vazios.')}</span>
         <span className="fashion-suggestion-status">Adicionar como: {statusLabel}</span>
+        <dl className="fashion-suggestion-attributes">
+          {value('size') && <><dt>Tamanho</dt><dd>{value('size')}</dd></>}
+          {strings(seasons).length > 0 && <><dt>Estações</dt><dd>{strings(seasons).join(', ')}</dd></>}
+          {strings(occasions).length > 0 && <><dt>Ocasiões</dt><dd>{strings(occasions).join(', ')}</dd></>}
+          {strings(tags).length > 0 && <><dt>Tags</dt><dd>{strings(tags).join(', ')}</dd></>}
+        </dl>
         {Array.isArray(analysis.uncertain_fields) && analysis.uncertain_fields.length > 0 && <span className="fashion-uncertain">Não confirmado: {analysis.uncertain_fields.filter((field): field is string => typeof field === 'string').join(', ')}</span>}
         {editing && actionState !== 'saved' && <div className="fashion-suggestion-fields">
           <label>Nome<input value={value('name')} onChange={event => setField('name', event.target.value)}/></label>
@@ -130,8 +142,11 @@ export function ChatObjectRenderer({ object }: { object: ChatUiObject }) {
           <label>Estilo<input value={value('style')} onChange={event => setField('style', event.target.value || null)}/></label>
           <label>Marca<input value={value('brand')} onChange={event => setField('brand', event.target.value || null)}/></label>
           <label>Material<input value={value('material')} onChange={event => setField('material', event.target.value || null)}/></label>
+          <label>Tamanho<input value={value('size')} onChange={event => setField('size', event.target.value || null)}/></label>
+          <label>Estações<input value={strings(seasons).join(', ')} onChange={event => setField('seasons', event.target.value.split(',').map(season => season.trim()).filter(Boolean))}/></label>
+          <label>Ocasiões<input value={strings(occasions).join(', ')} onChange={event => setField('occasions', event.target.value.split(',').map(occasion => occasion.trim()).filter(Boolean))}/></label>
           <label>Estado<select value={status} onChange={event => setField('collection_status', event.target.value)}><option value="owned">Possuo</option><option value="wanted">Quero</option><option value="inspiration">Inspiração</option></select></label>
-          <label>Tags<input value={Array.isArray(tags) ? tags.join(', ') : ''} onChange={event => setField('tags', event.target.value.split(',').map(tag => tag.trim()).filter(Boolean))}/></label>
+          <label>Tags<input value={strings(tags).join(', ')} onChange={event => setField('tags', event.target.value.split(',').map(tag => tag.trim()).filter(Boolean))}/></label>
         </div>}
         <div className="fashion-suggestion-actions">
           {actionState !== 'saved' && <button type="button" className="secondary" onClick={() => setEditing(open => !open)}>{editing ? 'Fechar edição' : 'Revisar campos'}</button>}
