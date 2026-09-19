@@ -1,0 +1,289 @@
+﻿personagem,posicao,linha,coluna,arquivo,expressao_principal,interpretacao_visual
+morena,1,1,1,por_personagem/morena/01_feliz_sorrindo.png,Feliz / sorrindo,"Expressão alegre, sorriso aberto; em algumas cartelas também sugere abraço/acolhimento"
+morena,2,1,2,por_personagem/morena/02_rindo.png,Rindo,"Risada evidente, olhos fechados ou gesto de humor"
+morena,3,1,3,por_personagem/morena/03_muito_empolgada.png,MUITO empolgada / MUITO animada,"Entusiasmo forte, punhos erguidos e/ou marcas de exclamação"
+morena,4,1,4,por_personagem/morena/04_piscando_brincando.png,Piscando / brincando,"Piscadinha, finger-gun/gesto brincalhão; também funciona para provocação leve"
+morena,5,1,5,por_personagem/morena/05_carinhosa_fofa.png,Carinhosa / fofa,"Pose doce, rosto apoiado nas mãos e/ou corações"
+morena,6,1,6,por_personagem/morena/06_apaixonada_encantada.png,Apaixonada / encantada,"Coração grande/corações, expressão afetiva"
+morena,7,2,1,por_personagem/morena/07_aprovando_concordando.png,Aprovando / concordando,Joinha/gesto positivo
+morena,8,2,2,por_personagem/morena/08_surpresa.png,Surpresa,"Olhos abertos, boca aberta e exclamação"
+morena,9,2,3,por_personagem/morena/09_chocada.png,Chocada,"Surpresa intensa/pânico, mãos abertas e/ou gotas de suor"
+morena,10,2,4,por_personagem/morena/10_confusa.png,Confusa,Interrogação e gesto de dúvida
+morena,11,2,5,por_personagem/morena/11_pensativa.png,Pensativa,"Mão no queixo, olhar reflexivo"
+morena,12,2,6,por_personagem/morena/12_curiosa.png,Curiosa,Inclinação da cabeça/olhar investigativo
+morena,13,3,1,por_personagem/morena/13_concentrada_seria.png,Concentrada / séria,"Expressão focada, neutra ou mais firme"
+morena,14,3,2,por_personagem/morena/14_negando_desaprovando.png,Negando / desaprovando,Braços em X/gesto explícito de não
+morena,15,3,3,por_personagem/morena/15_envergonhada_timida.png,Envergonhada,Rubor e rosto parcialmente escondido; também funciona para timidez
+morena,16,3,4,por_personagem/morena/16_triste_chateada.png,Triste,Olhar baixo/teary/abraçando-se; também funciona para chateada
+morena,17,3,5,por_personagem/morena/17_brava_irritada.png,Brava / irritada,Sobrancelhas cerradas e símbolo de raiva
+morena,18,3,6,por_personagem/morena/18_frustrada.png,Frustrada,Mãos na cabeça/cabelo e expressão de estresse
+morena,19,4,1,por_personagem/morena/19_preocupada_ansiosa.png,Preocupada,Mãos juntas/olhar apreensivo; também aproxima nervosa/ansiosa
+morena,20,4,2,por_personagem/morena/20_com_medo_assustada.png,Com medo / assustada,"Olhos arregalados, tensão e gotas de suor"
+morena,21,4,3,por_personagem/morena/21_cansada_com_sono.png,Cansada / com sono,Bocejo/olhos semicerrados
+morena,22,4,4,por_personagem/morena/22_entediada.png,Entediada,Cabeça apoiada na mão/olhar sem energia
+morena,23,4,5,por_personagem/morena/23_pedindo_desculpas.png,Pedindo desculpas,Mãos juntas/gesto de desculpa ou pedido
+morena,24,4,6,por_personagem/morena/24_ops_erro_leve.png,Modo “ops” / erro leve,"Pose descontraída/sem graça, frequentemente mão atrás da cabeça ou piscadinha"
+morena,25,5,1,por_personagem/morena/25_comemorando.png,Comemorando,Braços erguidos/confetes/festa
+morena,26,5,2,por_personagem/morena/26_tive_uma_ideia.png,Tive uma ideia,Lâmpada/indicador visual de ideia
+morena,27,5,3,por_personagem/morena/27_explicando_algo.png,Explicando algo,Mãos abertas/apresentando uma explicação
+morena,28,5,4,por_personagem/morena/28_escutando_atenta.png,Escutando / atenta,Mão na orelha/pose de atenção
+morena,29,5,5,por_personagem/morena/29_entendi.png,Entendi,Sinal de OK/expressão de compreensão
+morena,30,5,6,por_personagem/morena/30_nao_entendi.png,Não entendi,Encolher de ombros/interrogações
+morena,31,6,1,por_personagem/morena/31_elogiando_usuario.png,Elogiando o usuário,Joinhas/sparkles/elogio visual forte
+morena,32,6,2,por_personagem/morena/32_motivando_incentivando.png,Motivando / incentivando,Punho erguido/gesto de incentivo
+morena,33,6,3,por_personagem/morena/33_confortando.png,Confortando,Mão estendida/gesto acolhedor
+morena,34,6,4,por_personagem/morena/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,"Postura determinada, punho fechado e expressão confiante"
+morena,35,6,5,por_personagem/morena/35_analisando.png,Modo “analisando”,Tablet/clipboard/pose de trabalho e análise
+morena,36,6,6,por_personagem/morena/36_segredo_sussurro.png,Modo “segredo / sussurro”,Mão perto da boca/pose de confidência
+loira,1,1,1,por_personagem/loira/01_feliz_sorrindo.png,Feliz / sorrindo,"Expressão alegre, sorriso aberto; em algumas cartelas também sugere abraço/acolhimento"
+loira,2,1,2,por_personagem/loira/02_rindo.png,Rindo,"Risada evidente, olhos fechados ou gesto de humor"
+loira,3,1,3,por_personagem/loira/03_muito_empolgada.png,MUITO empolgada / MUITO animada,"Entusiasmo forte, punhos erguidos e/ou marcas de exclamação"
+loira,4,1,4,por_personagem/loira/04_piscando_brincando.png,Piscando / brincando,"Piscadinha, finger-gun/gesto brincalhão; também funciona para provocação leve"
+loira,5,1,5,por_personagem/loira/05_carinhosa_fofa.png,Carinhosa / fofa,"Pose doce, rosto apoiado nas mãos e/ou corações"
+loira,6,1,6,por_personagem/loira/06_apaixonada_encantada.png,Apaixonada / encantada,"Coração grande/corações, expressão afetiva"
+loira,7,2,1,por_personagem/loira/07_aprovando_concordando.png,Aprovando / concordando,Joinha/gesto positivo
+loira,8,2,2,por_personagem/loira/08_surpresa.png,Surpresa,"Olhos abertos, boca aberta e exclamação"
+loira,9,2,3,por_personagem/loira/09_chocada.png,Chocada,"Surpresa intensa/pânico, mãos abertas e/ou gotas de suor"
+loira,10,2,4,por_personagem/loira/10_confusa.png,Confusa,Interrogação e gesto de dúvida
+loira,11,2,5,por_personagem/loira/11_pensativa.png,Pensativa,"Mão no queixo, olhar reflexivo"
+loira,12,2,6,por_personagem/loira/12_curiosa.png,Curiosa,Inclinação da cabeça/olhar investigativo
+loira,13,3,1,por_personagem/loira/13_concentrada_seria.png,Concentrada / séria,"Expressão focada, neutra ou mais firme"
+loira,14,3,2,por_personagem/loira/14_negando_desaprovando.png,Negando / desaprovando,Braços em X/gesto explícito de não
+loira,15,3,3,por_personagem/loira/15_envergonhada_timida.png,Envergonhada,Rubor e rosto parcialmente escondido; também funciona para timidez
+loira,16,3,4,por_personagem/loira/16_triste_chateada.png,Triste,Olhar baixo/teary/abraçando-se; também funciona para chateada
+loira,17,3,5,por_personagem/loira/17_brava_irritada.png,Brava / irritada,Sobrancelhas cerradas e símbolo de raiva
+loira,18,3,6,por_personagem/loira/18_frustrada.png,Frustrada,Mãos na cabeça/cabelo e expressão de estresse
+loira,19,4,1,por_personagem/loira/19_preocupada_ansiosa.png,Preocupada,Mãos juntas/olhar apreensivo; também aproxima nervosa/ansiosa
+loira,20,4,2,por_personagem/loira/20_com_medo_assustada.png,Com medo / assustada,"Olhos arregalados, tensão e gotas de suor"
+loira,21,4,3,por_personagem/loira/21_cansada_com_sono.png,Cansada / com sono,Bocejo/olhos semicerrados
+loira,22,4,4,por_personagem/loira/22_entediada.png,Entediada,Cabeça apoiada na mão/olhar sem energia
+loira,23,4,5,por_personagem/loira/23_pedindo_desculpas.png,Pedindo desculpas,Mãos juntas/gesto de desculpa ou pedido
+loira,24,4,6,por_personagem/loira/24_ops_erro_leve.png,Modo “ops” / erro leve,"Pose descontraída/sem graça, frequentemente mão atrás da cabeça ou piscadinha"
+loira,25,5,1,por_personagem/loira/25_comemorando.png,Comemorando,Braços erguidos/confetes/festa
+loira,26,5,2,por_personagem/loira/26_tive_uma_ideia.png,Tive uma ideia,Lâmpada/indicador visual de ideia
+loira,27,5,3,por_personagem/loira/27_explicando_algo.png,Explicando algo,Mãos abertas/apresentando uma explicação
+loira,28,5,4,por_personagem/loira/28_escutando_atenta.png,Escutando / atenta,Mão na orelha/pose de atenção
+loira,29,5,5,por_personagem/loira/29_entendi.png,Entendi,Sinal de OK/expressão de compreensão
+loira,30,5,6,por_personagem/loira/30_nao_entendi.png,Não entendi,Encolher de ombros/interrogações
+loira,31,6,1,por_personagem/loira/31_elogiando_usuario.png,Elogiando o usuário,Joinhas/sparkles/elogio visual forte
+loira,32,6,2,por_personagem/loira/32_motivando_incentivando.png,Motivando / incentivando,Punho erguido/gesto de incentivo
+loira,33,6,3,por_personagem/loira/33_confortando.png,Confortando,Mão estendida/gesto acolhedor
+loira,34,6,4,por_personagem/loira/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,"Postura determinada, punho fechado e expressão confiante"
+loira,35,6,5,por_personagem/loira/35_analisando.png,Modo “analisando”,Tablet/clipboard/pose de trabalho e análise
+loira,36,6,6,por_personagem/loira/36_segredo_sussurro.png,Modo “segredo / sussurro”,Mão perto da boca/pose de confidência
+ruiva,1,1,1,por_personagem/ruiva/01_feliz_sorrindo.png,Feliz / sorrindo,"Expressão alegre, sorriso aberto; em algumas cartelas também sugere abraço/acolhimento"
+ruiva,2,1,2,por_personagem/ruiva/02_rindo.png,Rindo,"Risada evidente, olhos fechados ou gesto de humor"
+ruiva,3,1,3,por_personagem/ruiva/03_muito_empolgada.png,MUITO empolgada / MUITO animada,"Entusiasmo forte, punhos erguidos e/ou marcas de exclamação"
+ruiva,4,1,4,por_personagem/ruiva/04_piscando_brincando.png,Piscando / brincando,"Piscadinha, finger-gun/gesto brincalhão; também funciona para provocação leve"
+ruiva,5,1,5,por_personagem/ruiva/05_carinhosa_fofa.png,Carinhosa / fofa,"Pose doce, rosto apoiado nas mãos e/ou corações"
+ruiva,6,1,6,por_personagem/ruiva/06_apaixonada_encantada.png,Apaixonada / encantada,"Coração grande/corações, expressão afetiva"
+ruiva,7,2,1,por_personagem/ruiva/07_aprovando_concordando.png,Aprovando / concordando,Joinha/gesto positivo
+ruiva,8,2,2,por_personagem/ruiva/08_surpresa.png,Surpresa,"Olhos abertos, boca aberta e exclamação"
+ruiva,9,2,3,por_personagem/ruiva/09_chocada.png,Chocada,"Surpresa intensa/pânico, mãos abertas e/ou gotas de suor"
+ruiva,10,2,4,por_personagem/ruiva/10_confusa.png,Confusa,Interrogação e gesto de dúvida
+ruiva,11,2,5,por_personagem/ruiva/11_pensativa.png,Pensativa,"Mão no queixo, olhar reflexivo"
+ruiva,12,2,6,por_personagem/ruiva/12_curiosa.png,Curiosa,Inclinação da cabeça/olhar investigativo
+ruiva,13,3,1,por_personagem/ruiva/13_concentrada_seria.png,Concentrada / séria,"Expressão focada, neutra ou mais firme"
+ruiva,14,3,2,por_personagem/ruiva/14_negando_desaprovando.png,Negando / desaprovando,Braços em X/gesto explícito de não
+ruiva,15,3,3,por_personagem/ruiva/15_envergonhada_timida.png,Envergonhada,Rubor e rosto parcialmente escondido; também funciona para timidez
+ruiva,16,3,4,por_personagem/ruiva/16_triste_chateada.png,Triste,Olhar baixo/teary/abraçando-se; também funciona para chateada
+ruiva,17,3,5,por_personagem/ruiva/17_brava_irritada.png,Brava / irritada,Sobrancelhas cerradas e símbolo de raiva
+ruiva,18,3,6,por_personagem/ruiva/18_frustrada.png,Frustrada,Mãos na cabeça/cabelo e expressão de estresse
+ruiva,19,4,1,por_personagem/ruiva/19_preocupada_ansiosa.png,Preocupada,Mãos juntas/olhar apreensivo; também aproxima nervosa/ansiosa
+ruiva,20,4,2,por_personagem/ruiva/20_com_medo_assustada.png,Com medo / assustada,"Olhos arregalados, tensão e gotas de suor"
+ruiva,21,4,3,por_personagem/ruiva/21_cansada_com_sono.png,Cansada / com sono,Bocejo/olhos semicerrados
+ruiva,22,4,4,por_personagem/ruiva/22_entediada.png,Entediada,Cabeça apoiada na mão/olhar sem energia
+ruiva,23,4,5,por_personagem/ruiva/23_pedindo_desculpas.png,Pedindo desculpas,Mãos juntas/gesto de desculpa ou pedido
+ruiva,24,4,6,por_personagem/ruiva/24_ops_erro_leve.png,Modo “ops” / erro leve,"Pose descontraída/sem graça, frequentemente mão atrás da cabeça ou piscadinha"
+ruiva,25,5,1,por_personagem/ruiva/25_comemorando.png,Comemorando,Braços erguidos/confetes/festa
+ruiva,26,5,2,por_personagem/ruiva/26_tive_uma_ideia.png,Tive uma ideia,Lâmpada/indicador visual de ideia
+ruiva,27,5,3,por_personagem/ruiva/27_explicando_algo.png,Explicando algo,Mãos abertas/apresentando uma explicação
+ruiva,28,5,4,por_personagem/ruiva/28_escutando_atenta.png,Escutando / atenta,Mão na orelha/pose de atenção
+ruiva,29,5,5,por_personagem/ruiva/29_entendi.png,Entendi,Sinal de OK/expressão de compreensão
+ruiva,30,5,6,por_personagem/ruiva/30_nao_entendi.png,Não entendi,Encolher de ombros/interrogações
+ruiva,31,6,1,por_personagem/ruiva/31_elogiando_usuario.png,Elogiando o usuário,Joinhas/sparkles/elogio visual forte
+ruiva,32,6,2,por_personagem/ruiva/32_motivando_incentivando.png,Motivando / incentivando,Punho erguido/gesto de incentivo
+ruiva,33,6,3,por_personagem/ruiva/33_confortando.png,Confortando,Mão estendida/gesto acolhedor
+ruiva,34,6,4,por_personagem/ruiva/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,"Postura determinada, punho fechado e expressão confiante"
+ruiva,35,6,5,por_personagem/ruiva/35_analisando.png,Modo “analisando”,Tablet/clipboard/pose de trabalho e análise
+ruiva,36,6,6,por_personagem/ruiva/36_segredo_sussurro.png,Modo “segredo / sussurro”,Mão perto da boca/pose de confidência
+japonesa_oriental,1,1,1,por_personagem/japonesa_oriental/01_feliz_sorrindo.png,Feliz / sorrindo,"Expressão alegre, sorriso aberto; em algumas cartelas também sugere abraço/acolhimento"
+japonesa_oriental,2,1,2,por_personagem/japonesa_oriental/02_rindo.png,Rindo,"Risada evidente, olhos fechados ou gesto de humor"
+japonesa_oriental,3,1,3,por_personagem/japonesa_oriental/03_muito_empolgada.png,MUITO empolgada / MUITO animada,"Entusiasmo forte, punhos erguidos e/ou marcas de exclamação"
+japonesa_oriental,4,1,4,por_personagem/japonesa_oriental/04_piscando_brincando.png,Piscando / brincando,"Piscadinha, finger-gun/gesto brincalhão; também funciona para provocação leve"
+japonesa_oriental,5,1,5,por_personagem/japonesa_oriental/05_carinhosa_fofa.png,Carinhosa / fofa,"Pose doce, rosto apoiado nas mãos e/ou corações"
+japonesa_oriental,6,1,6,por_personagem/japonesa_oriental/06_apaixonada_encantada.png,Apaixonada / encantada,"Coração grande/corações, expressão afetiva"
+japonesa_oriental,7,2,1,por_personagem/japonesa_oriental/07_aprovando_concordando.png,Aprovando / concordando,Joinha/gesto positivo
+japonesa_oriental,8,2,2,por_personagem/japonesa_oriental/08_surpresa.png,Surpresa,"Olhos abertos, boca aberta e exclamação"
+japonesa_oriental,9,2,3,por_personagem/japonesa_oriental/09_chocada.png,Chocada,"Surpresa intensa/pânico, mãos abertas e/ou gotas de suor"
+japonesa_oriental,10,2,4,por_personagem/japonesa_oriental/10_confusa.png,Confusa,Interrogação e gesto de dúvida
+japonesa_oriental,11,2,5,por_personagem/japonesa_oriental/11_pensativa.png,Pensativa,"Mão no queixo, olhar reflexivo"
+japonesa_oriental,12,2,6,por_personagem/japonesa_oriental/12_curiosa.png,Curiosa,Inclinação da cabeça/olhar investigativo
+japonesa_oriental,13,3,1,por_personagem/japonesa_oriental/13_concentrada_seria.png,Concentrada / séria,"Expressão focada, neutra ou mais firme"
+japonesa_oriental,14,3,2,por_personagem/japonesa_oriental/14_negando_desaprovando.png,Negando / desaprovando,Braços em X/gesto explícito de não
+japonesa_oriental,15,3,3,por_personagem/japonesa_oriental/15_envergonhada_timida.png,Envergonhada,Rubor e rosto parcialmente escondido; também funciona para timidez
+japonesa_oriental,16,3,4,por_personagem/japonesa_oriental/16_triste_chateada.png,Triste,Olhar baixo/teary/abraçando-se; também funciona para chateada
+japonesa_oriental,17,3,5,por_personagem/japonesa_oriental/17_brava_irritada.png,Brava / irritada,Sobrancelhas cerradas e símbolo de raiva
+japonesa_oriental,18,3,6,por_personagem/japonesa_oriental/18_frustrada.png,Frustrada,Mãos na cabeça/cabelo e expressão de estresse
+japonesa_oriental,19,4,1,por_personagem/japonesa_oriental/19_preocupada_ansiosa.png,Preocupada,Mãos juntas/olhar apreensivo; também aproxima nervosa/ansiosa
+japonesa_oriental,20,4,2,por_personagem/japonesa_oriental/20_com_medo_assustada.png,Com medo / assustada,"Olhos arregalados, tensão e gotas de suor"
+japonesa_oriental,21,4,3,por_personagem/japonesa_oriental/21_cansada_com_sono.png,Cansada / com sono,Bocejo/olhos semicerrados
+japonesa_oriental,22,4,4,por_personagem/japonesa_oriental/22_entediada.png,Entediada,Cabeça apoiada na mão/olhar sem energia
+japonesa_oriental,23,4,5,por_personagem/japonesa_oriental/23_pedindo_desculpas.png,Pedindo desculpas,Mãos juntas/gesto de desculpa ou pedido
+japonesa_oriental,24,4,6,por_personagem/japonesa_oriental/24_ops_erro_leve.png,Modo “ops” / erro leve,"Pose descontraída/sem graça, frequentemente mão atrás da cabeça ou piscadinha"
+japonesa_oriental,25,5,1,por_personagem/japonesa_oriental/25_comemorando.png,Comemorando,Braços erguidos/confetes/festa
+japonesa_oriental,26,5,2,por_personagem/japonesa_oriental/26_tive_uma_ideia.png,Tive uma ideia,Lâmpada/indicador visual de ideia
+japonesa_oriental,27,5,3,por_personagem/japonesa_oriental/27_explicando_algo.png,Explicando algo,Mãos abertas/apresentando uma explicação
+japonesa_oriental,28,5,4,por_personagem/japonesa_oriental/28_escutando_atenta.png,Escutando / atenta,Mão na orelha/pose de atenção
+japonesa_oriental,29,5,5,por_personagem/japonesa_oriental/29_entendi.png,Entendi,Sinal de OK/expressão de compreensão
+japonesa_oriental,30,5,6,por_personagem/japonesa_oriental/30_nao_entendi.png,Não entendi,Encolher de ombros/interrogações
+japonesa_oriental,31,6,1,por_personagem/japonesa_oriental/31_elogiando_usuario.png,Elogiando o usuário,Joinhas/sparkles/elogio visual forte
+japonesa_oriental,32,6,2,por_personagem/japonesa_oriental/32_motivando_incentivando.png,Motivando / incentivando,Punho erguido/gesto de incentivo
+japonesa_oriental,33,6,3,por_personagem/japonesa_oriental/33_confortando.png,Confortando,Mão estendida/gesto acolhedor
+japonesa_oriental,34,6,4,por_personagem/japonesa_oriental/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,"Postura determinada, punho fechado e expressão confiante"
+japonesa_oriental,35,6,5,por_personagem/japonesa_oriental/35_analisando.png,Modo “analisando”,Tablet/clipboard/pose de trabalho e análise
+japonesa_oriental,36,6,6,por_personagem/japonesa_oriental/36_segredo_sussurro.png,Modo “segredo / sussurro”,Mão perto da boca/pose de confidência
+cabelos_brancos,1,1,1,por_personagem/cabelos_brancos/01_feliz_sorrindo.png,Feliz / sorrindo,"Expressão alegre, sorriso aberto; em algumas cartelas também sugere abraço/acolhimento"
+cabelos_brancos,2,1,2,por_personagem/cabelos_brancos/02_rindo.png,Rindo,"Risada evidente, olhos fechados ou gesto de humor"
+cabelos_brancos,3,1,3,por_personagem/cabelos_brancos/03_muito_empolgada.png,MUITO empolgada / MUITO animada,"Entusiasmo forte, punhos erguidos e/ou marcas de exclamação"
+cabelos_brancos,4,1,4,por_personagem/cabelos_brancos/04_piscando_brincando.png,Piscando / brincando,"Piscadinha, finger-gun/gesto brincalhão; também funciona para provocação leve"
+cabelos_brancos,5,1,5,por_personagem/cabelos_brancos/05_carinhosa_fofa.png,Carinhosa / fofa,"Pose doce, rosto apoiado nas mãos e/ou corações"
+cabelos_brancos,6,1,6,por_personagem/cabelos_brancos/06_apaixonada_encantada.png,Apaixonada / encantada,"Coração grande/corações, expressão afetiva"
+cabelos_brancos,7,2,1,por_personagem/cabelos_brancos/07_aprovando_concordando.png,Aprovando / concordando,Joinha/gesto positivo
+cabelos_brancos,8,2,2,por_personagem/cabelos_brancos/08_surpresa.png,Surpresa,"Olhos abertos, boca aberta e exclamação"
+cabelos_brancos,9,2,3,por_personagem/cabelos_brancos/09_chocada.png,Chocada,"Surpresa intensa/pânico, mãos abertas e/ou gotas de suor"
+cabelos_brancos,10,2,4,por_personagem/cabelos_brancos/10_confusa.png,Confusa,Interrogação e gesto de dúvida
+cabelos_brancos,11,2,5,por_personagem/cabelos_brancos/11_pensativa.png,Pensativa,"Mão no queixo, olhar reflexivo"
+cabelos_brancos,12,2,6,por_personagem/cabelos_brancos/12_curiosa.png,Curiosa,Inclinação da cabeça/olhar investigativo
+cabelos_brancos,13,3,1,por_personagem/cabelos_brancos/13_concentrada_seria.png,Concentrada / séria,"Expressão focada, neutra ou mais firme"
+cabelos_brancos,14,3,2,por_personagem/cabelos_brancos/14_negando_desaprovando.png,Negando / desaprovando,Braços em X/gesto explícito de não
+cabelos_brancos,15,3,3,por_personagem/cabelos_brancos/15_envergonhada_timida.png,Envergonhada,Rubor e rosto parcialmente escondido; também funciona para timidez
+cabelos_brancos,16,3,4,por_personagem/cabelos_brancos/16_triste_chateada.png,Triste,Olhar baixo/teary/abraçando-se; também funciona para chateada
+cabelos_brancos,17,3,5,por_personagem/cabelos_brancos/17_brava_irritada.png,Brava / irritada,Sobrancelhas cerradas e símbolo de raiva
+cabelos_brancos,18,3,6,por_personagem/cabelos_brancos/18_frustrada.png,Frustrada,Mãos na cabeça/cabelo e expressão de estresse
+cabelos_brancos,19,4,1,por_personagem/cabelos_brancos/19_preocupada_ansiosa.png,Preocupada,Mãos juntas/olhar apreensivo; também aproxima nervosa/ansiosa
+cabelos_brancos,20,4,2,por_personagem/cabelos_brancos/20_com_medo_assustada.png,Com medo / assustada,"Olhos arregalados, tensão e gotas de suor"
+cabelos_brancos,21,4,3,por_personagem/cabelos_brancos/21_cansada_com_sono.png,Cansada / com sono,Bocejo/olhos semicerrados
+cabelos_brancos,22,4,4,por_personagem/cabelos_brancos/22_entediada.png,Entediada,Cabeça apoiada na mão/olhar sem energia
+cabelos_brancos,23,4,5,por_personagem/cabelos_brancos/23_pedindo_desculpas.png,Pedindo desculpas,Mãos juntas/gesto de desculpa ou pedido
+cabelos_brancos,24,4,6,por_personagem/cabelos_brancos/24_ops_erro_leve.png,Modo “ops” / erro leve,"Pose descontraída/sem graça, frequentemente mão atrás da cabeça ou piscadinha"
+cabelos_brancos,25,5,1,por_personagem/cabelos_brancos/25_comemorando.png,Comemorando,Braços erguidos/confetes/festa
+cabelos_brancos,26,5,2,por_personagem/cabelos_brancos/26_tive_uma_ideia.png,Tive uma ideia,Lâmpada/indicador visual de ideia
+cabelos_brancos,27,5,3,por_personagem/cabelos_brancos/27_explicando_algo.png,Explicando algo,Mãos abertas/apresentando uma explicação
+cabelos_brancos,28,5,4,por_personagem/cabelos_brancos/28_escutando_atenta.png,Escutando / atenta,Mão na orelha/pose de atenção
+cabelos_brancos,29,5,5,por_personagem/cabelos_brancos/29_entendi.png,Entendi,Sinal de OK/expressão de compreensão
+cabelos_brancos,30,5,6,por_personagem/cabelos_brancos/30_nao_entendi.png,Não entendi,Encolher de ombros/interrogações
+cabelos_brancos,31,6,1,por_personagem/cabelos_brancos/31_elogiando_usuario.png,Elogiando o usuário,Joinhas/sparkles/elogio visual forte
+cabelos_brancos,32,6,2,por_personagem/cabelos_brancos/32_motivando_incentivando.png,Motivando / incentivando,Punho erguido/gesto de incentivo
+cabelos_brancos,33,6,3,por_personagem/cabelos_brancos/33_confortando.png,Confortando,Mão estendida/gesto acolhedor
+cabelos_brancos,34,6,4,por_personagem/cabelos_brancos/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,"Postura determinada, punho fechado e expressão confiante"
+cabelos_brancos,35,6,5,por_personagem/cabelos_brancos/35_analisando.png,Modo “analisando”,Tablet/clipboard/pose de trabalho e análise
+cabelos_brancos,36,6,6,por_personagem/cabelos_brancos/36_segredo_sussurro.png,Modo “segredo / sussurro”,Mão perto da boca/pose de confidência
+fashionista,1,1,1,por_personagem/fashionista/01_feliz_sorrindo.png,Feliz / sorrindo,"Expressão alegre, sorriso aberto; em algumas cartelas também sugere abraço/acolhimento"
+fashionista,2,1,2,por_personagem/fashionista/02_rindo.png,Rindo,"Risada evidente, olhos fechados ou gesto de humor"
+fashionista,3,1,3,por_personagem/fashionista/03_muito_empolgada.png,MUITO empolgada / MUITO animada,"Entusiasmo forte, punhos erguidos e/ou marcas de exclamação"
+fashionista,4,1,4,por_personagem/fashionista/04_piscando_brincando.png,Piscando / brincando,"Piscadinha, finger-gun/gesto brincalhão; também funciona para provocação leve"
+fashionista,5,1,5,por_personagem/fashionista/05_carinhosa_fofa.png,Carinhosa / fofa,"Pose doce, rosto apoiado nas mãos e/ou corações"
+fashionista,6,1,6,por_personagem/fashionista/06_apaixonada_encantada.png,Apaixonada / encantada,"Coração grande/corações, expressão afetiva"
+fashionista,7,2,1,por_personagem/fashionista/07_aprovando_concordando.png,Aprovando / concordando,Joinha/gesto positivo
+fashionista,8,2,2,por_personagem/fashionista/08_surpresa.png,Surpresa,"Olhos abertos, boca aberta e exclamação"
+fashionista,9,2,3,por_personagem/fashionista/09_chocada.png,Chocada,"Surpresa intensa/pânico, mãos abertas e/ou gotas de suor"
+fashionista,10,2,4,por_personagem/fashionista/10_confusa.png,Confusa,Interrogação e gesto de dúvida
+fashionista,11,2,5,por_personagem/fashionista/11_pensativa.png,Pensativa,"Mão no queixo, olhar reflexivo"
+fashionista,12,2,6,por_personagem/fashionista/12_curiosa.png,Curiosa,Inclinação da cabeça/olhar investigativo
+fashionista,13,3,1,por_personagem/fashionista/13_concentrada_seria.png,Concentrada / séria,"Expressão focada, neutra ou mais firme"
+fashionista,14,3,2,por_personagem/fashionista/14_negando_desaprovando.png,Negando / desaprovando,Braços em X/gesto explícito de não
+fashionista,15,3,3,por_personagem/fashionista/15_envergonhada_timida.png,Envergonhada,Rubor e rosto parcialmente escondido; também funciona para timidez
+fashionista,16,3,4,por_personagem/fashionista/16_triste_chateada.png,Triste,Olhar baixo/teary/abraçando-se; também funciona para chateada
+fashionista,17,3,5,por_personagem/fashionista/17_brava_irritada.png,Brava / irritada,Sobrancelhas cerradas e símbolo de raiva
+fashionista,18,3,6,por_personagem/fashionista/18_frustrada.png,Frustrada,Mãos na cabeça/cabelo e expressão de estresse
+fashionista,19,4,1,por_personagem/fashionista/19_preocupada_ansiosa.png,Preocupada,Mãos juntas/olhar apreensivo; também aproxima nervosa/ansiosa
+fashionista,20,4,2,por_personagem/fashionista/20_com_medo_assustada.png,Com medo / assustada,"Olhos arregalados, tensão e gotas de suor"
+fashionista,21,4,3,por_personagem/fashionista/21_cansada_com_sono.png,Cansada / com sono,Bocejo/olhos semicerrados
+fashionista,22,4,4,por_personagem/fashionista/22_entediada.png,Entediada,Cabeça apoiada na mão/olhar sem energia
+fashionista,23,4,5,por_personagem/fashionista/23_pedindo_desculpas.png,Pedindo desculpas,Mãos juntas/gesto de desculpa ou pedido
+fashionista,24,4,6,por_personagem/fashionista/24_ops_erro_leve.png,Modo “ops” / erro leve,"Pose descontraída/sem graça, frequentemente mão atrás da cabeça ou piscadinha"
+fashionista,25,5,1,por_personagem/fashionista/25_comemorando.png,Comemorando,Braços erguidos/confetes/festa
+fashionista,26,5,2,por_personagem/fashionista/26_tive_uma_ideia.png,Tive uma ideia,Lâmpada/indicador visual de ideia
+fashionista,27,5,3,por_personagem/fashionista/27_explicando_algo.png,Explicando algo,Mãos abertas/apresentando uma explicação
+fashionista,28,5,4,por_personagem/fashionista/28_escutando_atenta.png,Escutando / atenta,Mão na orelha/pose de atenção
+fashionista,29,5,5,por_personagem/fashionista/29_entendi.png,Entendi,Sinal de OK/expressão de compreensão
+fashionista,30,5,6,por_personagem/fashionista/30_nao_entendi.png,Não entendi,Encolher de ombros/interrogações
+fashionista,31,6,1,por_personagem/fashionista/31_elogiando_usuario.png,Elogiando o usuário,Joinhas/sparkles/elogio visual forte
+fashionista,32,6,2,por_personagem/fashionista/32_motivando_incentivando.png,Motivando / incentivando,Punho erguido/gesto de incentivo
+fashionista,33,6,3,por_personagem/fashionista/33_confortando.png,Confortando,Mão estendida/gesto acolhedor
+fashionista,34,6,4,por_personagem/fashionista/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,"Postura determinada, punho fechado e expressão confiante"
+fashionista,35,6,5,por_personagem/fashionista/35_analisando.png,Modo “analisando”,Tablet/clipboard/pose de trabalho e análise
+fashionista,36,6,6,por_personagem/fashionista/36_segredo_sussurro.png,Modo “segredo / sussurro”,Mão perto da boca/pose de confidência
+lobinha_spooky,1,1,1,por_personagem/lobinha_spooky/01_feliz_sorrindo.png,Feliz / sorrindo,"Expressão alegre, sorriso aberto; em algumas cartelas também sugere abraço/acolhimento"
+lobinha_spooky,2,1,2,por_personagem/lobinha_spooky/02_rindo.png,Rindo,"Risada evidente, olhos fechados ou gesto de humor"
+lobinha_spooky,3,1,3,por_personagem/lobinha_spooky/03_muito_empolgada.png,MUITO empolgada / MUITO animada,"Entusiasmo forte, punhos erguidos e/ou marcas de exclamação"
+lobinha_spooky,4,1,4,por_personagem/lobinha_spooky/04_piscando_brincando.png,Piscando / brincando,"Piscadinha, finger-gun/gesto brincalhão; também funciona para provocação leve"
+lobinha_spooky,5,1,5,por_personagem/lobinha_spooky/05_carinhosa_fofa.png,Carinhosa / fofa,"Pose doce, rosto apoiado nas mãos e/ou corações"
+lobinha_spooky,6,1,6,por_personagem/lobinha_spooky/06_apaixonada_encantada.png,Apaixonada / encantada,"Coração grande/corações, expressão afetiva"
+lobinha_spooky,7,2,1,por_personagem/lobinha_spooky/07_aprovando_concordando.png,Aprovando / concordando,Joinha/gesto positivo
+lobinha_spooky,8,2,2,por_personagem/lobinha_spooky/08_surpresa.png,Surpresa,"Olhos abertos, boca aberta e exclamação"
+lobinha_spooky,9,2,3,por_personagem/lobinha_spooky/09_chocada.png,Chocada,"Surpresa intensa/pânico, mãos abertas e/ou gotas de suor"
+lobinha_spooky,10,2,4,por_personagem/lobinha_spooky/10_confusa.png,Confusa,Interrogação e gesto de dúvida
+lobinha_spooky,11,2,5,por_personagem/lobinha_spooky/11_pensativa.png,Pensativa,"Mão no queixo, olhar reflexivo"
+lobinha_spooky,12,2,6,por_personagem/lobinha_spooky/12_curiosa.png,Curiosa,Inclinação da cabeça/olhar investigativo
+lobinha_spooky,13,3,1,por_personagem/lobinha_spooky/13_concentrada_seria.png,Concentrada / séria,"Expressão focada, neutra ou mais firme"
+lobinha_spooky,14,3,2,por_personagem/lobinha_spooky/14_negando_desaprovando.png,Negando / desaprovando,Braços em X/gesto explícito de não
+lobinha_spooky,15,3,3,por_personagem/lobinha_spooky/15_envergonhada_timida.png,Envergonhada,Rubor e rosto parcialmente escondido; também funciona para timidez
+lobinha_spooky,16,3,4,por_personagem/lobinha_spooky/16_triste_chateada.png,Triste,Olhar baixo/teary/abraçando-se; também funciona para chateada
+lobinha_spooky,17,3,5,por_personagem/lobinha_spooky/17_brava_irritada.png,Brava / irritada,Sobrancelhas cerradas e símbolo de raiva
+lobinha_spooky,18,3,6,por_personagem/lobinha_spooky/18_frustrada.png,Frustrada,Mãos na cabeça/cabelo e expressão de estresse
+lobinha_spooky,19,4,1,por_personagem/lobinha_spooky/19_preocupada_ansiosa.png,Preocupada,Mãos juntas/olhar apreensivo; também aproxima nervosa/ansiosa
+lobinha_spooky,20,4,2,por_personagem/lobinha_spooky/20_com_medo_assustada.png,Com medo / assustada,"Olhos arregalados, tensão e gotas de suor"
+lobinha_spooky,21,4,3,por_personagem/lobinha_spooky/21_cansada_com_sono.png,Cansada / com sono,Bocejo/olhos semicerrados
+lobinha_spooky,22,4,4,por_personagem/lobinha_spooky/22_entediada.png,Entediada,Cabeça apoiada na mão/olhar sem energia
+lobinha_spooky,23,4,5,por_personagem/lobinha_spooky/23_pedindo_desculpas.png,Pedindo desculpas,Mãos juntas/gesto de desculpa ou pedido
+lobinha_spooky,24,4,6,por_personagem/lobinha_spooky/24_ops_erro_leve.png,Modo “ops” / erro leve,"Pose descontraída/sem graça, frequentemente mão atrás da cabeça ou piscadinha"
+lobinha_spooky,25,5,1,por_personagem/lobinha_spooky/25_comemorando.png,Comemorando,Braços erguidos/confetes/festa
+lobinha_spooky,26,5,2,por_personagem/lobinha_spooky/26_tive_uma_ideia.png,Tive uma ideia,Lâmpada/indicador visual de ideia
+lobinha_spooky,27,5,3,por_personagem/lobinha_spooky/27_explicando_algo.png,Explicando algo,Mãos abertas/apresentando uma explicação
+lobinha_spooky,28,5,4,por_personagem/lobinha_spooky/28_escutando_atenta.png,Escutando / atenta,Mão na orelha/pose de atenção
+lobinha_spooky,29,5,5,por_personagem/lobinha_spooky/29_entendi.png,Entendi,Sinal de OK/expressão de compreensão
+lobinha_spooky,30,5,6,por_personagem/lobinha_spooky/30_nao_entendi.png,Não entendi,Encolher de ombros/interrogações
+lobinha_spooky,31,6,1,por_personagem/lobinha_spooky/31_elogiando_usuario.png,Elogiando o usuário,Joinhas/sparkles/elogio visual forte
+lobinha_spooky,32,6,2,por_personagem/lobinha_spooky/32_motivando_incentivando.png,Motivando / incentivando,Punho erguido/gesto de incentivo
+lobinha_spooky,33,6,3,por_personagem/lobinha_spooky/33_confortando.png,Confortando,Mão estendida/gesto acolhedor
+lobinha_spooky,34,6,4,por_personagem/lobinha_spooky/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,"Postura determinada, punho fechado e expressão confiante"
+lobinha_spooky,35,6,5,por_personagem/lobinha_spooky/35_analisando.png,Modo “analisando”,Tablet/clipboard/pose de trabalho e análise
+lobinha_spooky,36,6,6,por_personagem/lobinha_spooky/36_segredo_sussurro.png,Modo “segredo / sussurro”,Mão perto da boca/pose de confidência
+vampirinha_gotica,1,1,1,por_personagem/vampirinha_gotica/01_feliz_sorrindo.png,Feliz / sorrindo,"Expressão alegre, sorriso aberto; em algumas cartelas também sugere abraço/acolhimento"
+vampirinha_gotica,2,1,2,por_personagem/vampirinha_gotica/02_rindo.png,Rindo,"Risada evidente, olhos fechados ou gesto de humor"
+vampirinha_gotica,3,1,3,por_personagem/vampirinha_gotica/03_muito_empolgada.png,MUITO empolgada / MUITO animada,"Entusiasmo forte, punhos erguidos e/ou marcas de exclamação"
+vampirinha_gotica,4,1,4,por_personagem/vampirinha_gotica/04_piscando_brincando.png,Piscando / brincando,"Piscadinha, finger-gun/gesto brincalhão; também funciona para provocação leve"
+vampirinha_gotica,5,1,5,por_personagem/vampirinha_gotica/05_carinhosa_fofa.png,Carinhosa / fofa,"Pose doce, rosto apoiado nas mãos e/ou corações"
+vampirinha_gotica,6,1,6,por_personagem/vampirinha_gotica/06_apaixonada_encantada.png,Apaixonada / encantada,"Coração grande/corações, expressão afetiva"
+vampirinha_gotica,7,2,1,por_personagem/vampirinha_gotica/07_aprovando_concordando.png,Aprovando / concordando,Joinha/gesto positivo
+vampirinha_gotica,8,2,2,por_personagem/vampirinha_gotica/08_surpresa.png,Surpresa,"Olhos abertos, boca aberta e exclamação"
+vampirinha_gotica,9,2,3,por_personagem/vampirinha_gotica/09_chocada.png,Chocada,"Surpresa intensa/pânico, mãos abertas e/ou gotas de suor"
+vampirinha_gotica,10,2,4,por_personagem/vampirinha_gotica/10_confusa.png,Confusa,Interrogação e gesto de dúvida
+vampirinha_gotica,11,2,5,por_personagem/vampirinha_gotica/11_pensativa.png,Pensativa,"Mão no queixo, olhar reflexivo"
+vampirinha_gotica,12,2,6,por_personagem/vampirinha_gotica/12_curiosa.png,Curiosa,Inclinação da cabeça/olhar investigativo
+vampirinha_gotica,13,3,1,por_personagem/vampirinha_gotica/13_concentrada_seria.png,Concentrada / séria,"Expressão focada, neutra ou mais firme"
+vampirinha_gotica,14,3,2,por_personagem/vampirinha_gotica/14_negando_desaprovando.png,Negando / desaprovando,Braços em X/gesto explícito de não
+vampirinha_gotica,15,3,3,por_personagem/vampirinha_gotica/15_envergonhada_timida.png,Envergonhada,Rubor e rosto parcialmente escondido; também funciona para timidez
+vampirinha_gotica,16,3,4,por_personagem/vampirinha_gotica/16_triste_chateada.png,Triste,Olhar baixo/teary/abraçando-se; também funciona para chateada
+vampirinha_gotica,17,3,5,por_personagem/vampirinha_gotica/17_brava_irritada.png,Brava / irritada,Sobrancelhas cerradas e símbolo de raiva
+vampirinha_gotica,18,3,6,por_personagem/vampirinha_gotica/18_frustrada.png,Frustrada,Mãos na cabeça/cabelo e expressão de estresse
+vampirinha_gotica,19,4,1,por_personagem/vampirinha_gotica/19_preocupada_ansiosa.png,Preocupada,Mãos juntas/olhar apreensivo; também aproxima nervosa/ansiosa
+vampirinha_gotica,20,4,2,por_personagem/vampirinha_gotica/20_com_medo_assustada.png,Com medo / assustada,"Olhos arregalados, tensão e gotas de suor"
+vampirinha_gotica,21,4,3,por_personagem/vampirinha_gotica/21_cansada_com_sono.png,Cansada / com sono,Bocejo/olhos semicerrados
+vampirinha_gotica,22,4,4,por_personagem/vampirinha_gotica/22_entediada.png,Entediada,Cabeça apoiada na mão/olhar sem energia
+vampirinha_gotica,23,4,5,por_personagem/vampirinha_gotica/23_pedindo_desculpas.png,Pedindo desculpas,Mãos juntas/gesto de desculpa ou pedido
+vampirinha_gotica,24,4,6,por_personagem/vampirinha_gotica/24_ops_erro_leve.png,Modo “ops” / erro leve,"Pose descontraída/sem graça, frequentemente mão atrás da cabeça ou piscadinha"
+vampirinha_gotica,25,5,1,por_personagem/vampirinha_gotica/25_comemorando.png,Comemorando,Braços erguidos/confetes/festa
+vampirinha_gotica,26,5,2,por_personagem/vampirinha_gotica/26_tive_uma_ideia.png,Tive uma ideia,Lâmpada/indicador visual de ideia
+vampirinha_gotica,27,5,3,por_personagem/vampirinha_gotica/27_explicando_algo.png,Explicando algo,Mãos abertas/apresentando uma explicação
+vampirinha_gotica,28,5,4,por_personagem/vampirinha_gotica/28_escutando_atenta.png,Escutando / atenta,Mão na orelha/pose de atenção
+vampirinha_gotica,29,5,5,por_personagem/vampirinha_gotica/29_entendi.png,Entendi,Sinal de OK/expressão de compreensão
+vampirinha_gotica,30,5,6,por_personagem/vampirinha_gotica/30_nao_entendi.png,Não entendi,Encolher de ombros/interrogações
+vampirinha_gotica,31,6,1,por_personagem/vampirinha_gotica/31_elogiando_usuario.png,Elogiando o usuário,Joinhas/sparkles/elogio visual forte
+vampirinha_gotica,32,6,2,por_personagem/vampirinha_gotica/32_motivando_incentivando.png,Motivando / incentivando,Punho erguido/gesto de incentivo
+vampirinha_gotica,33,6,3,por_personagem/vampirinha_gotica/33_confortando.png,Confortando,Mão estendida/gesto acolhedor
+vampirinha_gotica,34,6,4,por_personagem/vampirinha_gotica/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,"Postura determinada, punho fechado e expressão confiante"
+vampirinha_gotica,35,6,5,por_personagem/vampirinha_gotica/35_analisando.png,Modo “analisando”,Tablet/clipboard/pose de trabalho e análise
+vampirinha_gotica,36,6,6,por_personagem/vampirinha_gotica/36_segredo_sussurro.png,Modo “segredo / sussurro”,Mão perto da boca/pose de confidência

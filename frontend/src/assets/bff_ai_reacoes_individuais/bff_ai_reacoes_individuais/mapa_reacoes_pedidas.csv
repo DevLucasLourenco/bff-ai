@@ -1,0 +1,393 @@
+﻿personagem,ordem_solicitada,reacao_pedida,imagem_mais_proxima,expressao_primaria_da_imagem,observacao
+morena,1,Feliz / sorrindo,por_personagem/morena/01_feliz_sorrindo.png,Feliz / sorrindo,Correspondência direta
+morena,2,Rindo,por_personagem/morena/02_rindo.png,Rindo,Correspondência direta
+morena,3,Empolgada / animada,por_personagem/morena/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,4,MUITO empolgada / MUITO animada,por_personagem/morena/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência direta
+morena,5,Orgulhosa / confiante,por_personagem/morena/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,6,Carinhosa / fofa,por_personagem/morena/05_carinhosa_fofa.png,Carinhosa / fofa,Correspondência direta
+morena,7,Apaixonada / encantada,por_personagem/morena/06_apaixonada_encantada.png,Apaixonada / encantada,Correspondência direta
+morena,8,Piscando / brincando,por_personagem/morena/04_piscando_brincando.png,Piscando / brincando,Correspondência direta
+morena,9,Travessa / provocando,por_personagem/morena/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,10,Surpresa,por_personagem/morena/08_surpresa.png,Surpresa,Correspondência direta
+morena,11,Chocada,por_personagem/morena/09_chocada.png,Chocada,Correspondência direta
+morena,12,Confusa,por_personagem/morena/10_confusa.png,Confusa,Correspondência direta
+morena,13,Pensativa,por_personagem/morena/11_pensativa.png,Pensativa,Correspondência direta
+morena,14,Curiosa,por_personagem/morena/12_curiosa.png,Curiosa,Correspondência direta
+morena,15,Concentrada / séria,por_personagem/morena/13_concentrada_seria.png,Concentrada / séria,Correspondência direta
+morena,16,Aprovando / concordando,por_personagem/morena/07_aprovando_concordando.png,Aprovando / concordando,Correspondência direta
+morena,17,Negando / desaprovando,por_personagem/morena/14_negando_desaprovando.png,Negando / desaprovando,Correspondência direta
+morena,18,Envergonhada,por_personagem/morena/15_envergonhada_timida.png,Envergonhada,Correspondência direta
+morena,19,Tímida,por_personagem/morena/15_envergonhada_timida.png,Envergonhada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,20,Triste,por_personagem/morena/16_triste_chateada.png,Triste,Correspondência direta
+morena,21,Chateada,por_personagem/morena/16_triste_chateada.png,Triste,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,22,Brava / irritada,por_personagem/morena/17_brava_irritada.png,Brava / irritada,Correspondência direta
+morena,23,Frustrada,por_personagem/morena/18_frustrada.png,Frustrada,Correspondência direta
+morena,24,Preocupada,por_personagem/morena/19_preocupada_ansiosa.png,Preocupada,Correspondência direta
+morena,25,Com medo / assustada,por_personagem/morena/20_com_medo_assustada.png,Com medo / assustada,Correspondência direta
+morena,26,Cansada / com sono,por_personagem/morena/21_cansada_com_sono.png,Cansada / com sono,Correspondência direta
+morena,27,Entediada,por_personagem/morena/22_entediada.png,Entediada,Correspondência direta
+morena,28,Nervosa / ansiosa,por_personagem/morena/19_preocupada_ansiosa.png,Preocupada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,29,Com dúvida,por_personagem/morena/10_confusa.png,Confusa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,30,Pedindo desculpas,por_personagem/morena/23_pedindo_desculpas.png,Pedindo desculpas,Correspondência direta
+morena,31,Comemorando,por_personagem/morena/25_comemorando.png,Comemorando,Correspondência direta
+morena,32,Pensando / processando resposta,por_personagem/morena/35_analisando.png,Modo “analisando”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,33,Tive uma ideia,por_personagem/morena/26_tive_uma_ideia.png,Tive uma ideia,Correspondência direta
+morena,34,Explicando algo,por_personagem/morena/27_explicando_algo.png,Explicando algo,Correspondência direta
+morena,35,Escutando / atenta,por_personagem/morena/28_escutando_atenta.png,Escutando / atenta,Correspondência direta
+morena,36,Não entendi,por_personagem/morena/30_nao_entendi.png,Não entendi,Correspondência direta
+morena,37,Entendi,por_personagem/morena/29_entendi.png,Entendi,Correspondência direta
+morena,38,Elogiando o usuário,por_personagem/morena/31_elogiando_usuario.png,Elogiando o usuário,Correspondência direta
+morena,39,Motivando / incentivando,por_personagem/morena/32_motivando_incentivando.png,Motivando / incentivando,Correspondência direta
+morena,40,Confortando,por_personagem/morena/33_confortando.png,Confortando,Correspondência direta
+morena,41,Modo “vamos resolver isso”,por_personagem/morena/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência direta
+morena,42,Modo “isso ficou incrível”,por_personagem/morena/31_elogiando_usuario.png,Elogiando o usuário,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,43,Modo “ops” / erro leve,por_personagem/morena/24_ops_erro_leve.png,Modo “ops” / erro leve,Correspondência direta
+morena,44,Modo “analisando”,por_personagem/morena/35_analisando.png,Modo “analisando”,Correspondência direta
+morena,45,Modo “aguardando”,por_personagem/morena/28_escutando_atenta.png,Escutando / atenta,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,46,Modo “sugestão”,por_personagem/morena/27_explicando_algo.png,Explicando algo,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,47,Modo “alerta”,por_personagem/morena/08_surpresa.png,Surpresa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+morena,48,Modo “segredo / sussurro”,por_personagem/morena/36_segredo_sussurro.png,Modo “segredo / sussurro”,Correspondência direta
+morena,49,Modo “zoeira leve”,por_personagem/morena/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,1,Feliz / sorrindo,por_personagem/loira/01_feliz_sorrindo.png,Feliz / sorrindo,Correspondência direta
+loira,2,Rindo,por_personagem/loira/02_rindo.png,Rindo,Correspondência direta
+loira,3,Empolgada / animada,por_personagem/loira/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,4,MUITO empolgada / MUITO animada,por_personagem/loira/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência direta
+loira,5,Orgulhosa / confiante,por_personagem/loira/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,6,Carinhosa / fofa,por_personagem/loira/05_carinhosa_fofa.png,Carinhosa / fofa,Correspondência direta
+loira,7,Apaixonada / encantada,por_personagem/loira/06_apaixonada_encantada.png,Apaixonada / encantada,Correspondência direta
+loira,8,Piscando / brincando,por_personagem/loira/04_piscando_brincando.png,Piscando / brincando,Correspondência direta
+loira,9,Travessa / provocando,por_personagem/loira/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,10,Surpresa,por_personagem/loira/08_surpresa.png,Surpresa,Correspondência direta
+loira,11,Chocada,por_personagem/loira/09_chocada.png,Chocada,Correspondência direta
+loira,12,Confusa,por_personagem/loira/10_confusa.png,Confusa,Correspondência direta
+loira,13,Pensativa,por_personagem/loira/11_pensativa.png,Pensativa,Correspondência direta
+loira,14,Curiosa,por_personagem/loira/12_curiosa.png,Curiosa,Correspondência direta
+loira,15,Concentrada / séria,por_personagem/loira/13_concentrada_seria.png,Concentrada / séria,Correspondência direta
+loira,16,Aprovando / concordando,por_personagem/loira/07_aprovando_concordando.png,Aprovando / concordando,Correspondência direta
+loira,17,Negando / desaprovando,por_personagem/loira/14_negando_desaprovando.png,Negando / desaprovando,Correspondência direta
+loira,18,Envergonhada,por_personagem/loira/15_envergonhada_timida.png,Envergonhada,Correspondência direta
+loira,19,Tímida,por_personagem/loira/15_envergonhada_timida.png,Envergonhada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,20,Triste,por_personagem/loira/16_triste_chateada.png,Triste,Correspondência direta
+loira,21,Chateada,por_personagem/loira/16_triste_chateada.png,Triste,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,22,Brava / irritada,por_personagem/loira/17_brava_irritada.png,Brava / irritada,Correspondência direta
+loira,23,Frustrada,por_personagem/loira/18_frustrada.png,Frustrada,Correspondência direta
+loira,24,Preocupada,por_personagem/loira/19_preocupada_ansiosa.png,Preocupada,Correspondência direta
+loira,25,Com medo / assustada,por_personagem/loira/20_com_medo_assustada.png,Com medo / assustada,Correspondência direta
+loira,26,Cansada / com sono,por_personagem/loira/21_cansada_com_sono.png,Cansada / com sono,Correspondência direta
+loira,27,Entediada,por_personagem/loira/22_entediada.png,Entediada,Correspondência direta
+loira,28,Nervosa / ansiosa,por_personagem/loira/19_preocupada_ansiosa.png,Preocupada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,29,Com dúvida,por_personagem/loira/10_confusa.png,Confusa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,30,Pedindo desculpas,por_personagem/loira/23_pedindo_desculpas.png,Pedindo desculpas,Correspondência direta
+loira,31,Comemorando,por_personagem/loira/25_comemorando.png,Comemorando,Correspondência direta
+loira,32,Pensando / processando resposta,por_personagem/loira/35_analisando.png,Modo “analisando”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,33,Tive uma ideia,por_personagem/loira/26_tive_uma_ideia.png,Tive uma ideia,Correspondência direta
+loira,34,Explicando algo,por_personagem/loira/27_explicando_algo.png,Explicando algo,Correspondência direta
+loira,35,Escutando / atenta,por_personagem/loira/28_escutando_atenta.png,Escutando / atenta,Correspondência direta
+loira,36,Não entendi,por_personagem/loira/30_nao_entendi.png,Não entendi,Correspondência direta
+loira,37,Entendi,por_personagem/loira/29_entendi.png,Entendi,Correspondência direta
+loira,38,Elogiando o usuário,por_personagem/loira/31_elogiando_usuario.png,Elogiando o usuário,Correspondência direta
+loira,39,Motivando / incentivando,por_personagem/loira/32_motivando_incentivando.png,Motivando / incentivando,Correspondência direta
+loira,40,Confortando,por_personagem/loira/33_confortando.png,Confortando,Correspondência direta
+loira,41,Modo “vamos resolver isso”,por_personagem/loira/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência direta
+loira,42,Modo “isso ficou incrível”,por_personagem/loira/31_elogiando_usuario.png,Elogiando o usuário,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,43,Modo “ops” / erro leve,por_personagem/loira/24_ops_erro_leve.png,Modo “ops” / erro leve,Correspondência direta
+loira,44,Modo “analisando”,por_personagem/loira/35_analisando.png,Modo “analisando”,Correspondência direta
+loira,45,Modo “aguardando”,por_personagem/loira/28_escutando_atenta.png,Escutando / atenta,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,46,Modo “sugestão”,por_personagem/loira/27_explicando_algo.png,Explicando algo,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,47,Modo “alerta”,por_personagem/loira/08_surpresa.png,Surpresa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+loira,48,Modo “segredo / sussurro”,por_personagem/loira/36_segredo_sussurro.png,Modo “segredo / sussurro”,Correspondência direta
+loira,49,Modo “zoeira leve”,por_personagem/loira/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,1,Feliz / sorrindo,por_personagem/ruiva/01_feliz_sorrindo.png,Feliz / sorrindo,Correspondência direta
+ruiva,2,Rindo,por_personagem/ruiva/02_rindo.png,Rindo,Correspondência direta
+ruiva,3,Empolgada / animada,por_personagem/ruiva/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,4,MUITO empolgada / MUITO animada,por_personagem/ruiva/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência direta
+ruiva,5,Orgulhosa / confiante,por_personagem/ruiva/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,6,Carinhosa / fofa,por_personagem/ruiva/05_carinhosa_fofa.png,Carinhosa / fofa,Correspondência direta
+ruiva,7,Apaixonada / encantada,por_personagem/ruiva/06_apaixonada_encantada.png,Apaixonada / encantada,Correspondência direta
+ruiva,8,Piscando / brincando,por_personagem/ruiva/04_piscando_brincando.png,Piscando / brincando,Correspondência direta
+ruiva,9,Travessa / provocando,por_personagem/ruiva/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,10,Surpresa,por_personagem/ruiva/08_surpresa.png,Surpresa,Correspondência direta
+ruiva,11,Chocada,por_personagem/ruiva/09_chocada.png,Chocada,Correspondência direta
+ruiva,12,Confusa,por_personagem/ruiva/10_confusa.png,Confusa,Correspondência direta
+ruiva,13,Pensativa,por_personagem/ruiva/11_pensativa.png,Pensativa,Correspondência direta
+ruiva,14,Curiosa,por_personagem/ruiva/12_curiosa.png,Curiosa,Correspondência direta
+ruiva,15,Concentrada / séria,por_personagem/ruiva/13_concentrada_seria.png,Concentrada / séria,Correspondência direta
+ruiva,16,Aprovando / concordando,por_personagem/ruiva/07_aprovando_concordando.png,Aprovando / concordando,Correspondência direta
+ruiva,17,Negando / desaprovando,por_personagem/ruiva/14_negando_desaprovando.png,Negando / desaprovando,Correspondência direta
+ruiva,18,Envergonhada,por_personagem/ruiva/15_envergonhada_timida.png,Envergonhada,Correspondência direta
+ruiva,19,Tímida,por_personagem/ruiva/15_envergonhada_timida.png,Envergonhada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,20,Triste,por_personagem/ruiva/16_triste_chateada.png,Triste,Correspondência direta
+ruiva,21,Chateada,por_personagem/ruiva/16_triste_chateada.png,Triste,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,22,Brava / irritada,por_personagem/ruiva/17_brava_irritada.png,Brava / irritada,Correspondência direta
+ruiva,23,Frustrada,por_personagem/ruiva/18_frustrada.png,Frustrada,Correspondência direta
+ruiva,24,Preocupada,por_personagem/ruiva/19_preocupada_ansiosa.png,Preocupada,Correspondência direta
+ruiva,25,Com medo / assustada,por_personagem/ruiva/20_com_medo_assustada.png,Com medo / assustada,Correspondência direta
+ruiva,26,Cansada / com sono,por_personagem/ruiva/21_cansada_com_sono.png,Cansada / com sono,Correspondência direta
+ruiva,27,Entediada,por_personagem/ruiva/22_entediada.png,Entediada,Correspondência direta
+ruiva,28,Nervosa / ansiosa,por_personagem/ruiva/19_preocupada_ansiosa.png,Preocupada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,29,Com dúvida,por_personagem/ruiva/10_confusa.png,Confusa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,30,Pedindo desculpas,por_personagem/ruiva/23_pedindo_desculpas.png,Pedindo desculpas,Correspondência direta
+ruiva,31,Comemorando,por_personagem/ruiva/25_comemorando.png,Comemorando,Correspondência direta
+ruiva,32,Pensando / processando resposta,por_personagem/ruiva/35_analisando.png,Modo “analisando”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,33,Tive uma ideia,por_personagem/ruiva/26_tive_uma_ideia.png,Tive uma ideia,Correspondência direta
+ruiva,34,Explicando algo,por_personagem/ruiva/27_explicando_algo.png,Explicando algo,Correspondência direta
+ruiva,35,Escutando / atenta,por_personagem/ruiva/28_escutando_atenta.png,Escutando / atenta,Correspondência direta
+ruiva,36,Não entendi,por_personagem/ruiva/30_nao_entendi.png,Não entendi,Correspondência direta
+ruiva,37,Entendi,por_personagem/ruiva/29_entendi.png,Entendi,Correspondência direta
+ruiva,38,Elogiando o usuário,por_personagem/ruiva/31_elogiando_usuario.png,Elogiando o usuário,Correspondência direta
+ruiva,39,Motivando / incentivando,por_personagem/ruiva/32_motivando_incentivando.png,Motivando / incentivando,Correspondência direta
+ruiva,40,Confortando,por_personagem/ruiva/33_confortando.png,Confortando,Correspondência direta
+ruiva,41,Modo “vamos resolver isso”,por_personagem/ruiva/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência direta
+ruiva,42,Modo “isso ficou incrível”,por_personagem/ruiva/31_elogiando_usuario.png,Elogiando o usuário,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,43,Modo “ops” / erro leve,por_personagem/ruiva/24_ops_erro_leve.png,Modo “ops” / erro leve,Correspondência direta
+ruiva,44,Modo “analisando”,por_personagem/ruiva/35_analisando.png,Modo “analisando”,Correspondência direta
+ruiva,45,Modo “aguardando”,por_personagem/ruiva/28_escutando_atenta.png,Escutando / atenta,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,46,Modo “sugestão”,por_personagem/ruiva/27_explicando_algo.png,Explicando algo,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,47,Modo “alerta”,por_personagem/ruiva/08_surpresa.png,Surpresa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+ruiva,48,Modo “segredo / sussurro”,por_personagem/ruiva/36_segredo_sussurro.png,Modo “segredo / sussurro”,Correspondência direta
+ruiva,49,Modo “zoeira leve”,por_personagem/ruiva/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,1,Feliz / sorrindo,por_personagem/japonesa_oriental/01_feliz_sorrindo.png,Feliz / sorrindo,Correspondência direta
+japonesa_oriental,2,Rindo,por_personagem/japonesa_oriental/02_rindo.png,Rindo,Correspondência direta
+japonesa_oriental,3,Empolgada / animada,por_personagem/japonesa_oriental/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,4,MUITO empolgada / MUITO animada,por_personagem/japonesa_oriental/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência direta
+japonesa_oriental,5,Orgulhosa / confiante,por_personagem/japonesa_oriental/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,6,Carinhosa / fofa,por_personagem/japonesa_oriental/05_carinhosa_fofa.png,Carinhosa / fofa,Correspondência direta
+japonesa_oriental,7,Apaixonada / encantada,por_personagem/japonesa_oriental/06_apaixonada_encantada.png,Apaixonada / encantada,Correspondência direta
+japonesa_oriental,8,Piscando / brincando,por_personagem/japonesa_oriental/04_piscando_brincando.png,Piscando / brincando,Correspondência direta
+japonesa_oriental,9,Travessa / provocando,por_personagem/japonesa_oriental/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,10,Surpresa,por_personagem/japonesa_oriental/08_surpresa.png,Surpresa,Correspondência direta
+japonesa_oriental,11,Chocada,por_personagem/japonesa_oriental/09_chocada.png,Chocada,Correspondência direta
+japonesa_oriental,12,Confusa,por_personagem/japonesa_oriental/10_confusa.png,Confusa,Correspondência direta
+japonesa_oriental,13,Pensativa,por_personagem/japonesa_oriental/11_pensativa.png,Pensativa,Correspondência direta
+japonesa_oriental,14,Curiosa,por_personagem/japonesa_oriental/12_curiosa.png,Curiosa,Correspondência direta
+japonesa_oriental,15,Concentrada / séria,por_personagem/japonesa_oriental/13_concentrada_seria.png,Concentrada / séria,Correspondência direta
+japonesa_oriental,16,Aprovando / concordando,por_personagem/japonesa_oriental/07_aprovando_concordando.png,Aprovando / concordando,Correspondência direta
+japonesa_oriental,17,Negando / desaprovando,por_personagem/japonesa_oriental/14_negando_desaprovando.png,Negando / desaprovando,Correspondência direta
+japonesa_oriental,18,Envergonhada,por_personagem/japonesa_oriental/15_envergonhada_timida.png,Envergonhada,Correspondência direta
+japonesa_oriental,19,Tímida,por_personagem/japonesa_oriental/15_envergonhada_timida.png,Envergonhada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,20,Triste,por_personagem/japonesa_oriental/16_triste_chateada.png,Triste,Correspondência direta
+japonesa_oriental,21,Chateada,por_personagem/japonesa_oriental/16_triste_chateada.png,Triste,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,22,Brava / irritada,por_personagem/japonesa_oriental/17_brava_irritada.png,Brava / irritada,Correspondência direta
+japonesa_oriental,23,Frustrada,por_personagem/japonesa_oriental/18_frustrada.png,Frustrada,Correspondência direta
+japonesa_oriental,24,Preocupada,por_personagem/japonesa_oriental/19_preocupada_ansiosa.png,Preocupada,Correspondência direta
+japonesa_oriental,25,Com medo / assustada,por_personagem/japonesa_oriental/20_com_medo_assustada.png,Com medo / assustada,Correspondência direta
+japonesa_oriental,26,Cansada / com sono,por_personagem/japonesa_oriental/21_cansada_com_sono.png,Cansada / com sono,Correspondência direta
+japonesa_oriental,27,Entediada,por_personagem/japonesa_oriental/22_entediada.png,Entediada,Correspondência direta
+japonesa_oriental,28,Nervosa / ansiosa,por_personagem/japonesa_oriental/19_preocupada_ansiosa.png,Preocupada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,29,Com dúvida,por_personagem/japonesa_oriental/10_confusa.png,Confusa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,30,Pedindo desculpas,por_personagem/japonesa_oriental/23_pedindo_desculpas.png,Pedindo desculpas,Correspondência direta
+japonesa_oriental,31,Comemorando,por_personagem/japonesa_oriental/25_comemorando.png,Comemorando,Correspondência direta
+japonesa_oriental,32,Pensando / processando resposta,por_personagem/japonesa_oriental/35_analisando.png,Modo “analisando”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,33,Tive uma ideia,por_personagem/japonesa_oriental/26_tive_uma_ideia.png,Tive uma ideia,Correspondência direta
+japonesa_oriental,34,Explicando algo,por_personagem/japonesa_oriental/27_explicando_algo.png,Explicando algo,Correspondência direta
+japonesa_oriental,35,Escutando / atenta,por_personagem/japonesa_oriental/28_escutando_atenta.png,Escutando / atenta,Correspondência direta
+japonesa_oriental,36,Não entendi,por_personagem/japonesa_oriental/30_nao_entendi.png,Não entendi,Correspondência direta
+japonesa_oriental,37,Entendi,por_personagem/japonesa_oriental/29_entendi.png,Entendi,Correspondência direta
+japonesa_oriental,38,Elogiando o usuário,por_personagem/japonesa_oriental/31_elogiando_usuario.png,Elogiando o usuário,Correspondência direta
+japonesa_oriental,39,Motivando / incentivando,por_personagem/japonesa_oriental/32_motivando_incentivando.png,Motivando / incentivando,Correspondência direta
+japonesa_oriental,40,Confortando,por_personagem/japonesa_oriental/33_confortando.png,Confortando,Correspondência direta
+japonesa_oriental,41,Modo “vamos resolver isso”,por_personagem/japonesa_oriental/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência direta
+japonesa_oriental,42,Modo “isso ficou incrível”,por_personagem/japonesa_oriental/31_elogiando_usuario.png,Elogiando o usuário,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,43,Modo “ops” / erro leve,por_personagem/japonesa_oriental/24_ops_erro_leve.png,Modo “ops” / erro leve,Correspondência direta
+japonesa_oriental,44,Modo “analisando”,por_personagem/japonesa_oriental/35_analisando.png,Modo “analisando”,Correspondência direta
+japonesa_oriental,45,Modo “aguardando”,por_personagem/japonesa_oriental/28_escutando_atenta.png,Escutando / atenta,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,46,Modo “sugestão”,por_personagem/japonesa_oriental/27_explicando_algo.png,Explicando algo,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,47,Modo “alerta”,por_personagem/japonesa_oriental/08_surpresa.png,Surpresa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+japonesa_oriental,48,Modo “segredo / sussurro”,por_personagem/japonesa_oriental/36_segredo_sussurro.png,Modo “segredo / sussurro”,Correspondência direta
+japonesa_oriental,49,Modo “zoeira leve”,por_personagem/japonesa_oriental/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,1,Feliz / sorrindo,por_personagem/cabelos_brancos/01_feliz_sorrindo.png,Feliz / sorrindo,Correspondência direta
+cabelos_brancos,2,Rindo,por_personagem/cabelos_brancos/02_rindo.png,Rindo,Correspondência direta
+cabelos_brancos,3,Empolgada / animada,por_personagem/cabelos_brancos/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,4,MUITO empolgada / MUITO animada,por_personagem/cabelos_brancos/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência direta
+cabelos_brancos,5,Orgulhosa / confiante,por_personagem/cabelos_brancos/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,6,Carinhosa / fofa,por_personagem/cabelos_brancos/05_carinhosa_fofa.png,Carinhosa / fofa,Correspondência direta
+cabelos_brancos,7,Apaixonada / encantada,por_personagem/cabelos_brancos/06_apaixonada_encantada.png,Apaixonada / encantada,Correspondência direta
+cabelos_brancos,8,Piscando / brincando,por_personagem/cabelos_brancos/04_piscando_brincando.png,Piscando / brincando,Correspondência direta
+cabelos_brancos,9,Travessa / provocando,por_personagem/cabelos_brancos/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,10,Surpresa,por_personagem/cabelos_brancos/08_surpresa.png,Surpresa,Correspondência direta
+cabelos_brancos,11,Chocada,por_personagem/cabelos_brancos/09_chocada.png,Chocada,Correspondência direta
+cabelos_brancos,12,Confusa,por_personagem/cabelos_brancos/10_confusa.png,Confusa,Correspondência direta
+cabelos_brancos,13,Pensativa,por_personagem/cabelos_brancos/11_pensativa.png,Pensativa,Correspondência direta
+cabelos_brancos,14,Curiosa,por_personagem/cabelos_brancos/12_curiosa.png,Curiosa,Correspondência direta
+cabelos_brancos,15,Concentrada / séria,por_personagem/cabelos_brancos/13_concentrada_seria.png,Concentrada / séria,Correspondência direta
+cabelos_brancos,16,Aprovando / concordando,por_personagem/cabelos_brancos/07_aprovando_concordando.png,Aprovando / concordando,Correspondência direta
+cabelos_brancos,17,Negando / desaprovando,por_personagem/cabelos_brancos/14_negando_desaprovando.png,Negando / desaprovando,Correspondência direta
+cabelos_brancos,18,Envergonhada,por_personagem/cabelos_brancos/15_envergonhada_timida.png,Envergonhada,Correspondência direta
+cabelos_brancos,19,Tímida,por_personagem/cabelos_brancos/15_envergonhada_timida.png,Envergonhada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,20,Triste,por_personagem/cabelos_brancos/16_triste_chateada.png,Triste,Correspondência direta
+cabelos_brancos,21,Chateada,por_personagem/cabelos_brancos/16_triste_chateada.png,Triste,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,22,Brava / irritada,por_personagem/cabelos_brancos/17_brava_irritada.png,Brava / irritada,Correspondência direta
+cabelos_brancos,23,Frustrada,por_personagem/cabelos_brancos/18_frustrada.png,Frustrada,Correspondência direta
+cabelos_brancos,24,Preocupada,por_personagem/cabelos_brancos/19_preocupada_ansiosa.png,Preocupada,Correspondência direta
+cabelos_brancos,25,Com medo / assustada,por_personagem/cabelos_brancos/20_com_medo_assustada.png,Com medo / assustada,Correspondência direta
+cabelos_brancos,26,Cansada / com sono,por_personagem/cabelos_brancos/21_cansada_com_sono.png,Cansada / com sono,Correspondência direta
+cabelos_brancos,27,Entediada,por_personagem/cabelos_brancos/22_entediada.png,Entediada,Correspondência direta
+cabelos_brancos,28,Nervosa / ansiosa,por_personagem/cabelos_brancos/19_preocupada_ansiosa.png,Preocupada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,29,Com dúvida,por_personagem/cabelos_brancos/10_confusa.png,Confusa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,30,Pedindo desculpas,por_personagem/cabelos_brancos/23_pedindo_desculpas.png,Pedindo desculpas,Correspondência direta
+cabelos_brancos,31,Comemorando,por_personagem/cabelos_brancos/25_comemorando.png,Comemorando,Correspondência direta
+cabelos_brancos,32,Pensando / processando resposta,por_personagem/cabelos_brancos/35_analisando.png,Modo “analisando”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,33,Tive uma ideia,por_personagem/cabelos_brancos/26_tive_uma_ideia.png,Tive uma ideia,Correspondência direta
+cabelos_brancos,34,Explicando algo,por_personagem/cabelos_brancos/27_explicando_algo.png,Explicando algo,Correspondência direta
+cabelos_brancos,35,Escutando / atenta,por_personagem/cabelos_brancos/28_escutando_atenta.png,Escutando / atenta,Correspondência direta
+cabelos_brancos,36,Não entendi,por_personagem/cabelos_brancos/30_nao_entendi.png,Não entendi,Correspondência direta
+cabelos_brancos,37,Entendi,por_personagem/cabelos_brancos/29_entendi.png,Entendi,Correspondência direta
+cabelos_brancos,38,Elogiando o usuário,por_personagem/cabelos_brancos/31_elogiando_usuario.png,Elogiando o usuário,Correspondência direta
+cabelos_brancos,39,Motivando / incentivando,por_personagem/cabelos_brancos/32_motivando_incentivando.png,Motivando / incentivando,Correspondência direta
+cabelos_brancos,40,Confortando,por_personagem/cabelos_brancos/33_confortando.png,Confortando,Correspondência direta
+cabelos_brancos,41,Modo “vamos resolver isso”,por_personagem/cabelos_brancos/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência direta
+cabelos_brancos,42,Modo “isso ficou incrível”,por_personagem/cabelos_brancos/31_elogiando_usuario.png,Elogiando o usuário,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,43,Modo “ops” / erro leve,por_personagem/cabelos_brancos/24_ops_erro_leve.png,Modo “ops” / erro leve,Correspondência direta
+cabelos_brancos,44,Modo “analisando”,por_personagem/cabelos_brancos/35_analisando.png,Modo “analisando”,Correspondência direta
+cabelos_brancos,45,Modo “aguardando”,por_personagem/cabelos_brancos/28_escutando_atenta.png,Escutando / atenta,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,46,Modo “sugestão”,por_personagem/cabelos_brancos/27_explicando_algo.png,Explicando algo,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,47,Modo “alerta”,por_personagem/cabelos_brancos/08_surpresa.png,Surpresa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+cabelos_brancos,48,Modo “segredo / sussurro”,por_personagem/cabelos_brancos/36_segredo_sussurro.png,Modo “segredo / sussurro”,Correspondência direta
+cabelos_brancos,49,Modo “zoeira leve”,por_personagem/cabelos_brancos/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,1,Feliz / sorrindo,por_personagem/fashionista/01_feliz_sorrindo.png,Feliz / sorrindo,Correspondência direta
+fashionista,2,Rindo,por_personagem/fashionista/02_rindo.png,Rindo,Correspondência direta
+fashionista,3,Empolgada / animada,por_personagem/fashionista/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,4,MUITO empolgada / MUITO animada,por_personagem/fashionista/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência direta
+fashionista,5,Orgulhosa / confiante,por_personagem/fashionista/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,6,Carinhosa / fofa,por_personagem/fashionista/05_carinhosa_fofa.png,Carinhosa / fofa,Correspondência direta
+fashionista,7,Apaixonada / encantada,por_personagem/fashionista/06_apaixonada_encantada.png,Apaixonada / encantada,Correspondência direta
+fashionista,8,Piscando / brincando,por_personagem/fashionista/04_piscando_brincando.png,Piscando / brincando,Correspondência direta
+fashionista,9,Travessa / provocando,por_personagem/fashionista/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,10,Surpresa,por_personagem/fashionista/08_surpresa.png,Surpresa,Correspondência direta
+fashionista,11,Chocada,por_personagem/fashionista/09_chocada.png,Chocada,Correspondência direta
+fashionista,12,Confusa,por_personagem/fashionista/10_confusa.png,Confusa,Correspondência direta
+fashionista,13,Pensativa,por_personagem/fashionista/11_pensativa.png,Pensativa,Correspondência direta
+fashionista,14,Curiosa,por_personagem/fashionista/12_curiosa.png,Curiosa,Correspondência direta
+fashionista,15,Concentrada / séria,por_personagem/fashionista/13_concentrada_seria.png,Concentrada / séria,Correspondência direta
+fashionista,16,Aprovando / concordando,por_personagem/fashionista/07_aprovando_concordando.png,Aprovando / concordando,Correspondência direta
+fashionista,17,Negando / desaprovando,por_personagem/fashionista/14_negando_desaprovando.png,Negando / desaprovando,Correspondência direta
+fashionista,18,Envergonhada,por_personagem/fashionista/15_envergonhada_timida.png,Envergonhada,Correspondência direta
+fashionista,19,Tímida,por_personagem/fashionista/15_envergonhada_timida.png,Envergonhada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,20,Triste,por_personagem/fashionista/16_triste_chateada.png,Triste,Correspondência direta
+fashionista,21,Chateada,por_personagem/fashionista/16_triste_chateada.png,Triste,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,22,Brava / irritada,por_personagem/fashionista/17_brava_irritada.png,Brava / irritada,Correspondência direta
+fashionista,23,Frustrada,por_personagem/fashionista/18_frustrada.png,Frustrada,Correspondência direta
+fashionista,24,Preocupada,por_personagem/fashionista/19_preocupada_ansiosa.png,Preocupada,Correspondência direta
+fashionista,25,Com medo / assustada,por_personagem/fashionista/20_com_medo_assustada.png,Com medo / assustada,Correspondência direta
+fashionista,26,Cansada / com sono,por_personagem/fashionista/21_cansada_com_sono.png,Cansada / com sono,Correspondência direta
+fashionista,27,Entediada,por_personagem/fashionista/22_entediada.png,Entediada,Correspondência direta
+fashionista,28,Nervosa / ansiosa,por_personagem/fashionista/19_preocupada_ansiosa.png,Preocupada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,29,Com dúvida,por_personagem/fashionista/10_confusa.png,Confusa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,30,Pedindo desculpas,por_personagem/fashionista/23_pedindo_desculpas.png,Pedindo desculpas,Correspondência direta
+fashionista,31,Comemorando,por_personagem/fashionista/25_comemorando.png,Comemorando,Correspondência direta
+fashionista,32,Pensando / processando resposta,por_personagem/fashionista/35_analisando.png,Modo “analisando”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,33,Tive uma ideia,por_personagem/fashionista/26_tive_uma_ideia.png,Tive uma ideia,Correspondência direta
+fashionista,34,Explicando algo,por_personagem/fashionista/27_explicando_algo.png,Explicando algo,Correspondência direta
+fashionista,35,Escutando / atenta,por_personagem/fashionista/28_escutando_atenta.png,Escutando / atenta,Correspondência direta
+fashionista,36,Não entendi,por_personagem/fashionista/30_nao_entendi.png,Não entendi,Correspondência direta
+fashionista,37,Entendi,por_personagem/fashionista/29_entendi.png,Entendi,Correspondência direta
+fashionista,38,Elogiando o usuário,por_personagem/fashionista/31_elogiando_usuario.png,Elogiando o usuário,Correspondência direta
+fashionista,39,Motivando / incentivando,por_personagem/fashionista/32_motivando_incentivando.png,Motivando / incentivando,Correspondência direta
+fashionista,40,Confortando,por_personagem/fashionista/33_confortando.png,Confortando,Correspondência direta
+fashionista,41,Modo “vamos resolver isso”,por_personagem/fashionista/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência direta
+fashionista,42,Modo “isso ficou incrível”,por_personagem/fashionista/31_elogiando_usuario.png,Elogiando o usuário,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,43,Modo “ops” / erro leve,por_personagem/fashionista/24_ops_erro_leve.png,Modo “ops” / erro leve,Correspondência direta
+fashionista,44,Modo “analisando”,por_personagem/fashionista/35_analisando.png,Modo “analisando”,Correspondência direta
+fashionista,45,Modo “aguardando”,por_personagem/fashionista/28_escutando_atenta.png,Escutando / atenta,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,46,Modo “sugestão”,por_personagem/fashionista/27_explicando_algo.png,Explicando algo,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,47,Modo “alerta”,por_personagem/fashionista/08_surpresa.png,Surpresa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+fashionista,48,Modo “segredo / sussurro”,por_personagem/fashionista/36_segredo_sussurro.png,Modo “segredo / sussurro”,Correspondência direta
+fashionista,49,Modo “zoeira leve”,por_personagem/fashionista/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,1,Feliz / sorrindo,por_personagem/lobinha_spooky/01_feliz_sorrindo.png,Feliz / sorrindo,Correspondência direta
+lobinha_spooky,2,Rindo,por_personagem/lobinha_spooky/02_rindo.png,Rindo,Correspondência direta
+lobinha_spooky,3,Empolgada / animada,por_personagem/lobinha_spooky/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,4,MUITO empolgada / MUITO animada,por_personagem/lobinha_spooky/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência direta
+lobinha_spooky,5,Orgulhosa / confiante,por_personagem/lobinha_spooky/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,6,Carinhosa / fofa,por_personagem/lobinha_spooky/05_carinhosa_fofa.png,Carinhosa / fofa,Correspondência direta
+lobinha_spooky,7,Apaixonada / encantada,por_personagem/lobinha_spooky/06_apaixonada_encantada.png,Apaixonada / encantada,Correspondência direta
+lobinha_spooky,8,Piscando / brincando,por_personagem/lobinha_spooky/04_piscando_brincando.png,Piscando / brincando,Correspondência direta
+lobinha_spooky,9,Travessa / provocando,por_personagem/lobinha_spooky/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,10,Surpresa,por_personagem/lobinha_spooky/08_surpresa.png,Surpresa,Correspondência direta
+lobinha_spooky,11,Chocada,por_personagem/lobinha_spooky/09_chocada.png,Chocada,Correspondência direta
+lobinha_spooky,12,Confusa,por_personagem/lobinha_spooky/10_confusa.png,Confusa,Correspondência direta
+lobinha_spooky,13,Pensativa,por_personagem/lobinha_spooky/11_pensativa.png,Pensativa,Correspondência direta
+lobinha_spooky,14,Curiosa,por_personagem/lobinha_spooky/12_curiosa.png,Curiosa,Correspondência direta
+lobinha_spooky,15,Concentrada / séria,por_personagem/lobinha_spooky/13_concentrada_seria.png,Concentrada / séria,Correspondência direta
+lobinha_spooky,16,Aprovando / concordando,por_personagem/lobinha_spooky/07_aprovando_concordando.png,Aprovando / concordando,Correspondência direta
+lobinha_spooky,17,Negando / desaprovando,por_personagem/lobinha_spooky/14_negando_desaprovando.png,Negando / desaprovando,Correspondência direta
+lobinha_spooky,18,Envergonhada,por_personagem/lobinha_spooky/15_envergonhada_timida.png,Envergonhada,Correspondência direta
+lobinha_spooky,19,Tímida,por_personagem/lobinha_spooky/15_envergonhada_timida.png,Envergonhada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,20,Triste,por_personagem/lobinha_spooky/16_triste_chateada.png,Triste,Correspondência direta
+lobinha_spooky,21,Chateada,por_personagem/lobinha_spooky/16_triste_chateada.png,Triste,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,22,Brava / irritada,por_personagem/lobinha_spooky/17_brava_irritada.png,Brava / irritada,Correspondência direta
+lobinha_spooky,23,Frustrada,por_personagem/lobinha_spooky/18_frustrada.png,Frustrada,Correspondência direta
+lobinha_spooky,24,Preocupada,por_personagem/lobinha_spooky/19_preocupada_ansiosa.png,Preocupada,Correspondência direta
+lobinha_spooky,25,Com medo / assustada,por_personagem/lobinha_spooky/20_com_medo_assustada.png,Com medo / assustada,Correspondência direta
+lobinha_spooky,26,Cansada / com sono,por_personagem/lobinha_spooky/21_cansada_com_sono.png,Cansada / com sono,Correspondência direta
+lobinha_spooky,27,Entediada,por_personagem/lobinha_spooky/22_entediada.png,Entediada,Correspondência direta
+lobinha_spooky,28,Nervosa / ansiosa,por_personagem/lobinha_spooky/19_preocupada_ansiosa.png,Preocupada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,29,Com dúvida,por_personagem/lobinha_spooky/10_confusa.png,Confusa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,30,Pedindo desculpas,por_personagem/lobinha_spooky/23_pedindo_desculpas.png,Pedindo desculpas,Correspondência direta
+lobinha_spooky,31,Comemorando,por_personagem/lobinha_spooky/25_comemorando.png,Comemorando,Correspondência direta
+lobinha_spooky,32,Pensando / processando resposta,por_personagem/lobinha_spooky/35_analisando.png,Modo “analisando”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,33,Tive uma ideia,por_personagem/lobinha_spooky/26_tive_uma_ideia.png,Tive uma ideia,Correspondência direta
+lobinha_spooky,34,Explicando algo,por_personagem/lobinha_spooky/27_explicando_algo.png,Explicando algo,Correspondência direta
+lobinha_spooky,35,Escutando / atenta,por_personagem/lobinha_spooky/28_escutando_atenta.png,Escutando / atenta,Correspondência direta
+lobinha_spooky,36,Não entendi,por_personagem/lobinha_spooky/30_nao_entendi.png,Não entendi,Correspondência direta
+lobinha_spooky,37,Entendi,por_personagem/lobinha_spooky/29_entendi.png,Entendi,Correspondência direta
+lobinha_spooky,38,Elogiando o usuário,por_personagem/lobinha_spooky/31_elogiando_usuario.png,Elogiando o usuário,Correspondência direta
+lobinha_spooky,39,Motivando / incentivando,por_personagem/lobinha_spooky/32_motivando_incentivando.png,Motivando / incentivando,Correspondência direta
+lobinha_spooky,40,Confortando,por_personagem/lobinha_spooky/33_confortando.png,Confortando,Correspondência direta
+lobinha_spooky,41,Modo “vamos resolver isso”,por_personagem/lobinha_spooky/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência direta
+lobinha_spooky,42,Modo “isso ficou incrível”,por_personagem/lobinha_spooky/31_elogiando_usuario.png,Elogiando o usuário,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,43,Modo “ops” / erro leve,por_personagem/lobinha_spooky/24_ops_erro_leve.png,Modo “ops” / erro leve,Correspondência direta
+lobinha_spooky,44,Modo “analisando”,por_personagem/lobinha_spooky/35_analisando.png,Modo “analisando”,Correspondência direta
+lobinha_spooky,45,Modo “aguardando”,por_personagem/lobinha_spooky/28_escutando_atenta.png,Escutando / atenta,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,46,Modo “sugestão”,por_personagem/lobinha_spooky/27_explicando_algo.png,Explicando algo,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,47,Modo “alerta”,por_personagem/lobinha_spooky/08_surpresa.png,Surpresa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+lobinha_spooky,48,Modo “segredo / sussurro”,por_personagem/lobinha_spooky/36_segredo_sussurro.png,Modo “segredo / sussurro”,Correspondência direta
+lobinha_spooky,49,Modo “zoeira leve”,por_personagem/lobinha_spooky/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,1,Feliz / sorrindo,por_personagem/vampirinha_gotica/01_feliz_sorrindo.png,Feliz / sorrindo,Correspondência direta
+vampirinha_gotica,2,Rindo,por_personagem/vampirinha_gotica/02_rindo.png,Rindo,Correspondência direta
+vampirinha_gotica,3,Empolgada / animada,por_personagem/vampirinha_gotica/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,4,MUITO empolgada / MUITO animada,por_personagem/vampirinha_gotica/03_muito_empolgada.png,MUITO empolgada / MUITO animada,Correspondência direta
+vampirinha_gotica,5,Orgulhosa / confiante,por_personagem/vampirinha_gotica/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,6,Carinhosa / fofa,por_personagem/vampirinha_gotica/05_carinhosa_fofa.png,Carinhosa / fofa,Correspondência direta
+vampirinha_gotica,7,Apaixonada / encantada,por_personagem/vampirinha_gotica/06_apaixonada_encantada.png,Apaixonada / encantada,Correspondência direta
+vampirinha_gotica,8,Piscando / brincando,por_personagem/vampirinha_gotica/04_piscando_brincando.png,Piscando / brincando,Correspondência direta
+vampirinha_gotica,9,Travessa / provocando,por_personagem/vampirinha_gotica/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,10,Surpresa,por_personagem/vampirinha_gotica/08_surpresa.png,Surpresa,Correspondência direta
+vampirinha_gotica,11,Chocada,por_personagem/vampirinha_gotica/09_chocada.png,Chocada,Correspondência direta
+vampirinha_gotica,12,Confusa,por_personagem/vampirinha_gotica/10_confusa.png,Confusa,Correspondência direta
+vampirinha_gotica,13,Pensativa,por_personagem/vampirinha_gotica/11_pensativa.png,Pensativa,Correspondência direta
+vampirinha_gotica,14,Curiosa,por_personagem/vampirinha_gotica/12_curiosa.png,Curiosa,Correspondência direta
+vampirinha_gotica,15,Concentrada / séria,por_personagem/vampirinha_gotica/13_concentrada_seria.png,Concentrada / séria,Correspondência direta
+vampirinha_gotica,16,Aprovando / concordando,por_personagem/vampirinha_gotica/07_aprovando_concordando.png,Aprovando / concordando,Correspondência direta
+vampirinha_gotica,17,Negando / desaprovando,por_personagem/vampirinha_gotica/14_negando_desaprovando.png,Negando / desaprovando,Correspondência direta
+vampirinha_gotica,18,Envergonhada,por_personagem/vampirinha_gotica/15_envergonhada_timida.png,Envergonhada,Correspondência direta
+vampirinha_gotica,19,Tímida,por_personagem/vampirinha_gotica/15_envergonhada_timida.png,Envergonhada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,20,Triste,por_personagem/vampirinha_gotica/16_triste_chateada.png,Triste,Correspondência direta
+vampirinha_gotica,21,Chateada,por_personagem/vampirinha_gotica/16_triste_chateada.png,Triste,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,22,Brava / irritada,por_personagem/vampirinha_gotica/17_brava_irritada.png,Brava / irritada,Correspondência direta
+vampirinha_gotica,23,Frustrada,por_personagem/vampirinha_gotica/18_frustrada.png,Frustrada,Correspondência direta
+vampirinha_gotica,24,Preocupada,por_personagem/vampirinha_gotica/19_preocupada_ansiosa.png,Preocupada,Correspondência direta
+vampirinha_gotica,25,Com medo / assustada,por_personagem/vampirinha_gotica/20_com_medo_assustada.png,Com medo / assustada,Correspondência direta
+vampirinha_gotica,26,Cansada / com sono,por_personagem/vampirinha_gotica/21_cansada_com_sono.png,Cansada / com sono,Correspondência direta
+vampirinha_gotica,27,Entediada,por_personagem/vampirinha_gotica/22_entediada.png,Entediada,Correspondência direta
+vampirinha_gotica,28,Nervosa / ansiosa,por_personagem/vampirinha_gotica/19_preocupada_ansiosa.png,Preocupada,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,29,Com dúvida,por_personagem/vampirinha_gotica/10_confusa.png,Confusa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,30,Pedindo desculpas,por_personagem/vampirinha_gotica/23_pedindo_desculpas.png,Pedindo desculpas,Correspondência direta
+vampirinha_gotica,31,Comemorando,por_personagem/vampirinha_gotica/25_comemorando.png,Comemorando,Correspondência direta
+vampirinha_gotica,32,Pensando / processando resposta,por_personagem/vampirinha_gotica/35_analisando.png,Modo “analisando”,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,33,Tive uma ideia,por_personagem/vampirinha_gotica/26_tive_uma_ideia.png,Tive uma ideia,Correspondência direta
+vampirinha_gotica,34,Explicando algo,por_personagem/vampirinha_gotica/27_explicando_algo.png,Explicando algo,Correspondência direta
+vampirinha_gotica,35,Escutando / atenta,por_personagem/vampirinha_gotica/28_escutando_atenta.png,Escutando / atenta,Correspondência direta
+vampirinha_gotica,36,Não entendi,por_personagem/vampirinha_gotica/30_nao_entendi.png,Não entendi,Correspondência direta
+vampirinha_gotica,37,Entendi,por_personagem/vampirinha_gotica/29_entendi.png,Entendi,Correspondência direta
+vampirinha_gotica,38,Elogiando o usuário,por_personagem/vampirinha_gotica/31_elogiando_usuario.png,Elogiando o usuário,Correspondência direta
+vampirinha_gotica,39,Motivando / incentivando,por_personagem/vampirinha_gotica/32_motivando_incentivando.png,Motivando / incentivando,Correspondência direta
+vampirinha_gotica,40,Confortando,por_personagem/vampirinha_gotica/33_confortando.png,Confortando,Correspondência direta
+vampirinha_gotica,41,Modo “vamos resolver isso”,por_personagem/vampirinha_gotica/34_vamos_resolver_isso.png,Modo “vamos resolver isso”,Correspondência direta
+vampirinha_gotica,42,Modo “isso ficou incrível”,por_personagem/vampirinha_gotica/31_elogiando_usuario.png,Elogiando o usuário,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,43,Modo “ops” / erro leve,por_personagem/vampirinha_gotica/24_ops_erro_leve.png,Modo “ops” / erro leve,Correspondência direta
+vampirinha_gotica,44,Modo “analisando”,por_personagem/vampirinha_gotica/35_analisando.png,Modo “analisando”,Correspondência direta
+vampirinha_gotica,45,Modo “aguardando”,por_personagem/vampirinha_gotica/28_escutando_atenta.png,Escutando / atenta,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,46,Modo “sugestão”,por_personagem/vampirinha_gotica/27_explicando_algo.png,Explicando algo,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,47,Modo “alerta”,por_personagem/vampirinha_gotica/08_surpresa.png,Surpresa,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva
+vampirinha_gotica,48,Modo “segredo / sussurro”,por_personagem/vampirinha_gotica/36_segredo_sussurro.png,Modo “segredo / sussurro”,Correspondência direta
+vampirinha_gotica,49,Modo “zoeira leve”,por_personagem/vampirinha_gotica/04_piscando_brincando.png,Piscando / brincando,Correspondência semântica aproximada; a cartela não gerou esta reação como pose exclusiva

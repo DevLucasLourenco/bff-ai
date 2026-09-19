@@ -1,0 +1,1978 @@
+{
+  "morena": {
+    "Feliz / sorrindo": {
+      "file": "por_personagem/morena/01_feliz_sorrindo.png",
+      "generated_primary_expression": "Feliz / sorrindo",
+      "match": "direct"
+    },
+    "Rindo": {
+      "file": "por_personagem/morena/02_rindo.png",
+      "generated_primary_expression": "Rindo",
+      "match": "direct"
+    },
+    "Empolgada / animada": {
+      "file": "por_personagem/morena/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "semantic_approximation"
+    },
+    "MUITO empolgada / MUITO animada": {
+      "file": "por_personagem/morena/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "direct"
+    },
+    "Orgulhosa / confiante": {
+      "file": "por_personagem/morena/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "semantic_approximation"
+    },
+    "Carinhosa / fofa": {
+      "file": "por_personagem/morena/05_carinhosa_fofa.png",
+      "generated_primary_expression": "Carinhosa / fofa",
+      "match": "direct"
+    },
+    "Apaixonada / encantada": {
+      "file": "por_personagem/morena/06_apaixonada_encantada.png",
+      "generated_primary_expression": "Apaixonada / encantada",
+      "match": "direct"
+    },
+    "Piscando / brincando": {
+      "file": "por_personagem/morena/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "direct"
+    },
+    "Travessa / provocando": {
+      "file": "por_personagem/morena/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    },
+    "Surpresa": {
+      "file": "por_personagem/morena/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "direct"
+    },
+    "Chocada": {
+      "file": "por_personagem/morena/09_chocada.png",
+      "generated_primary_expression": "Chocada",
+      "match": "direct"
+    },
+    "Confusa": {
+      "file": "por_personagem/morena/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "direct"
+    },
+    "Pensativa": {
+      "file": "por_personagem/morena/11_pensativa.png",
+      "generated_primary_expression": "Pensativa",
+      "match": "direct"
+    },
+    "Curiosa": {
+      "file": "por_personagem/morena/12_curiosa.png",
+      "generated_primary_expression": "Curiosa",
+      "match": "direct"
+    },
+    "Concentrada / séria": {
+      "file": "por_personagem/morena/13_concentrada_seria.png",
+      "generated_primary_expression": "Concentrada / séria",
+      "match": "direct"
+    },
+    "Aprovando / concordando": {
+      "file": "por_personagem/morena/07_aprovando_concordando.png",
+      "generated_primary_expression": "Aprovando / concordando",
+      "match": "direct"
+    },
+    "Negando / desaprovando": {
+      "file": "por_personagem/morena/14_negando_desaprovando.png",
+      "generated_primary_expression": "Negando / desaprovando",
+      "match": "direct"
+    },
+    "Envergonhada": {
+      "file": "por_personagem/morena/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "direct"
+    },
+    "Tímida": {
+      "file": "por_personagem/morena/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "semantic_approximation"
+    },
+    "Triste": {
+      "file": "por_personagem/morena/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "direct"
+    },
+    "Chateada": {
+      "file": "por_personagem/morena/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "semantic_approximation"
+    },
+    "Brava / irritada": {
+      "file": "por_personagem/morena/17_brava_irritada.png",
+      "generated_primary_expression": "Brava / irritada",
+      "match": "direct"
+    },
+    "Frustrada": {
+      "file": "por_personagem/morena/18_frustrada.png",
+      "generated_primary_expression": "Frustrada",
+      "match": "direct"
+    },
+    "Preocupada": {
+      "file": "por_personagem/morena/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "direct"
+    },
+    "Com medo / assustada": {
+      "file": "por_personagem/morena/20_com_medo_assustada.png",
+      "generated_primary_expression": "Com medo / assustada",
+      "match": "direct"
+    },
+    "Cansada / com sono": {
+      "file": "por_personagem/morena/21_cansada_com_sono.png",
+      "generated_primary_expression": "Cansada / com sono",
+      "match": "direct"
+    },
+    "Entediada": {
+      "file": "por_personagem/morena/22_entediada.png",
+      "generated_primary_expression": "Entediada",
+      "match": "direct"
+    },
+    "Nervosa / ansiosa": {
+      "file": "por_personagem/morena/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "semantic_approximation"
+    },
+    "Com dúvida": {
+      "file": "por_personagem/morena/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "semantic_approximation"
+    },
+    "Pedindo desculpas": {
+      "file": "por_personagem/morena/23_pedindo_desculpas.png",
+      "generated_primary_expression": "Pedindo desculpas",
+      "match": "direct"
+    },
+    "Comemorando": {
+      "file": "por_personagem/morena/25_comemorando.png",
+      "generated_primary_expression": "Comemorando",
+      "match": "direct"
+    },
+    "Pensando / processando resposta": {
+      "file": "por_personagem/morena/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "semantic_approximation"
+    },
+    "Tive uma ideia": {
+      "file": "por_personagem/morena/26_tive_uma_ideia.png",
+      "generated_primary_expression": "Tive uma ideia",
+      "match": "direct"
+    },
+    "Explicando algo": {
+      "file": "por_personagem/morena/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "direct"
+    },
+    "Escutando / atenta": {
+      "file": "por_personagem/morena/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "direct"
+    },
+    "Não entendi": {
+      "file": "por_personagem/morena/30_nao_entendi.png",
+      "generated_primary_expression": "Não entendi",
+      "match": "direct"
+    },
+    "Entendi": {
+      "file": "por_personagem/morena/29_entendi.png",
+      "generated_primary_expression": "Entendi",
+      "match": "direct"
+    },
+    "Elogiando o usuário": {
+      "file": "por_personagem/morena/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "direct"
+    },
+    "Motivando / incentivando": {
+      "file": "por_personagem/morena/32_motivando_incentivando.png",
+      "generated_primary_expression": "Motivando / incentivando",
+      "match": "direct"
+    },
+    "Confortando": {
+      "file": "por_personagem/morena/33_confortando.png",
+      "generated_primary_expression": "Confortando",
+      "match": "direct"
+    },
+    "Modo “vamos resolver isso”": {
+      "file": "por_personagem/morena/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "direct"
+    },
+    "Modo “isso ficou incrível”": {
+      "file": "por_personagem/morena/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "semantic_approximation"
+    },
+    "Modo “ops” / erro leve": {
+      "file": "por_personagem/morena/24_ops_erro_leve.png",
+      "generated_primary_expression": "Modo “ops” / erro leve",
+      "match": "direct"
+    },
+    "Modo “analisando”": {
+      "file": "por_personagem/morena/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "direct"
+    },
+    "Modo “aguardando”": {
+      "file": "por_personagem/morena/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "semantic_approximation"
+    },
+    "Modo “sugestão”": {
+      "file": "por_personagem/morena/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "semantic_approximation"
+    },
+    "Modo “alerta”": {
+      "file": "por_personagem/morena/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "semantic_approximation"
+    },
+    "Modo “segredo / sussurro”": {
+      "file": "por_personagem/morena/36_segredo_sussurro.png",
+      "generated_primary_expression": "Modo “segredo / sussurro”",
+      "match": "direct"
+    },
+    "Modo “zoeira leve”": {
+      "file": "por_personagem/morena/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    }
+  },
+  "loira": {
+    "Feliz / sorrindo": {
+      "file": "por_personagem/loira/01_feliz_sorrindo.png",
+      "generated_primary_expression": "Feliz / sorrindo",
+      "match": "direct"
+    },
+    "Rindo": {
+      "file": "por_personagem/loira/02_rindo.png",
+      "generated_primary_expression": "Rindo",
+      "match": "direct"
+    },
+    "Empolgada / animada": {
+      "file": "por_personagem/loira/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "semantic_approximation"
+    },
+    "MUITO empolgada / MUITO animada": {
+      "file": "por_personagem/loira/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "direct"
+    },
+    "Orgulhosa / confiante": {
+      "file": "por_personagem/loira/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "semantic_approximation"
+    },
+    "Carinhosa / fofa": {
+      "file": "por_personagem/loira/05_carinhosa_fofa.png",
+      "generated_primary_expression": "Carinhosa / fofa",
+      "match": "direct"
+    },
+    "Apaixonada / encantada": {
+      "file": "por_personagem/loira/06_apaixonada_encantada.png",
+      "generated_primary_expression": "Apaixonada / encantada",
+      "match": "direct"
+    },
+    "Piscando / brincando": {
+      "file": "por_personagem/loira/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "direct"
+    },
+    "Travessa / provocando": {
+      "file": "por_personagem/loira/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    },
+    "Surpresa": {
+      "file": "por_personagem/loira/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "direct"
+    },
+    "Chocada": {
+      "file": "por_personagem/loira/09_chocada.png",
+      "generated_primary_expression": "Chocada",
+      "match": "direct"
+    },
+    "Confusa": {
+      "file": "por_personagem/loira/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "direct"
+    },
+    "Pensativa": {
+      "file": "por_personagem/loira/11_pensativa.png",
+      "generated_primary_expression": "Pensativa",
+      "match": "direct"
+    },
+    "Curiosa": {
+      "file": "por_personagem/loira/12_curiosa.png",
+      "generated_primary_expression": "Curiosa",
+      "match": "direct"
+    },
+    "Concentrada / séria": {
+      "file": "por_personagem/loira/13_concentrada_seria.png",
+      "generated_primary_expression": "Concentrada / séria",
+      "match": "direct"
+    },
+    "Aprovando / concordando": {
+      "file": "por_personagem/loira/07_aprovando_concordando.png",
+      "generated_primary_expression": "Aprovando / concordando",
+      "match": "direct"
+    },
+    "Negando / desaprovando": {
+      "file": "por_personagem/loira/14_negando_desaprovando.png",
+      "generated_primary_expression": "Negando / desaprovando",
+      "match": "direct"
+    },
+    "Envergonhada": {
+      "file": "por_personagem/loira/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "direct"
+    },
+    "Tímida": {
+      "file": "por_personagem/loira/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "semantic_approximation"
+    },
+    "Triste": {
+      "file": "por_personagem/loira/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "direct"
+    },
+    "Chateada": {
+      "file": "por_personagem/loira/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "semantic_approximation"
+    },
+    "Brava / irritada": {
+      "file": "por_personagem/loira/17_brava_irritada.png",
+      "generated_primary_expression": "Brava / irritada",
+      "match": "direct"
+    },
+    "Frustrada": {
+      "file": "por_personagem/loira/18_frustrada.png",
+      "generated_primary_expression": "Frustrada",
+      "match": "direct"
+    },
+    "Preocupada": {
+      "file": "por_personagem/loira/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "direct"
+    },
+    "Com medo / assustada": {
+      "file": "por_personagem/loira/20_com_medo_assustada.png",
+      "generated_primary_expression": "Com medo / assustada",
+      "match": "direct"
+    },
+    "Cansada / com sono": {
+      "file": "por_personagem/loira/21_cansada_com_sono.png",
+      "generated_primary_expression": "Cansada / com sono",
+      "match": "direct"
+    },
+    "Entediada": {
+      "file": "por_personagem/loira/22_entediada.png",
+      "generated_primary_expression": "Entediada",
+      "match": "direct"
+    },
+    "Nervosa / ansiosa": {
+      "file": "por_personagem/loira/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "semantic_approximation"
+    },
+    "Com dúvida": {
+      "file": "por_personagem/loira/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "semantic_approximation"
+    },
+    "Pedindo desculpas": {
+      "file": "por_personagem/loira/23_pedindo_desculpas.png",
+      "generated_primary_expression": "Pedindo desculpas",
+      "match": "direct"
+    },
+    "Comemorando": {
+      "file": "por_personagem/loira/25_comemorando.png",
+      "generated_primary_expression": "Comemorando",
+      "match": "direct"
+    },
+    "Pensando / processando resposta": {
+      "file": "por_personagem/loira/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "semantic_approximation"
+    },
+    "Tive uma ideia": {
+      "file": "por_personagem/loira/26_tive_uma_ideia.png",
+      "generated_primary_expression": "Tive uma ideia",
+      "match": "direct"
+    },
+    "Explicando algo": {
+      "file": "por_personagem/loira/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "direct"
+    },
+    "Escutando / atenta": {
+      "file": "por_personagem/loira/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "direct"
+    },
+    "Não entendi": {
+      "file": "por_personagem/loira/30_nao_entendi.png",
+      "generated_primary_expression": "Não entendi",
+      "match": "direct"
+    },
+    "Entendi": {
+      "file": "por_personagem/loira/29_entendi.png",
+      "generated_primary_expression": "Entendi",
+      "match": "direct"
+    },
+    "Elogiando o usuário": {
+      "file": "por_personagem/loira/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "direct"
+    },
+    "Motivando / incentivando": {
+      "file": "por_personagem/loira/32_motivando_incentivando.png",
+      "generated_primary_expression": "Motivando / incentivando",
+      "match": "direct"
+    },
+    "Confortando": {
+      "file": "por_personagem/loira/33_confortando.png",
+      "generated_primary_expression": "Confortando",
+      "match": "direct"
+    },
+    "Modo “vamos resolver isso”": {
+      "file": "por_personagem/loira/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "direct"
+    },
+    "Modo “isso ficou incrível”": {
+      "file": "por_personagem/loira/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "semantic_approximation"
+    },
+    "Modo “ops” / erro leve": {
+      "file": "por_personagem/loira/24_ops_erro_leve.png",
+      "generated_primary_expression": "Modo “ops” / erro leve",
+      "match": "direct"
+    },
+    "Modo “analisando”": {
+      "file": "por_personagem/loira/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "direct"
+    },
+    "Modo “aguardando”": {
+      "file": "por_personagem/loira/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "semantic_approximation"
+    },
+    "Modo “sugestão”": {
+      "file": "por_personagem/loira/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "semantic_approximation"
+    },
+    "Modo “alerta”": {
+      "file": "por_personagem/loira/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "semantic_approximation"
+    },
+    "Modo “segredo / sussurro”": {
+      "file": "por_personagem/loira/36_segredo_sussurro.png",
+      "generated_primary_expression": "Modo “segredo / sussurro”",
+      "match": "direct"
+    },
+    "Modo “zoeira leve”": {
+      "file": "por_personagem/loira/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    }
+  },
+  "ruiva": {
+    "Feliz / sorrindo": {
+      "file": "por_personagem/ruiva/01_feliz_sorrindo.png",
+      "generated_primary_expression": "Feliz / sorrindo",
+      "match": "direct"
+    },
+    "Rindo": {
+      "file": "por_personagem/ruiva/02_rindo.png",
+      "generated_primary_expression": "Rindo",
+      "match": "direct"
+    },
+    "Empolgada / animada": {
+      "file": "por_personagem/ruiva/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "semantic_approximation"
+    },
+    "MUITO empolgada / MUITO animada": {
+      "file": "por_personagem/ruiva/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "direct"
+    },
+    "Orgulhosa / confiante": {
+      "file": "por_personagem/ruiva/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "semantic_approximation"
+    },
+    "Carinhosa / fofa": {
+      "file": "por_personagem/ruiva/05_carinhosa_fofa.png",
+      "generated_primary_expression": "Carinhosa / fofa",
+      "match": "direct"
+    },
+    "Apaixonada / encantada": {
+      "file": "por_personagem/ruiva/06_apaixonada_encantada.png",
+      "generated_primary_expression": "Apaixonada / encantada",
+      "match": "direct"
+    },
+    "Piscando / brincando": {
+      "file": "por_personagem/ruiva/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "direct"
+    },
+    "Travessa / provocando": {
+      "file": "por_personagem/ruiva/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    },
+    "Surpresa": {
+      "file": "por_personagem/ruiva/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "direct"
+    },
+    "Chocada": {
+      "file": "por_personagem/ruiva/09_chocada.png",
+      "generated_primary_expression": "Chocada",
+      "match": "direct"
+    },
+    "Confusa": {
+      "file": "por_personagem/ruiva/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "direct"
+    },
+    "Pensativa": {
+      "file": "por_personagem/ruiva/11_pensativa.png",
+      "generated_primary_expression": "Pensativa",
+      "match": "direct"
+    },
+    "Curiosa": {
+      "file": "por_personagem/ruiva/12_curiosa.png",
+      "generated_primary_expression": "Curiosa",
+      "match": "direct"
+    },
+    "Concentrada / séria": {
+      "file": "por_personagem/ruiva/13_concentrada_seria.png",
+      "generated_primary_expression": "Concentrada / séria",
+      "match": "direct"
+    },
+    "Aprovando / concordando": {
+      "file": "por_personagem/ruiva/07_aprovando_concordando.png",
+      "generated_primary_expression": "Aprovando / concordando",
+      "match": "direct"
+    },
+    "Negando / desaprovando": {
+      "file": "por_personagem/ruiva/14_negando_desaprovando.png",
+      "generated_primary_expression": "Negando / desaprovando",
+      "match": "direct"
+    },
+    "Envergonhada": {
+      "file": "por_personagem/ruiva/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "direct"
+    },
+    "Tímida": {
+      "file": "por_personagem/ruiva/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "semantic_approximation"
+    },
+    "Triste": {
+      "file": "por_personagem/ruiva/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "direct"
+    },
+    "Chateada": {
+      "file": "por_personagem/ruiva/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "semantic_approximation"
+    },
+    "Brava / irritada": {
+      "file": "por_personagem/ruiva/17_brava_irritada.png",
+      "generated_primary_expression": "Brava / irritada",
+      "match": "direct"
+    },
+    "Frustrada": {
+      "file": "por_personagem/ruiva/18_frustrada.png",
+      "generated_primary_expression": "Frustrada",
+      "match": "direct"
+    },
+    "Preocupada": {
+      "file": "por_personagem/ruiva/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "direct"
+    },
+    "Com medo / assustada": {
+      "file": "por_personagem/ruiva/20_com_medo_assustada.png",
+      "generated_primary_expression": "Com medo / assustada",
+      "match": "direct"
+    },
+    "Cansada / com sono": {
+      "file": "por_personagem/ruiva/21_cansada_com_sono.png",
+      "generated_primary_expression": "Cansada / com sono",
+      "match": "direct"
+    },
+    "Entediada": {
+      "file": "por_personagem/ruiva/22_entediada.png",
+      "generated_primary_expression": "Entediada",
+      "match": "direct"
+    },
+    "Nervosa / ansiosa": {
+      "file": "por_personagem/ruiva/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "semantic_approximation"
+    },
+    "Com dúvida": {
+      "file": "por_personagem/ruiva/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "semantic_approximation"
+    },
+    "Pedindo desculpas": {
+      "file": "por_personagem/ruiva/23_pedindo_desculpas.png",
+      "generated_primary_expression": "Pedindo desculpas",
+      "match": "direct"
+    },
+    "Comemorando": {
+      "file": "por_personagem/ruiva/25_comemorando.png",
+      "generated_primary_expression": "Comemorando",
+      "match": "direct"
+    },
+    "Pensando / processando resposta": {
+      "file": "por_personagem/ruiva/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "semantic_approximation"
+    },
+    "Tive uma ideia": {
+      "file": "por_personagem/ruiva/26_tive_uma_ideia.png",
+      "generated_primary_expression": "Tive uma ideia",
+      "match": "direct"
+    },
+    "Explicando algo": {
+      "file": "por_personagem/ruiva/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "direct"
+    },
+    "Escutando / atenta": {
+      "file": "por_personagem/ruiva/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "direct"
+    },
+    "Não entendi": {
+      "file": "por_personagem/ruiva/30_nao_entendi.png",
+      "generated_primary_expression": "Não entendi",
+      "match": "direct"
+    },
+    "Entendi": {
+      "file": "por_personagem/ruiva/29_entendi.png",
+      "generated_primary_expression": "Entendi",
+      "match": "direct"
+    },
+    "Elogiando o usuário": {
+      "file": "por_personagem/ruiva/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "direct"
+    },
+    "Motivando / incentivando": {
+      "file": "por_personagem/ruiva/32_motivando_incentivando.png",
+      "generated_primary_expression": "Motivando / incentivando",
+      "match": "direct"
+    },
+    "Confortando": {
+      "file": "por_personagem/ruiva/33_confortando.png",
+      "generated_primary_expression": "Confortando",
+      "match": "direct"
+    },
+    "Modo “vamos resolver isso”": {
+      "file": "por_personagem/ruiva/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "direct"
+    },
+    "Modo “isso ficou incrível”": {
+      "file": "por_personagem/ruiva/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "semantic_approximation"
+    },
+    "Modo “ops” / erro leve": {
+      "file": "por_personagem/ruiva/24_ops_erro_leve.png",
+      "generated_primary_expression": "Modo “ops” / erro leve",
+      "match": "direct"
+    },
+    "Modo “analisando”": {
+      "file": "por_personagem/ruiva/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "direct"
+    },
+    "Modo “aguardando”": {
+      "file": "por_personagem/ruiva/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "semantic_approximation"
+    },
+    "Modo “sugestão”": {
+      "file": "por_personagem/ruiva/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "semantic_approximation"
+    },
+    "Modo “alerta”": {
+      "file": "por_personagem/ruiva/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "semantic_approximation"
+    },
+    "Modo “segredo / sussurro”": {
+      "file": "por_personagem/ruiva/36_segredo_sussurro.png",
+      "generated_primary_expression": "Modo “segredo / sussurro”",
+      "match": "direct"
+    },
+    "Modo “zoeira leve”": {
+      "file": "por_personagem/ruiva/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    }
+  },
+  "japonesa_oriental": {
+    "Feliz / sorrindo": {
+      "file": "por_personagem/japonesa_oriental/01_feliz_sorrindo.png",
+      "generated_primary_expression": "Feliz / sorrindo",
+      "match": "direct"
+    },
+    "Rindo": {
+      "file": "por_personagem/japonesa_oriental/02_rindo.png",
+      "generated_primary_expression": "Rindo",
+      "match": "direct"
+    },
+    "Empolgada / animada": {
+      "file": "por_personagem/japonesa_oriental/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "semantic_approximation"
+    },
+    "MUITO empolgada / MUITO animada": {
+      "file": "por_personagem/japonesa_oriental/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "direct"
+    },
+    "Orgulhosa / confiante": {
+      "file": "por_personagem/japonesa_oriental/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "semantic_approximation"
+    },
+    "Carinhosa / fofa": {
+      "file": "por_personagem/japonesa_oriental/05_carinhosa_fofa.png",
+      "generated_primary_expression": "Carinhosa / fofa",
+      "match": "direct"
+    },
+    "Apaixonada / encantada": {
+      "file": "por_personagem/japonesa_oriental/06_apaixonada_encantada.png",
+      "generated_primary_expression": "Apaixonada / encantada",
+      "match": "direct"
+    },
+    "Piscando / brincando": {
+      "file": "por_personagem/japonesa_oriental/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "direct"
+    },
+    "Travessa / provocando": {
+      "file": "por_personagem/japonesa_oriental/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    },
+    "Surpresa": {
+      "file": "por_personagem/japonesa_oriental/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "direct"
+    },
+    "Chocada": {
+      "file": "por_personagem/japonesa_oriental/09_chocada.png",
+      "generated_primary_expression": "Chocada",
+      "match": "direct"
+    },
+    "Confusa": {
+      "file": "por_personagem/japonesa_oriental/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "direct"
+    },
+    "Pensativa": {
+      "file": "por_personagem/japonesa_oriental/11_pensativa.png",
+      "generated_primary_expression": "Pensativa",
+      "match": "direct"
+    },
+    "Curiosa": {
+      "file": "por_personagem/japonesa_oriental/12_curiosa.png",
+      "generated_primary_expression": "Curiosa",
+      "match": "direct"
+    },
+    "Concentrada / séria": {
+      "file": "por_personagem/japonesa_oriental/13_concentrada_seria.png",
+      "generated_primary_expression": "Concentrada / séria",
+      "match": "direct"
+    },
+    "Aprovando / concordando": {
+      "file": "por_personagem/japonesa_oriental/07_aprovando_concordando.png",
+      "generated_primary_expression": "Aprovando / concordando",
+      "match": "direct"
+    },
+    "Negando / desaprovando": {
+      "file": "por_personagem/japonesa_oriental/14_negando_desaprovando.png",
+      "generated_primary_expression": "Negando / desaprovando",
+      "match": "direct"
+    },
+    "Envergonhada": {
+      "file": "por_personagem/japonesa_oriental/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "direct"
+    },
+    "Tímida": {
+      "file": "por_personagem/japonesa_oriental/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "semantic_approximation"
+    },
+    "Triste": {
+      "file": "por_personagem/japonesa_oriental/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "direct"
+    },
+    "Chateada": {
+      "file": "por_personagem/japonesa_oriental/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "semantic_approximation"
+    },
+    "Brava / irritada": {
+      "file": "por_personagem/japonesa_oriental/17_brava_irritada.png",
+      "generated_primary_expression": "Brava / irritada",
+      "match": "direct"
+    },
+    "Frustrada": {
+      "file": "por_personagem/japonesa_oriental/18_frustrada.png",
+      "generated_primary_expression": "Frustrada",
+      "match": "direct"
+    },
+    "Preocupada": {
+      "file": "por_personagem/japonesa_oriental/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "direct"
+    },
+    "Com medo / assustada": {
+      "file": "por_personagem/japonesa_oriental/20_com_medo_assustada.png",
+      "generated_primary_expression": "Com medo / assustada",
+      "match": "direct"
+    },
+    "Cansada / com sono": {
+      "file": "por_personagem/japonesa_oriental/21_cansada_com_sono.png",
+      "generated_primary_expression": "Cansada / com sono",
+      "match": "direct"
+    },
+    "Entediada": {
+      "file": "por_personagem/japonesa_oriental/22_entediada.png",
+      "generated_primary_expression": "Entediada",
+      "match": "direct"
+    },
+    "Nervosa / ansiosa": {
+      "file": "por_personagem/japonesa_oriental/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "semantic_approximation"
+    },
+    "Com dúvida": {
+      "file": "por_personagem/japonesa_oriental/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "semantic_approximation"
+    },
+    "Pedindo desculpas": {
+      "file": "por_personagem/japonesa_oriental/23_pedindo_desculpas.png",
+      "generated_primary_expression": "Pedindo desculpas",
+      "match": "direct"
+    },
+    "Comemorando": {
+      "file": "por_personagem/japonesa_oriental/25_comemorando.png",
+      "generated_primary_expression": "Comemorando",
+      "match": "direct"
+    },
+    "Pensando / processando resposta": {
+      "file": "por_personagem/japonesa_oriental/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "semantic_approximation"
+    },
+    "Tive uma ideia": {
+      "file": "por_personagem/japonesa_oriental/26_tive_uma_ideia.png",
+      "generated_primary_expression": "Tive uma ideia",
+      "match": "direct"
+    },
+    "Explicando algo": {
+      "file": "por_personagem/japonesa_oriental/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "direct"
+    },
+    "Escutando / atenta": {
+      "file": "por_personagem/japonesa_oriental/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "direct"
+    },
+    "Não entendi": {
+      "file": "por_personagem/japonesa_oriental/30_nao_entendi.png",
+      "generated_primary_expression": "Não entendi",
+      "match": "direct"
+    },
+    "Entendi": {
+      "file": "por_personagem/japonesa_oriental/29_entendi.png",
+      "generated_primary_expression": "Entendi",
+      "match": "direct"
+    },
+    "Elogiando o usuário": {
+      "file": "por_personagem/japonesa_oriental/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "direct"
+    },
+    "Motivando / incentivando": {
+      "file": "por_personagem/japonesa_oriental/32_motivando_incentivando.png",
+      "generated_primary_expression": "Motivando / incentivando",
+      "match": "direct"
+    },
+    "Confortando": {
+      "file": "por_personagem/japonesa_oriental/33_confortando.png",
+      "generated_primary_expression": "Confortando",
+      "match": "direct"
+    },
+    "Modo “vamos resolver isso”": {
+      "file": "por_personagem/japonesa_oriental/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "direct"
+    },
+    "Modo “isso ficou incrível”": {
+      "file": "por_personagem/japonesa_oriental/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "semantic_approximation"
+    },
+    "Modo “ops” / erro leve": {
+      "file": "por_personagem/japonesa_oriental/24_ops_erro_leve.png",
+      "generated_primary_expression": "Modo “ops” / erro leve",
+      "match": "direct"
+    },
+    "Modo “analisando”": {
+      "file": "por_personagem/japonesa_oriental/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "direct"
+    },
+    "Modo “aguardando”": {
+      "file": "por_personagem/japonesa_oriental/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "semantic_approximation"
+    },
+    "Modo “sugestão”": {
+      "file": "por_personagem/japonesa_oriental/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "semantic_approximation"
+    },
+    "Modo “alerta”": {
+      "file": "por_personagem/japonesa_oriental/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "semantic_approximation"
+    },
+    "Modo “segredo / sussurro”": {
+      "file": "por_personagem/japonesa_oriental/36_segredo_sussurro.png",
+      "generated_primary_expression": "Modo “segredo / sussurro”",
+      "match": "direct"
+    },
+    "Modo “zoeira leve”": {
+      "file": "por_personagem/japonesa_oriental/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    }
+  },
+  "cabelos_brancos": {
+    "Feliz / sorrindo": {
+      "file": "por_personagem/cabelos_brancos/01_feliz_sorrindo.png",
+      "generated_primary_expression": "Feliz / sorrindo",
+      "match": "direct"
+    },
+    "Rindo": {
+      "file": "por_personagem/cabelos_brancos/02_rindo.png",
+      "generated_primary_expression": "Rindo",
+      "match": "direct"
+    },
+    "Empolgada / animada": {
+      "file": "por_personagem/cabelos_brancos/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "semantic_approximation"
+    },
+    "MUITO empolgada / MUITO animada": {
+      "file": "por_personagem/cabelos_brancos/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "direct"
+    },
+    "Orgulhosa / confiante": {
+      "file": "por_personagem/cabelos_brancos/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "semantic_approximation"
+    },
+    "Carinhosa / fofa": {
+      "file": "por_personagem/cabelos_brancos/05_carinhosa_fofa.png",
+      "generated_primary_expression": "Carinhosa / fofa",
+      "match": "direct"
+    },
+    "Apaixonada / encantada": {
+      "file": "por_personagem/cabelos_brancos/06_apaixonada_encantada.png",
+      "generated_primary_expression": "Apaixonada / encantada",
+      "match": "direct"
+    },
+    "Piscando / brincando": {
+      "file": "por_personagem/cabelos_brancos/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "direct"
+    },
+    "Travessa / provocando": {
+      "file": "por_personagem/cabelos_brancos/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    },
+    "Surpresa": {
+      "file": "por_personagem/cabelos_brancos/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "direct"
+    },
+    "Chocada": {
+      "file": "por_personagem/cabelos_brancos/09_chocada.png",
+      "generated_primary_expression": "Chocada",
+      "match": "direct"
+    },
+    "Confusa": {
+      "file": "por_personagem/cabelos_brancos/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "direct"
+    },
+    "Pensativa": {
+      "file": "por_personagem/cabelos_brancos/11_pensativa.png",
+      "generated_primary_expression": "Pensativa",
+      "match": "direct"
+    },
+    "Curiosa": {
+      "file": "por_personagem/cabelos_brancos/12_curiosa.png",
+      "generated_primary_expression": "Curiosa",
+      "match": "direct"
+    },
+    "Concentrada / séria": {
+      "file": "por_personagem/cabelos_brancos/13_concentrada_seria.png",
+      "generated_primary_expression": "Concentrada / séria",
+      "match": "direct"
+    },
+    "Aprovando / concordando": {
+      "file": "por_personagem/cabelos_brancos/07_aprovando_concordando.png",
+      "generated_primary_expression": "Aprovando / concordando",
+      "match": "direct"
+    },
+    "Negando / desaprovando": {
+      "file": "por_personagem/cabelos_brancos/14_negando_desaprovando.png",
+      "generated_primary_expression": "Negando / desaprovando",
+      "match": "direct"
+    },
+    "Envergonhada": {
+      "file": "por_personagem/cabelos_brancos/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "direct"
+    },
+    "Tímida": {
+      "file": "por_personagem/cabelos_brancos/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "semantic_approximation"
+    },
+    "Triste": {
+      "file": "por_personagem/cabelos_brancos/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "direct"
+    },
+    "Chateada": {
+      "file": "por_personagem/cabelos_brancos/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "semantic_approximation"
+    },
+    "Brava / irritada": {
+      "file": "por_personagem/cabelos_brancos/17_brava_irritada.png",
+      "generated_primary_expression": "Brava / irritada",
+      "match": "direct"
+    },
+    "Frustrada": {
+      "file": "por_personagem/cabelos_brancos/18_frustrada.png",
+      "generated_primary_expression": "Frustrada",
+      "match": "direct"
+    },
+    "Preocupada": {
+      "file": "por_personagem/cabelos_brancos/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "direct"
+    },
+    "Com medo / assustada": {
+      "file": "por_personagem/cabelos_brancos/20_com_medo_assustada.png",
+      "generated_primary_expression": "Com medo / assustada",
+      "match": "direct"
+    },
+    "Cansada / com sono": {
+      "file": "por_personagem/cabelos_brancos/21_cansada_com_sono.png",
+      "generated_primary_expression": "Cansada / com sono",
+      "match": "direct"
+    },
+    "Entediada": {
+      "file": "por_personagem/cabelos_brancos/22_entediada.png",
+      "generated_primary_expression": "Entediada",
+      "match": "direct"
+    },
+    "Nervosa / ansiosa": {
+      "file": "por_personagem/cabelos_brancos/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "semantic_approximation"
+    },
+    "Com dúvida": {
+      "file": "por_personagem/cabelos_brancos/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "semantic_approximation"
+    },
+    "Pedindo desculpas": {
+      "file": "por_personagem/cabelos_brancos/23_pedindo_desculpas.png",
+      "generated_primary_expression": "Pedindo desculpas",
+      "match": "direct"
+    },
+    "Comemorando": {
+      "file": "por_personagem/cabelos_brancos/25_comemorando.png",
+      "generated_primary_expression": "Comemorando",
+      "match": "direct"
+    },
+    "Pensando / processando resposta": {
+      "file": "por_personagem/cabelos_brancos/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "semantic_approximation"
+    },
+    "Tive uma ideia": {
+      "file": "por_personagem/cabelos_brancos/26_tive_uma_ideia.png",
+      "generated_primary_expression": "Tive uma ideia",
+      "match": "direct"
+    },
+    "Explicando algo": {
+      "file": "por_personagem/cabelos_brancos/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "direct"
+    },
+    "Escutando / atenta": {
+      "file": "por_personagem/cabelos_brancos/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "direct"
+    },
+    "Não entendi": {
+      "file": "por_personagem/cabelos_brancos/30_nao_entendi.png",
+      "generated_primary_expression": "Não entendi",
+      "match": "direct"
+    },
+    "Entendi": {
+      "file": "por_personagem/cabelos_brancos/29_entendi.png",
+      "generated_primary_expression": "Entendi",
+      "match": "direct"
+    },
+    "Elogiando o usuário": {
+      "file": "por_personagem/cabelos_brancos/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "direct"
+    },
+    "Motivando / incentivando": {
+      "file": "por_personagem/cabelos_brancos/32_motivando_incentivando.png",
+      "generated_primary_expression": "Motivando / incentivando",
+      "match": "direct"
+    },
+    "Confortando": {
+      "file": "por_personagem/cabelos_brancos/33_confortando.png",
+      "generated_primary_expression": "Confortando",
+      "match": "direct"
+    },
+    "Modo “vamos resolver isso”": {
+      "file": "por_personagem/cabelos_brancos/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "direct"
+    },
+    "Modo “isso ficou incrível”": {
+      "file": "por_personagem/cabelos_brancos/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "semantic_approximation"
+    },
+    "Modo “ops” / erro leve": {
+      "file": "por_personagem/cabelos_brancos/24_ops_erro_leve.png",
+      "generated_primary_expression": "Modo “ops” / erro leve",
+      "match": "direct"
+    },
+    "Modo “analisando”": {
+      "file": "por_personagem/cabelos_brancos/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "direct"
+    },
+    "Modo “aguardando”": {
+      "file": "por_personagem/cabelos_brancos/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "semantic_approximation"
+    },
+    "Modo “sugestão”": {
+      "file": "por_personagem/cabelos_brancos/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "semantic_approximation"
+    },
+    "Modo “alerta”": {
+      "file": "por_personagem/cabelos_brancos/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "semantic_approximation"
+    },
+    "Modo “segredo / sussurro”": {
+      "file": "por_personagem/cabelos_brancos/36_segredo_sussurro.png",
+      "generated_primary_expression": "Modo “segredo / sussurro”",
+      "match": "direct"
+    },
+    "Modo “zoeira leve”": {
+      "file": "por_personagem/cabelos_brancos/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    }
+  },
+  "fashionista": {
+    "Feliz / sorrindo": {
+      "file": "por_personagem/fashionista/01_feliz_sorrindo.png",
+      "generated_primary_expression": "Feliz / sorrindo",
+      "match": "direct"
+    },
+    "Rindo": {
+      "file": "por_personagem/fashionista/02_rindo.png",
+      "generated_primary_expression": "Rindo",
+      "match": "direct"
+    },
+    "Empolgada / animada": {
+      "file": "por_personagem/fashionista/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "semantic_approximation"
+    },
+    "MUITO empolgada / MUITO animada": {
+      "file": "por_personagem/fashionista/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "direct"
+    },
+    "Orgulhosa / confiante": {
+      "file": "por_personagem/fashionista/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "semantic_approximation"
+    },
+    "Carinhosa / fofa": {
+      "file": "por_personagem/fashionista/05_carinhosa_fofa.png",
+      "generated_primary_expression": "Carinhosa / fofa",
+      "match": "direct"
+    },
+    "Apaixonada / encantada": {
+      "file": "por_personagem/fashionista/06_apaixonada_encantada.png",
+      "generated_primary_expression": "Apaixonada / encantada",
+      "match": "direct"
+    },
+    "Piscando / brincando": {
+      "file": "por_personagem/fashionista/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "direct"
+    },
+    "Travessa / provocando": {
+      "file": "por_personagem/fashionista/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    },
+    "Surpresa": {
+      "file": "por_personagem/fashionista/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "direct"
+    },
+    "Chocada": {
+      "file": "por_personagem/fashionista/09_chocada.png",
+      "generated_primary_expression": "Chocada",
+      "match": "direct"
+    },
+    "Confusa": {
+      "file": "por_personagem/fashionista/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "direct"
+    },
+    "Pensativa": {
+      "file": "por_personagem/fashionista/11_pensativa.png",
+      "generated_primary_expression": "Pensativa",
+      "match": "direct"
+    },
+    "Curiosa": {
+      "file": "por_personagem/fashionista/12_curiosa.png",
+      "generated_primary_expression": "Curiosa",
+      "match": "direct"
+    },
+    "Concentrada / séria": {
+      "file": "por_personagem/fashionista/13_concentrada_seria.png",
+      "generated_primary_expression": "Concentrada / séria",
+      "match": "direct"
+    },
+    "Aprovando / concordando": {
+      "file": "por_personagem/fashionista/07_aprovando_concordando.png",
+      "generated_primary_expression": "Aprovando / concordando",
+      "match": "direct"
+    },
+    "Negando / desaprovando": {
+      "file": "por_personagem/fashionista/14_negando_desaprovando.png",
+      "generated_primary_expression": "Negando / desaprovando",
+      "match": "direct"
+    },
+    "Envergonhada": {
+      "file": "por_personagem/fashionista/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "direct"
+    },
+    "Tímida": {
+      "file": "por_personagem/fashionista/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "semantic_approximation"
+    },
+    "Triste": {
+      "file": "por_personagem/fashionista/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "direct"
+    },
+    "Chateada": {
+      "file": "por_personagem/fashionista/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "semantic_approximation"
+    },
+    "Brava / irritada": {
+      "file": "por_personagem/fashionista/17_brava_irritada.png",
+      "generated_primary_expression": "Brava / irritada",
+      "match": "direct"
+    },
+    "Frustrada": {
+      "file": "por_personagem/fashionista/18_frustrada.png",
+      "generated_primary_expression": "Frustrada",
+      "match": "direct"
+    },
+    "Preocupada": {
+      "file": "por_personagem/fashionista/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "direct"
+    },
+    "Com medo / assustada": {
+      "file": "por_personagem/fashionista/20_com_medo_assustada.png",
+      "generated_primary_expression": "Com medo / assustada",
+      "match": "direct"
+    },
+    "Cansada / com sono": {
+      "file": "por_personagem/fashionista/21_cansada_com_sono.png",
+      "generated_primary_expression": "Cansada / com sono",
+      "match": "direct"
+    },
+    "Entediada": {
+      "file": "por_personagem/fashionista/22_entediada.png",
+      "generated_primary_expression": "Entediada",
+      "match": "direct"
+    },
+    "Nervosa / ansiosa": {
+      "file": "por_personagem/fashionista/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "semantic_approximation"
+    },
+    "Com dúvida": {
+      "file": "por_personagem/fashionista/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "semantic_approximation"
+    },
+    "Pedindo desculpas": {
+      "file": "por_personagem/fashionista/23_pedindo_desculpas.png",
+      "generated_primary_expression": "Pedindo desculpas",
+      "match": "direct"
+    },
+    "Comemorando": {
+      "file": "por_personagem/fashionista/25_comemorando.png",
+      "generated_primary_expression": "Comemorando",
+      "match": "direct"
+    },
+    "Pensando / processando resposta": {
+      "file": "por_personagem/fashionista/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "semantic_approximation"
+    },
+    "Tive uma ideia": {
+      "file": "por_personagem/fashionista/26_tive_uma_ideia.png",
+      "generated_primary_expression": "Tive uma ideia",
+      "match": "direct"
+    },
+    "Explicando algo": {
+      "file": "por_personagem/fashionista/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "direct"
+    },
+    "Escutando / atenta": {
+      "file": "por_personagem/fashionista/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "direct"
+    },
+    "Não entendi": {
+      "file": "por_personagem/fashionista/30_nao_entendi.png",
+      "generated_primary_expression": "Não entendi",
+      "match": "direct"
+    },
+    "Entendi": {
+      "file": "por_personagem/fashionista/29_entendi.png",
+      "generated_primary_expression": "Entendi",
+      "match": "direct"
+    },
+    "Elogiando o usuário": {
+      "file": "por_personagem/fashionista/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "direct"
+    },
+    "Motivando / incentivando": {
+      "file": "por_personagem/fashionista/32_motivando_incentivando.png",
+      "generated_primary_expression": "Motivando / incentivando",
+      "match": "direct"
+    },
+    "Confortando": {
+      "file": "por_personagem/fashionista/33_confortando.png",
+      "generated_primary_expression": "Confortando",
+      "match": "direct"
+    },
+    "Modo “vamos resolver isso”": {
+      "file": "por_personagem/fashionista/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "direct"
+    },
+    "Modo “isso ficou incrível”": {
+      "file": "por_personagem/fashionista/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "semantic_approximation"
+    },
+    "Modo “ops” / erro leve": {
+      "file": "por_personagem/fashionista/24_ops_erro_leve.png",
+      "generated_primary_expression": "Modo “ops” / erro leve",
+      "match": "direct"
+    },
+    "Modo “analisando”": {
+      "file": "por_personagem/fashionista/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "direct"
+    },
+    "Modo “aguardando”": {
+      "file": "por_personagem/fashionista/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "semantic_approximation"
+    },
+    "Modo “sugestão”": {
+      "file": "por_personagem/fashionista/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "semantic_approximation"
+    },
+    "Modo “alerta”": {
+      "file": "por_personagem/fashionista/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "semantic_approximation"
+    },
+    "Modo “segredo / sussurro”": {
+      "file": "por_personagem/fashionista/36_segredo_sussurro.png",
+      "generated_primary_expression": "Modo “segredo / sussurro”",
+      "match": "direct"
+    },
+    "Modo “zoeira leve”": {
+      "file": "por_personagem/fashionista/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    }
+  },
+  "lobinha_spooky": {
+    "Feliz / sorrindo": {
+      "file": "por_personagem/lobinha_spooky/01_feliz_sorrindo.png",
+      "generated_primary_expression": "Feliz / sorrindo",
+      "match": "direct"
+    },
+    "Rindo": {
+      "file": "por_personagem/lobinha_spooky/02_rindo.png",
+      "generated_primary_expression": "Rindo",
+      "match": "direct"
+    },
+    "Empolgada / animada": {
+      "file": "por_personagem/lobinha_spooky/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "semantic_approximation"
+    },
+    "MUITO empolgada / MUITO animada": {
+      "file": "por_personagem/lobinha_spooky/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "direct"
+    },
+    "Orgulhosa / confiante": {
+      "file": "por_personagem/lobinha_spooky/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "semantic_approximation"
+    },
+    "Carinhosa / fofa": {
+      "file": "por_personagem/lobinha_spooky/05_carinhosa_fofa.png",
+      "generated_primary_expression": "Carinhosa / fofa",
+      "match": "direct"
+    },
+    "Apaixonada / encantada": {
+      "file": "por_personagem/lobinha_spooky/06_apaixonada_encantada.png",
+      "generated_primary_expression": "Apaixonada / encantada",
+      "match": "direct"
+    },
+    "Piscando / brincando": {
+      "file": "por_personagem/lobinha_spooky/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "direct"
+    },
+    "Travessa / provocando": {
+      "file": "por_personagem/lobinha_spooky/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    },
+    "Surpresa": {
+      "file": "por_personagem/lobinha_spooky/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "direct"
+    },
+    "Chocada": {
+      "file": "por_personagem/lobinha_spooky/09_chocada.png",
+      "generated_primary_expression": "Chocada",
+      "match": "direct"
+    },
+    "Confusa": {
+      "file": "por_personagem/lobinha_spooky/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "direct"
+    },
+    "Pensativa": {
+      "file": "por_personagem/lobinha_spooky/11_pensativa.png",
+      "generated_primary_expression": "Pensativa",
+      "match": "direct"
+    },
+    "Curiosa": {
+      "file": "por_personagem/lobinha_spooky/12_curiosa.png",
+      "generated_primary_expression": "Curiosa",
+      "match": "direct"
+    },
+    "Concentrada / séria": {
+      "file": "por_personagem/lobinha_spooky/13_concentrada_seria.png",
+      "generated_primary_expression": "Concentrada / séria",
+      "match": "direct"
+    },
+    "Aprovando / concordando": {
+      "file": "por_personagem/lobinha_spooky/07_aprovando_concordando.png",
+      "generated_primary_expression": "Aprovando / concordando",
+      "match": "direct"
+    },
+    "Negando / desaprovando": {
+      "file": "por_personagem/lobinha_spooky/14_negando_desaprovando.png",
+      "generated_primary_expression": "Negando / desaprovando",
+      "match": "direct"
+    },
+    "Envergonhada": {
+      "file": "por_personagem/lobinha_spooky/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "direct"
+    },
+    "Tímida": {
+      "file": "por_personagem/lobinha_spooky/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "semantic_approximation"
+    },
+    "Triste": {
+      "file": "por_personagem/lobinha_spooky/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "direct"
+    },
+    "Chateada": {
+      "file": "por_personagem/lobinha_spooky/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "semantic_approximation"
+    },
+    "Brava / irritada": {
+      "file": "por_personagem/lobinha_spooky/17_brava_irritada.png",
+      "generated_primary_expression": "Brava / irritada",
+      "match": "direct"
+    },
+    "Frustrada": {
+      "file": "por_personagem/lobinha_spooky/18_frustrada.png",
+      "generated_primary_expression": "Frustrada",
+      "match": "direct"
+    },
+    "Preocupada": {
+      "file": "por_personagem/lobinha_spooky/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "direct"
+    },
+    "Com medo / assustada": {
+      "file": "por_personagem/lobinha_spooky/20_com_medo_assustada.png",
+      "generated_primary_expression": "Com medo / assustada",
+      "match": "direct"
+    },
+    "Cansada / com sono": {
+      "file": "por_personagem/lobinha_spooky/21_cansada_com_sono.png",
+      "generated_primary_expression": "Cansada / com sono",
+      "match": "direct"
+    },
+    "Entediada": {
+      "file": "por_personagem/lobinha_spooky/22_entediada.png",
+      "generated_primary_expression": "Entediada",
+      "match": "direct"
+    },
+    "Nervosa / ansiosa": {
+      "file": "por_personagem/lobinha_spooky/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "semantic_approximation"
+    },
+    "Com dúvida": {
+      "file": "por_personagem/lobinha_spooky/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "semantic_approximation"
+    },
+    "Pedindo desculpas": {
+      "file": "por_personagem/lobinha_spooky/23_pedindo_desculpas.png",
+      "generated_primary_expression": "Pedindo desculpas",
+      "match": "direct"
+    },
+    "Comemorando": {
+      "file": "por_personagem/lobinha_spooky/25_comemorando.png",
+      "generated_primary_expression": "Comemorando",
+      "match": "direct"
+    },
+    "Pensando / processando resposta": {
+      "file": "por_personagem/lobinha_spooky/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "semantic_approximation"
+    },
+    "Tive uma ideia": {
+      "file": "por_personagem/lobinha_spooky/26_tive_uma_ideia.png",
+      "generated_primary_expression": "Tive uma ideia",
+      "match": "direct"
+    },
+    "Explicando algo": {
+      "file": "por_personagem/lobinha_spooky/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "direct"
+    },
+    "Escutando / atenta": {
+      "file": "por_personagem/lobinha_spooky/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "direct"
+    },
+    "Não entendi": {
+      "file": "por_personagem/lobinha_spooky/30_nao_entendi.png",
+      "generated_primary_expression": "Não entendi",
+      "match": "direct"
+    },
+    "Entendi": {
+      "file": "por_personagem/lobinha_spooky/29_entendi.png",
+      "generated_primary_expression": "Entendi",
+      "match": "direct"
+    },
+    "Elogiando o usuário": {
+      "file": "por_personagem/lobinha_spooky/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "direct"
+    },
+    "Motivando / incentivando": {
+      "file": "por_personagem/lobinha_spooky/32_motivando_incentivando.png",
+      "generated_primary_expression": "Motivando / incentivando",
+      "match": "direct"
+    },
+    "Confortando": {
+      "file": "por_personagem/lobinha_spooky/33_confortando.png",
+      "generated_primary_expression": "Confortando",
+      "match": "direct"
+    },
+    "Modo “vamos resolver isso”": {
+      "file": "por_personagem/lobinha_spooky/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "direct"
+    },
+    "Modo “isso ficou incrível”": {
+      "file": "por_personagem/lobinha_spooky/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "semantic_approximation"
+    },
+    "Modo “ops” / erro leve": {
+      "file": "por_personagem/lobinha_spooky/24_ops_erro_leve.png",
+      "generated_primary_expression": "Modo “ops” / erro leve",
+      "match": "direct"
+    },
+    "Modo “analisando”": {
+      "file": "por_personagem/lobinha_spooky/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "direct"
+    },
+    "Modo “aguardando”": {
+      "file": "por_personagem/lobinha_spooky/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "semantic_approximation"
+    },
+    "Modo “sugestão”": {
+      "file": "por_personagem/lobinha_spooky/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "semantic_approximation"
+    },
+    "Modo “alerta”": {
+      "file": "por_personagem/lobinha_spooky/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "semantic_approximation"
+    },
+    "Modo “segredo / sussurro”": {
+      "file": "por_personagem/lobinha_spooky/36_segredo_sussurro.png",
+      "generated_primary_expression": "Modo “segredo / sussurro”",
+      "match": "direct"
+    },
+    "Modo “zoeira leve”": {
+      "file": "por_personagem/lobinha_spooky/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    }
+  },
+  "vampirinha_gotica": {
+    "Feliz / sorrindo": {
+      "file": "por_personagem/vampirinha_gotica/01_feliz_sorrindo.png",
+      "generated_primary_expression": "Feliz / sorrindo",
+      "match": "direct"
+    },
+    "Rindo": {
+      "file": "por_personagem/vampirinha_gotica/02_rindo.png",
+      "generated_primary_expression": "Rindo",
+      "match": "direct"
+    },
+    "Empolgada / animada": {
+      "file": "por_personagem/vampirinha_gotica/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "semantic_approximation"
+    },
+    "MUITO empolgada / MUITO animada": {
+      "file": "por_personagem/vampirinha_gotica/03_muito_empolgada.png",
+      "generated_primary_expression": "MUITO empolgada / MUITO animada",
+      "match": "direct"
+    },
+    "Orgulhosa / confiante": {
+      "file": "por_personagem/vampirinha_gotica/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "semantic_approximation"
+    },
+    "Carinhosa / fofa": {
+      "file": "por_personagem/vampirinha_gotica/05_carinhosa_fofa.png",
+      "generated_primary_expression": "Carinhosa / fofa",
+      "match": "direct"
+    },
+    "Apaixonada / encantada": {
+      "file": "por_personagem/vampirinha_gotica/06_apaixonada_encantada.png",
+      "generated_primary_expression": "Apaixonada / encantada",
+      "match": "direct"
+    },
+    "Piscando / brincando": {
+      "file": "por_personagem/vampirinha_gotica/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "direct"
+    },
+    "Travessa / provocando": {
+      "file": "por_personagem/vampirinha_gotica/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    },
+    "Surpresa": {
+      "file": "por_personagem/vampirinha_gotica/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "direct"
+    },
+    "Chocada": {
+      "file": "por_personagem/vampirinha_gotica/09_chocada.png",
+      "generated_primary_expression": "Chocada",
+      "match": "direct"
+    },
+    "Confusa": {
+      "file": "por_personagem/vampirinha_gotica/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "direct"
+    },
+    "Pensativa": {
+      "file": "por_personagem/vampirinha_gotica/11_pensativa.png",
+      "generated_primary_expression": "Pensativa",
+      "match": "direct"
+    },
+    "Curiosa": {
+      "file": "por_personagem/vampirinha_gotica/12_curiosa.png",
+      "generated_primary_expression": "Curiosa",
+      "match": "direct"
+    },
+    "Concentrada / séria": {
+      "file": "por_personagem/vampirinha_gotica/13_concentrada_seria.png",
+      "generated_primary_expression": "Concentrada / séria",
+      "match": "direct"
+    },
+    "Aprovando / concordando": {
+      "file": "por_personagem/vampirinha_gotica/07_aprovando_concordando.png",
+      "generated_primary_expression": "Aprovando / concordando",
+      "match": "direct"
+    },
+    "Negando / desaprovando": {
+      "file": "por_personagem/vampirinha_gotica/14_negando_desaprovando.png",
+      "generated_primary_expression": "Negando / desaprovando",
+      "match": "direct"
+    },
+    "Envergonhada": {
+      "file": "por_personagem/vampirinha_gotica/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "direct"
+    },
+    "Tímida": {
+      "file": "por_personagem/vampirinha_gotica/15_envergonhada_timida.png",
+      "generated_primary_expression": "Envergonhada",
+      "match": "semantic_approximation"
+    },
+    "Triste": {
+      "file": "por_personagem/vampirinha_gotica/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "direct"
+    },
+    "Chateada": {
+      "file": "por_personagem/vampirinha_gotica/16_triste_chateada.png",
+      "generated_primary_expression": "Triste",
+      "match": "semantic_approximation"
+    },
+    "Brava / irritada": {
+      "file": "por_personagem/vampirinha_gotica/17_brava_irritada.png",
+      "generated_primary_expression": "Brava / irritada",
+      "match": "direct"
+    },
+    "Frustrada": {
+      "file": "por_personagem/vampirinha_gotica/18_frustrada.png",
+      "generated_primary_expression": "Frustrada",
+      "match": "direct"
+    },
+    "Preocupada": {
+      "file": "por_personagem/vampirinha_gotica/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "direct"
+    },
+    "Com medo / assustada": {
+      "file": "por_personagem/vampirinha_gotica/20_com_medo_assustada.png",
+      "generated_primary_expression": "Com medo / assustada",
+      "match": "direct"
+    },
+    "Cansada / com sono": {
+      "file": "por_personagem/vampirinha_gotica/21_cansada_com_sono.png",
+      "generated_primary_expression": "Cansada / com sono",
+      "match": "direct"
+    },
+    "Entediada": {
+      "file": "por_personagem/vampirinha_gotica/22_entediada.png",
+      "generated_primary_expression": "Entediada",
+      "match": "direct"
+    },
+    "Nervosa / ansiosa": {
+      "file": "por_personagem/vampirinha_gotica/19_preocupada_ansiosa.png",
+      "generated_primary_expression": "Preocupada",
+      "match": "semantic_approximation"
+    },
+    "Com dúvida": {
+      "file": "por_personagem/vampirinha_gotica/10_confusa.png",
+      "generated_primary_expression": "Confusa",
+      "match": "semantic_approximation"
+    },
+    "Pedindo desculpas": {
+      "file": "por_personagem/vampirinha_gotica/23_pedindo_desculpas.png",
+      "generated_primary_expression": "Pedindo desculpas",
+      "match": "direct"
+    },
+    "Comemorando": {
+      "file": "por_personagem/vampirinha_gotica/25_comemorando.png",
+      "generated_primary_expression": "Comemorando",
+      "match": "direct"
+    },
+    "Pensando / processando resposta": {
+      "file": "por_personagem/vampirinha_gotica/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "semantic_approximation"
+    },
+    "Tive uma ideia": {
+      "file": "por_personagem/vampirinha_gotica/26_tive_uma_ideia.png",
+      "generated_primary_expression": "Tive uma ideia",
+      "match": "direct"
+    },
+    "Explicando algo": {
+      "file": "por_personagem/vampirinha_gotica/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "direct"
+    },
+    "Escutando / atenta": {
+      "file": "por_personagem/vampirinha_gotica/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "direct"
+    },
+    "Não entendi": {
+      "file": "por_personagem/vampirinha_gotica/30_nao_entendi.png",
+      "generated_primary_expression": "Não entendi",
+      "match": "direct"
+    },
+    "Entendi": {
+      "file": "por_personagem/vampirinha_gotica/29_entendi.png",
+      "generated_primary_expression": "Entendi",
+      "match": "direct"
+    },
+    "Elogiando o usuário": {
+      "file": "por_personagem/vampirinha_gotica/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "direct"
+    },
+    "Motivando / incentivando": {
+      "file": "por_personagem/vampirinha_gotica/32_motivando_incentivando.png",
+      "generated_primary_expression": "Motivando / incentivando",
+      "match": "direct"
+    },
+    "Confortando": {
+      "file": "por_personagem/vampirinha_gotica/33_confortando.png",
+      "generated_primary_expression": "Confortando",
+      "match": "direct"
+    },
+    "Modo “vamos resolver isso”": {
+      "file": "por_personagem/vampirinha_gotica/34_vamos_resolver_isso.png",
+      "generated_primary_expression": "Modo “vamos resolver isso”",
+      "match": "direct"
+    },
+    "Modo “isso ficou incrível”": {
+      "file": "por_personagem/vampirinha_gotica/31_elogiando_usuario.png",
+      "generated_primary_expression": "Elogiando o usuário",
+      "match": "semantic_approximation"
+    },
+    "Modo “ops” / erro leve": {
+      "file": "por_personagem/vampirinha_gotica/24_ops_erro_leve.png",
+      "generated_primary_expression": "Modo “ops” / erro leve",
+      "match": "direct"
+    },
+    "Modo “analisando”": {
+      "file": "por_personagem/vampirinha_gotica/35_analisando.png",
+      "generated_primary_expression": "Modo “analisando”",
+      "match": "direct"
+    },
+    "Modo “aguardando”": {
+      "file": "por_personagem/vampirinha_gotica/28_escutando_atenta.png",
+      "generated_primary_expression": "Escutando / atenta",
+      "match": "semantic_approximation"
+    },
+    "Modo “sugestão”": {
+      "file": "por_personagem/vampirinha_gotica/27_explicando_algo.png",
+      "generated_primary_expression": "Explicando algo",
+      "match": "semantic_approximation"
+    },
+    "Modo “alerta”": {
+      "file": "por_personagem/vampirinha_gotica/08_surpresa.png",
+      "generated_primary_expression": "Surpresa",
+      "match": "semantic_approximation"
+    },
+    "Modo “segredo / sussurro”": {
+      "file": "por_personagem/vampirinha_gotica/36_segredo_sussurro.png",
+      "generated_primary_expression": "Modo “segredo / sussurro”",
+      "match": "direct"
+    },
+    "Modo “zoeira leve”": {
+      "file": "por_personagem/vampirinha_gotica/04_piscando_brincando.png",
+      "generated_primary_expression": "Piscando / brincando",
+      "match": "semantic_approximation"
+    }
+  }
+}
