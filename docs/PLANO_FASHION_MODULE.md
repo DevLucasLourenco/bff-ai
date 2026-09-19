@@ -1,6 +1,6 @@
 # Plano — Fashion Module
 
-Execução da [SPEC_FASHION_MODULE.md](SPEC_FASHION_MODULE.md). Status: **não iniciado**. A correspondência é estrita: `P01` entrega `S01`, `P02` entrega `S02`, e assim por diante até `P14`/`S14`. Cada item só está concluído quando seu aceite passa. O plano preserva as regras do README: modelo selecionado para cada turno, sem fallback silencioso, secrets cifrados, persona como dado, adapters isolados e streaming ponta a ponta.
+Execução da [SPEC_FASHION_MODULE.md](SPEC_FASHION_MODULE.md). Status: entregas incrementais em andamento. A correspondência é estrita: `P01` entrega `S01`, `P02` entrega `S02`, e assim por diante até `P15`/`S15`. Cada item só está concluído quando seu aceite passa. O plano preserva as regras do README: modelo selecionado para cada turno, sem fallback silencioso, secrets cifrados, persona como dado, adapters isolados e streaming ponta a ponta.
 
 ## Leitura do estado atual e premissas
 
@@ -24,6 +24,7 @@ O desenvolvimento pode usar fake adapters e busca simulada nos testes, mas **P09
 | P12 | Componentes React | P05–P11 conforme tipo | G |
 | P13 | Proteções e telemetria | P02–P12 | M |
 | P14 | Contratos, rollout e aceite | P01–P13 | M |
+| P15 | Coleção externa e captura segura | P03, P05, P06; P09 é opcional | G |
 
 P = pequeno, M = médio, G = grande. São portes relativos, não estimativas de prazo.
 
@@ -141,18 +142,38 @@ P = pequeno, M = médio, G = grande. São portes relativos, não estimativas de 
 
 **Objetivo.** Deixar o módulo expansível e verificável sem acoplamento da UI ao modelo.
 
-**Como.** Documentar template de nova tool/objeto, versionamento e compatibilidade. Adicionar testes de contrato entre Pydantic e TypeScript, testes de migration, adapter, orquestração, domínio, UI e e2e dos nove cenários S14. Atualizar README, exemplos de configuração e operacionalização de Alembic, busca e mídia. Habilitar por feature flag após gates; registrar limitações observadas em busca e visão.
+**Como.** Documentar template de nova tool/objeto, versionamento e compatibilidade. Adicionar testes de contrato entre Pydantic e TypeScript, testes de migration, adapter, orquestração, domínio, UI e e2e dos nove cenários S14. Atualizar README, exemplos de configuração e operacionalização de Alembic, busca e mídia. Habilitar pela capacidade verificada do modelo após os gates; registrar limitações observadas em busca e visão.
 
 **Aceite.** Todos os nove cenários S14 passam; criar uma tool nova não exige editar `ChatView` e criar um objeto novo não exige mudar adapter; fluxo de chat antigo permanece verde; módulo pode ser desligado sem perder dados; documentação permite configurar a integração web real e explica suas limitações.
+
+## P15 ↔ S15 — Coleção externa e captura segura
+
+**Objetivo.** Permitir que imagens, produtos e referências salvas da internet façam parte da coleção Fashion, preservando sua origem e distinguindo itens possuídos, desejados e inspirações.
+
+**Como.** Entregar em fases, sempre com revisão e gesto explícito da usuária:
+
+1. Criar migration para a proveniência externa: estado de coleção, URL original e canônica, domínio, método de entrada, asset interno, observações de produto datadas e vínculo opcional entre item do guarda-roupa e produto externo. Indexar por dono e URL canônica; usar hash da imagem como sinal adicional de duplicidade.
+2. Implementar `RemoteImageFetcher` isolado para a primeira fase de importação por URL de imagem. Antes e depois de redirects, validar HTTP(S), DNS e IP público; bloquear loopback, faixas privadas, link-local e endpoints de metadados. Aplicar timeout, limite de redirects, bytes e dimensões; validar MIME pelos bytes e reutilizar o pipeline de normalização WebP e miniatura de P03.
+3. Criar rotas de revisão e persistência: importar URL de imagem, iniciar importação de URL de produto, salvar/rejeitar uma proposta, atualizar observação e marcar item desejado como possuído. A captura de página fica atrás de um adaptador de fonte configurado; a primeira versão não faz scraping genérico de qualquer loja.
+4. Adicionar services e tools tipadas `propose_external_piece`, `import_external_image`, `import_product_page`, `save_external_piece`, `refresh_product_observation` e `mark_piece_owned`. A LLM pode propor e explicar, mas cards de chat exigem confirmação e escolha do estado. Cada mutação usa a mesma idempotência, autorização e revisão otimista das ações Fashion.
+5. Criar `external_piece_suggestion` e evoluir cards/listagens para foto local, badge Possuo/Quero/Inspiração, título, marca, preço e data observados, link de origem e ação de abrir, salvar, arquivar ou declarar posse. `mix_and_match` seleciona apenas `owned` por padrão e deixa alternativas externas explicitamente marcadas.
+6. Integrar resultados de busca configurada como entrada de coleção e preparar contrato da extensão de navegador, ambos posteriores à captura direta. A extensão envia somente dados da página escolhida pela usuária e passa pelo mesmo endpoint de validação.
+7. Cobrir com testes de migration, deduplicação, permissão, ações repetidas, limpeza/remoção de origem, renderer e um cliente HTTP falso que testa redirects, hosts privados, conteúdo inválido e limites sem acessar a internet real.
+
+**Arquivos.** `backend/alembic/versions/`, `backend/app/domain/models.py`, `backend/app/fashion/media.py`, novo `backend/app/fashion/external_collection.py`, `backend/app/fashion/tools.py`, `backend/app/api/routes/fashion.py`, `backend/app/services/chat.py`, `frontend/src/features/fashion/`, `frontend/src/features/chat/ChatObjectRenderer.tsx`, `frontend/src/lib/api.ts`, `frontend/src/lib/types.ts`, testes backend e frontend.
+
+**Aceite.** O fluxo de URL de imagem cria cópia WebP interna com proveniência e não expõe URL remota como mídia; entradas `wanted` e `inspiration` não contam como peças possuídas; confirmação repetida não duplica item; hosts privados, redirects internos, MIME inválido e arquivos acima do limite falham sem persistir; snapshots mostram fonte e data; a LLM só publica proposta confirmável; importação de página e extensão só são disponibilizadas quando seu adaptador estiver configurado e testado.
 
 ## Ordem de trabalho recomendada
 
 ```text
 P01 → P02 → P03
   └── P04 → P05 → P06 → P07 → P08
-                     └──────────────→ P09 → P10
+  ├── P03 + P05 + P06 ──────────────→ P15
+  │                    └────────────→ P09 → P10
+  │                                  └────→ P12
              P03 + P04 + P06 ───────→ P11
-P05–P11 → P12 → P13 → P14
+P05–P11 + P15 → P12 → P13 → P14
 ```
 
-P12 pode ser entregue por fatias junto de P06–P11, desde que o registry e o fallback de P05 existam antes. P13 é um gate final, mas seus limites de segurança entram em cada etapa de implementação. P09 precisa de uma integração configurada e testada antes de P10 ser considerado concluído.
+P12 pode ser entregue por fatias junto de P06–P11 e P15, desde que o registry e o fallback de P05 existam antes. P13 é um gate final, mas seus limites de segurança entram em cada etapa de implementação. P15 começa pela URL direta de imagem e só libera importação de página, busca e extensão quando houver adaptador configurado e testado. P09 precisa de uma integração configurada e testada antes de P10 ser considerado concluído.

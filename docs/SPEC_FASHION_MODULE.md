@@ -1,10 +1,10 @@
 # Spec — Fashion Module
 
-Status: proposta de arquitetura, sem implementação. Esta spec corresponde item a item ao [PLANO_FASHION_MODULE.md](PLANO_FASHION_MODULE.md): `S01` ↔ `P01` até `S14` ↔ `P14`.
+Status: arquitetura e entregas incrementais. Esta spec corresponde item a item ao [PLANO_FASHION_MODULE.md](PLANO_FASHION_MODULE.md): `S01` ↔ `P01` até `S15` ↔ `P15`.
 
 ## Contexto verificado no projeto
 
-O BFF AI é um app local React/Vite + FastAPI + SQLite. Uma conversa usa a persona e o modelo gravados nela; o backend envia `meta`, `token`, `error` e `done` por SSE. `Message` persiste apenas texto e metadados. `LLMAdapter.stream()` aceita mensagens `{role, content}` e produz apenas texto; os adapters Ollama e NVIDIA NIM descartam chamadas de ferramenta. Não há upload, visão, busca web, autenticação, usuários nem objetos visuais de chat. Alembic é a única fonte do schema. O plano de avatar 3D em `docs/` trata de **roupas de uma persona virtual** e está não iniciado; o guarda-roupa desta spec contém **peças reais da pessoa usuária** e não depende de VRM, sprites ou WebGL.
+O BFF AI é um app local React/Vite + FastAPI + SQLite. Uma conversa usa a persona e o modelo gravados nela e entrega `meta`, `token`, `ui_object`, `error` e `done` por SSE. O módulo Fashion já possui dono local, migrations, upload normalizado em WebP, guarda-roupa, perfil, looks, anexos no chat, tools, objetos visuais e ações confirmáveis. A capacidade de tools é configurada por modelo e o NIM ativo foi verificado para chamá-las. Alembic é a única fonte do schema. A coleção de conteúdo externo desta S15 ainda não está implementada. O plano de avatar 3D em `docs/` trata de **roupas de uma persona virtual** e está não iniciado; o guarda-roupa desta spec contém **peças reais da pessoa usuária** e não depende de VRM, sprites ou WebGL.
 
 Decisões de produto: o módulo começa com um único dono local, sem fingir que há isolamento seguro entre contas. A estrutura de dados terá `owner_id` desde o início; múltiplas contas só serão expostas após autenticação e autorização reais. O chat geral continuará funcionando com modelos que não suportem tools. O modo Fashion e suas ações terão erro de capacidade explícito nesses modelos, sem resposta que simule dados consultados. Busca de produtos e tendências só aparece quando houver integração web real configurada.
 
@@ -166,5 +166,60 @@ Separar fatos `owned`, `external_observed`, `inferred` e `user_declared` nos res
 ## S14 — Extensão, rollout e critérios de aceite
 
 Adicionar tool exige: schema versionado, executor, autorização, teste de contrato e documentação. Adicionar objeto exige schema backend, tipo TS, renderer e fallback para versões antigas. O backend é dono do contrato; a LLM não injeta JSX, CSS ou JSON livre na UI. Cada modelo configurado declara se suas tools Fashion foram verificadas; essa é a única chave de habilitação. Migrações são explícitas; backend antigo não deve abrir banco novo sem compatibilidade planejada.
+
+## S15 — Coleção externa: peças, inspirações e produtos salvos da internet
+
+O guarda-roupa deixa de ser apenas um inventário de upload. A usuária pode salvar uma foto ou página externa como parte da sua coleção Fashion, mas o produto distingue o que ela **possui** do que ela quer comprar ou usar como referência.
+
+### Estados e proveniência
+
+Cada item passa a ter `collection_status`:
+
+| Estado | Significado | Entra em looks como |
+|---|---|---|
+| `owned` | peça que a usuária declarou possuir | peça disponível |
+| `wanted` | produto salvo para possível compra | lacuna ou alternativa externa |
+| `inspiration` | referência estética, editorial ou de look | inspiração, nunca peça possuída |
+| `retired` | item preservado no histórico, fora das sugestões correntes | histórico |
+
+Um item externo preserva `origin=external`, URL original, URL canônica, domínio, título informado/extraído, data de captura, foto normalizada localmente, método de entrada (`image_url`, `product_url`, `chat_attachment`, `browser_extension`, `search_result`) e `product_observation_id?`. Preço, moeda, disponibilidade, variante e tamanho são snapshots datados; uma atualização não reescreve o snapshot sem manter `observed_at`. A transição de `wanted` para `owned` é uma ação explícita da usuária, que registra sinal de compra.
+
+### Formas de entrada
+
+1. **Colar URL de imagem:** a usuária informa foto, nome e atributos opcionais; o backend captura a imagem, normaliza para WebP e cria item externo.
+2. **Colar URL de produto:** um extrator obtém título, imagem principal, marca, preço e variantes quando presentes; a tela mostra revisão antes de salvar. Falta de campo permanece “não informado”.
+3. **Anexo no chat:** a pessoa envia foto, conversa com a LLM e recebe `external_piece_suggestion` ou `wardrobe_suggestion`; confirmar salva o estado escolhido.
+4. **Resultado de busca:** após haver provedor de busca configurado, cada card de produto oferece “Salvar na coleção”.
+5. **Extensão de navegador, posterior:** captura URL, página, seleção de variante e imagem a partir do gesto explícito da usuária. Não faz scraping silencioso nem lê páginas fora do clique dela.
+
+### Segurança da captura remota
+
+O servidor nunca entrega uma URL remota bruta ao navegador como imagem da coleção. Na importação, ele busca somente HTTP(S), limita redirecionamentos, tempo, bytes e dimensões, resolve DNS e bloqueia loopback, IPs privados, link-local e metadados de cloud. Valida MIME pelos bytes, remove EXIF, reencoda para WebP e armazena a cópia interna; falhas mostram erro por item. O fetch ocorre apenas após ação explícita da usuária. URL de página e créditos permanecem como link de proveniência, separados do arquivo normalizado. Base64 só pode ser usado transitoriamente para enviar anexo ao modelo multimodal, nunca em SQLite.
+
+### Dados e deduplicação
+
+Adicionar `external_products` ou evoluir `product_observations` para uma entidade estável com `owner_id`, URL canônica, domínio, foto/asset, título, marca, snapshots de preço, status de captura, timestamps e revisão. `wardrobe_items.external_product_id?` ou uma coleção de referências liga o item à origem sem duplicar a imagem. Dedupe usa URL canônica por dono e hash da imagem como sinal auxiliar; colisão abre revisão/mesclagem, não apaga o registro mais antigo. A usuária pode editar atributos, trocar foto, arquivar, exportar e apagar a cópia local e a origem associada.
+
+### Objetos e tools
+
+| Tool/objeto | Papel |
+|---|---|
+| `propose_external_piece` → `external_piece_suggestion` | LLM apresenta item discutido, com estado inicial, fonte e botão de confirmação; não grava por conta própria. |
+| `import_external_image` | recebe URL explicitamente fornecida pela usuária e cria captura validada. |
+| `import_product_page` | extrai metadados permitidos de página, produz revisão e snapshot datado. |
+| `save_external_piece` | confirmação idempotente do card, com `collection_status`. |
+| `refresh_product_observation` | busca novamente por gesto explícito; mostra mudança de preço/estoque, nunca afirma atualização contínua. |
+| `mark_piece_owned` | muda `wanted` para `owned`, preserva origem e cria sinal de compra. |
+
+`get_wardrobe` aceita filtro por estado e sempre exibe badge “Possuo”, “Quero” ou “Inspiração”. `mix_and_match` usa `owned` por padrão; itens `wanted` aparecem como alternativa claramente marcada. Cards externos mostram foto, marca/título, link da origem, preço observado e data, quando disponíveis.
+
+### Critérios de aceite
+
+- Salvar imagem externa produz cópia WebP interna e card com fonte, sem URL remota servida diretamente.
+- Produto salvo como `wanted` nunca aumenta contagem de peças possuídas nem é apresentado como disponível.
+- Confirmar o mesmo card duas vezes é idempotente; marcar como possuído preserva URL e snapshots anteriores.
+- URL privada, redirect para rede interna, conteúdo não imagem e resposta acima do limite falham sem gravar item.
+- Preço/estoque não aparecem sem fonte e data; refresh mostra quando a observação mudou.
+- A LLM só cria sugestão; a usuária escolhe estado e confirma no componente.
 
 Aceite ponta a ponta: (1) cadastrar foto e peça, recarregar e reencontrar por filtro; (2) “quero usar minha jaqueta jeans” cria looks só com IDs existentes ou lacunas marcadas; (3) salvar/rejeitar/usar altera sinais rastreáveis do perfil; (4) “tenho R$500” calcula lacunas antes de resultados web reais, com fonte e data; (5) fechar/reabrir conversa mantém objetos; (6) cancelar/regenerar não duplica escrita nem publica objeto parcial; (7) provider sem tools, busca sem credencial e visão indisponível mostram estados honestos; (8) testes não acessam rede real, exceto teste de integração opt-in com provedor de busca; (9) migrations e contratos backend/frontend passam.
