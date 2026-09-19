@@ -312,7 +312,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
   box-shadow: var(--sunk-1);
 }
 .message-notice { display: flex; align-items: center; gap: var(--s-2); margin-top: var(--s-2); font-size: 12px; color: var(--warn); }
-.message-meta { display: flex; gap: var(--s-3); align-items: center; margin-top: var(--s-1); font-size: 11px; color: var(--text-3); }
+.message-meta { display: flex; flex-wrap: wrap; gap: 2px var(--s-3); align-items: center; margin-top: var(--s-1); font-size: 11px; color: var(--text-3); }
 .message-attachments { display: flex; gap: var(--s-2); margin-top: var(--s-2); }
 .message-attachments img { width: 96px; height: 96px; object-fit: cover; border-radius: var(--r-sm); }
 .muted { color: var(--text-3); font-style: italic; }
