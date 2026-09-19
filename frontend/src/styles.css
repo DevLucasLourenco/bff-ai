@@ -362,7 +362,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
   box-shadow: var(--sunk-2);
 }
 .composer textarea {
-  flex: 1; resize: none; max-height: 200px;
+  flex: 1; min-width: 0; resize: none; line-height: 1.5; overflow-y: hidden;
   background: none; box-shadow: none; padding: var(--s-3);
 }
 .composer textarea:focus { box-shadow: none; }

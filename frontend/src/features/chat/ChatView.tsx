@@ -1,5 +1,5 @@
 import { ArrowUp, Paperclip, Sparkles, Square, X } from 'lucide-react'
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react'
 import type { StreamBuffer } from '../../lib/streamBuffer'
 import type { ApiError, Conversation } from '../../lib/types'
 import { MessageBubble } from './MessageBubble'
@@ -45,6 +45,22 @@ function useAutoScroll(dependencies: unknown[], enabled: boolean) {
   return { endRef, containerRef }
 }
 
+/** Ajusta a altura real do texto até dez linhas visíveis. */
+function resizeMessageInput(input: HTMLTextAreaElement) {
+  const style = window.getComputedStyle(input)
+  const lineHeight = Number.parseFloat(style.lineHeight)
+  const padding = Number.parseFloat(style.paddingTop) + Number.parseFloat(style.paddingBottom)
+  const borders = Number.parseFloat(style.borderTopWidth) + Number.parseFloat(style.borderBottomWidth)
+  const maxHeight = Math.ceil(lineHeight * 10 + padding + borders)
+  const previousScrollTop = input.scrollTop
+  input.style.height = 'auto'
+  input.style.overflowY = 'hidden'
+  const needsScroll = input.scrollHeight > maxHeight
+  input.style.height = `${Math.min(input.scrollHeight, maxHeight)}px`
+  input.style.overflowY = needsScroll ? 'auto' : 'hidden'
+  input.scrollTop = needsScroll ? previousScrollTop : 0
+}
+
 export function ChatView({ conversation, streaming, buffer, pendingUserMessage, error, onSend, onStop, onRegenerate, onDismissError }: Props) {
   const [draft, setDraft] = useState('')
   const [attachment, setAttachment] = useState<File | null>(null)
@@ -54,6 +70,14 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
   const messageCount = conversation?.messages.length ?? 0
   const lastMessageId = conversation?.messages.at(-1)?.id
   const { endRef, containerRef } = useAutoScroll([messageCount, streaming, pendingUserMessage], true)
+
+  // O efeito mede também quebras por largura e rascunhos inseridos por cards.
+  useLayoutEffect(() => { if (messageInput.current) resizeMessageInput(messageInput.current) }, [draft, conversation?.id])
+  useEffect(() => {
+    const onResize = () => { if (messageInput.current) resizeMessageInput(messageInput.current) }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   useEffect(() => {
     const attach = () => attachmentInput.current?.click()
