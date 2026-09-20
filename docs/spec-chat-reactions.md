@@ -10,7 +10,7 @@ Pessoas que conversam com uma persona que recebeu um visual e querem acompanhar 
 
 ## Proposta
 
-Colocar a personagem na margem livre do chat, sem deslocar a coluna central de mensagens. Ela escuta após o envio, pensa enquanto aguarda e reage a novos trechos conforme a resposta chega. Mudanças de pose têm intervalo mínimo e transição curta para não piscar. A arte fica sem nome ou legendas repetidas; a fase e a reação continuam disponíveis para leitores de tela. Uma ação discreta nas respostas permite rever a reação no histórico. As regras locais usam apenas sinais claros do texto, sem nova chamada ao modelo.
+Colocar a personagem na margem esquerda da coluna central, junto à origem das respostas e sem deslocar as mensagens. Ela escuta após o envio, pensa enquanto aguarda e reage a novos trechos conforme a resposta chega. Mudanças de pose têm intervalo mínimo e transição curta para não piscar. A arte fica sem nome ou legendas repetidas; a fase e a reação continuam disponíveis para leitores de tela. Uma ação discreta nas respostas permite rever a reação no histórico. As regras locais usam apenas sinais claros do texto, sem nova chamada ao modelo.
 
 ## Histórias
 
@@ -20,10 +20,10 @@ Colocar a personagem na margem livre do chat, sem deslocar a coluna central de m
 
 ## Critérios de aceitação
 
-1. Em conversa com visual escolhido, a personagem aparece na margem livre, visível sem rolar o histórico. A conversa e o composer mantêm o mesmo eixo central com ou sem personagem. Não há avatar repetido nas bolhas.
+1. Em conversa com visual escolhido, a personagem aparece à esquerda, perto das respostas e visível sem rolar o histórico. A conversa e o composer mantêm o mesmo eixo central com ou sem personagem. Não há avatar repetido nas bolhas.
 2. Após envio, o palco indica atenção e depois análise durante a espera. Ao chegar texto, a pose muda conforme trechos novos da resposta; dois trechos com sinais diferentes podem produzir duas reações no mesmo turno, com intervalo mínimo entre trocas. A reação final permanece visível até a próxima interação.
 3. Sinais claros de acolhimento, celebração, dúvida, humor, ideia ou explicação selecionam poses correspondentes. Sem sinal claro, a pose é calma e coerente com a fase da conversa. O estado é anunciado para leitores de tela sem texto redundante junto da arte.
-4. A personagem não cobre texto, composer, metadados, avisos ou componentes Fashion; em telas estreitas ocupa a lateral do cabeçalho. A rolagem do histórico usa trilho transparente e indicador discreto.
+4. A personagem não cobre texto, composer, metadados, avisos ou componentes Fashion; em telas estreitas ocupa a lateral esquerda do cabeçalho. A rolagem do histórico usa trilho transparente e indicador discreto. Ao editar uma peça, o formulário ocupa a largura do card e não força rolagem horizontal.
 5. Uma resposta antiga oferece uma ação acessível para reproduzir no palco sua reação final. Trocar a personagem mantém o mesmo tipo de reação e muda apenas a arte.
 6. Sem personagem selecionada, o chat continua utilizável e exibe o emoji usual. Se uma imagem falhar, o palco recua para o emoji. Movimento reduzido remove flutuação e transições, sem esconder estado.
 
