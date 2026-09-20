@@ -1,5 +1,6 @@
-import { Heart, MessageCircleMore, Plus, Settings, Trash2 } from 'lucide-react'
+import { MessageCircleMore, Plus, Settings, Trash2 } from 'lucide-react'
 import type { Conversation } from '../lib/types'
+import bffIcon from '../assets/bff_icon.png'
 
 type Props = {
   conversations: Conversation[]
@@ -13,7 +14,7 @@ type Props = {
 
 export function Sidebar({ conversations, activeId, appName, onNew, onSelect, onArchive, onOpenSettings }: Props) {
   return <aside className="sidebar">
-    <div className="brand"><span className="brand-mark"><Heart size={18} fill="currentColor"/></span><strong>{appName}</strong></div>
+    <div className="brand"><span className="brand-mark" aria-hidden="true"><img src={bffIcon} alt=""/></span><strong>{appName}</strong></div>
     <button className="new-chat" onClick={onNew}><Plus size={18}/> Nova conversa</button>
     <div className="conversation-list">
       {conversations.map(c => <div className={`conversation-row ${activeId === c.id ? 'active' : ''}`} key={c.id}>

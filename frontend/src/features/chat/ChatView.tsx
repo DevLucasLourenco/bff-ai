@@ -1,4 +1,4 @@
-import { ArrowUp, Paperclip, Sparkles, Square, X } from 'lucide-react'
+import { ArrowUp, Paperclip, Square, X } from 'lucide-react'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ClipboardEvent, type FormEvent } from 'react'
 import type { StreamBuffer } from '../../lib/streamBuffer'
 import type { ApiError, Conversation, Message } from '../../lib/types'
@@ -6,6 +6,7 @@ import { MessageBubble } from './MessageBubble'
 import { StreamingMessage } from './StreamingMessage'
 import { CharacterStage, type ReactionReplay } from './CharacterStage'
 import { classifyReaction } from '../../lib/personaReactions'
+import bffIcon from '../../assets/bff_icon.png'
 
 type Props = {
   conversation: Conversation | null
@@ -163,7 +164,7 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
 
   if (!conversation) {
     return <main className="chat-view empty-state">
-      <div className="empty-orb"><Sparkles size={28}/></div>
+      <div className="empty-orb"><img src={bffIcon} alt=""/></div>
       <h1>Uma conversa só de vocês.</h1>
       <p>Crie uma conversa e escolha a personalidade e o modelo nas configurações.</p>
     </main>

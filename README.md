@@ -1,5 +1,7 @@
 # BFF AI
 
+<p align="center"><img src="frontend/src/assets/bff_icon.png" alt="Logo do BFF AI" width="170"></p>
+
 O BFF AI é um chat pessoal com inteligência artificial. Nele, você escolhe uma persona e um modelo do Ollama ou da NVIDIA NIM para conversar em tempo real. As conversas, personas e configurações ficam salvas localmente.
 
 O projeto também reúne um guarda-roupa dentro do chat. Você pode enviar a foto ou o link de uma peça, revisar os dados sugeridos pela IA e salvá-la. As peças e combinações aparecem em componentes visuais na conversa, onde também é possível editar ou excluir itens. A personagem escolhida reage durante o diálogo.
