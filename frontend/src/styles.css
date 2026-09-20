@@ -278,11 +278,20 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 }
 .chat-header { padding: var(--s-4) var(--s-5); border-bottom: 1px solid var(--divider); }
 .persona-title { display: flex; align-items: center; gap: var(--s-2); font-size: 16px; }
+.persona-avatar { display: inline-flex; flex: none; align-items: center; justify-content: center; overflow: hidden; vertical-align: middle; }
+.persona-avatar img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.persona-avatar-emoji { display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+.persona-header-avatar { width: 34px; height: 42px; font-size: 25px; }
 .model-caption { display: block; margin-top: 2px; color: var(--text-3); font-size: 12px; }
 
 .messages { overflow: auto; overflow-x: hidden; padding: var(--s-5) max(var(--s-5), calc((100vw - 286px - 860px) / 2)); }
 .message-wrap { display: flex; flex-direction: column; align-items: flex-start; margin: 0 0 var(--s-5); min-width: 0; max-width: 100%; }
 .message-wrap.user { align-items: flex-end; }
+.message-row { display: flex; width: 100%; }
+.message-wrap.user .message-row { justify-content: flex-end; }
+.assistant-reaction-row { display: flex; align-items: flex-start; gap: var(--s-3); width: 100%; }
+.persona-message-avatar { width: 57px; height: 72px; margin-top: -7px; font-size: 26px; }
+.message-wrap.with-character .message-meta, .message-wrap.with-character .message-notice { margin-left: calc(57px + var(--s-3)); }
 .message {
   max-width: min(680px, 86%);
   white-space: pre-wrap;
@@ -379,6 +388,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
   flex: 1; min-width: 0; resize: none; line-height: 1.5; overflow-y: hidden;
   background: none; box-shadow: none; padding: var(--s-3);
 }
+.persona-greeting-avatar { display: block; width: 74px; height: 92px; margin: 0 auto var(--s-2); }
 .composer textarea:focus { box-shadow: none; }
 .composer button {
   width: 44px; height: 44px; flex: none;
@@ -519,10 +529,22 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .persona-nav { flex: 1; min-width: 0; display: flex; gap: var(--s-2); align-items: center; padding: var(--s-2) var(--s-3); text-align: left; color: var(--text-2); }
 .persona-nav-row.active .persona-nav strong { color: var(--accent-strong); }
 .persona-nav strong { display: block; font-size: 13px; }
+.persona-rail-avatar { width: 34px; height: 44px; font-size: 23px; }
 .persona-nav small { color: var(--text-3); font-size: 11px; }
 .persona-nav-row .icon-button { opacity: .4; }
 .persona-nav-row:hover .icon-button { opacity: 1; }
 .persona-editor { display: grid; gap: var(--s-3); }
+.character-picker { border: 0; padding: 0; margin: 0; min-width: 0; }
+.character-picker legend { padding: 0; font-size: 13px; font-weight: 650; color: var(--text-2); }
+.character-picker p { margin: var(--s-1) 0 var(--s-3); color: var(--text-3); font-size: 12px; line-height: 1.45; }
+.character-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: var(--s-2); }
+.character-option { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: var(--s-1); min-width: 0; min-height: 120px; padding: var(--s-2); border: 2px solid transparent; border-radius: var(--r-md); background: var(--surface-sunk); color: var(--text-2); box-shadow: var(--sunk-1); cursor: pointer; text-align: center; font-size: 11px; line-height: 1.2; }
+.character-option.selected { border-color: var(--accent); background: var(--surface); box-shadow: var(--raised-1); }
+.character-option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.character-option:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.character-option .persona-avatar { width: 65px; height: 82px; }
+.character-emoji { display: grid; place-items: center; width: 65px; height: 82px; font-size: 34px; }
+.character-option > span:last-child { min-height: 27px; display: grid; place-items: center; }
 .persona-traits { display: grid; gap: var(--s-3); }
 .persona-traits textarea { font-weight: 400; resize: vertical; }
 .persona-traits textarea::placeholder { font-size: 12px; }

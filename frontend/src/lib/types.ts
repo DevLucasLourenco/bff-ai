@@ -1,10 +1,12 @@
 /** Campos que descrevem a personalidade — o que varia entre personas. */
+import type { AvatarCharacter } from './personaVisuals'
+
 export type PersonaTraits = {
   personality: string; humor: string; tone: string; energy: string;
   objective: string; avoid: string; extra_instructions: string;
 }
 export type Persona = PersonaTraits & {
-  id: number; name: string; description: string; greeting: string; avatar_emoji: string;
+  id: number; name: string; description: string; greeting: string; avatar_emoji: string; avatar_character: AvatarCharacter | null;
   /** Prompt final montado no servidor: regra global + campos + extras. */
   composed_prompt: string;
 }
@@ -32,7 +34,7 @@ export type Message = {
   ui_objects?: ChatUiObject[];
 }
 export type Conversation = {
-  id: number; title: string; persona_id: number; persona_name: string; persona_emoji: string; persona_greeting: string; model_config_id: number;
+  id: number; title: string; persona_id: number; persona_name: string; persona_emoji: string; persona_character: AvatarCharacter | null; persona_greeting: string; model_config_id: number;
   model_display_name: string; provider_kind: string; is_archived: boolean; messages: Message[]; updated_at: string;
 }
 export type ThemeName = 'system' | 'light' | 'dark'

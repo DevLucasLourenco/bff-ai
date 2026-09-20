@@ -9,6 +9,10 @@ from app.services.llm.factory import PROVIDER_KINDS
 
 # Derivado do registry de adapters: a lista de kinds válidos existe em um lugar só.
 ProviderKind = Literal[PROVIDER_KINDS]
+AvatarCharacter = Literal[
+    "morena", "loira", "ruiva", "japonesa_oriental", "cabelos_brancos",
+    "fashionista", "lobinha_spooky", "vampirinha_gotica",
+]
 
 
 class OrmModel(BaseModel):
@@ -95,6 +99,7 @@ class PersonaCreate(PersonaTraitFields):
     description: str = ""
     greeting: str = ""
     avatar_emoji: str = "💗"
+    avatar_character: AvatarCharacter | None = None
 
 
 class PersonaUpdate(BaseModel):
@@ -109,6 +114,7 @@ class PersonaUpdate(BaseModel):
     extra_instructions: str | None = None
     greeting: str | None = None
     avatar_emoji: str | None = None
+    avatar_character: AvatarCharacter | None = None
 
 
 class PersonaRead(OrmModel):
@@ -124,6 +130,7 @@ class PersonaRead(OrmModel):
     extra_instructions: str
     greeting: str
     avatar_emoji: str
+    avatar_character: AvatarCharacter | None
     # Prompt final, montado a partir da regra global + campos + extras. A UI
     # mostra exatamente isto, para não haver mistério sobre o que foi enviado.
     composed_prompt: str
@@ -407,6 +414,7 @@ class ConversationRead(BaseModel):
     persona_id: int
     persona_name: str
     persona_emoji: str
+    persona_character: AvatarCharacter | None
     # Saudação da persona, mostrada na conversa vazia. Era editável e nunca aparecia.
     persona_greeting: str
     model_config_id: int

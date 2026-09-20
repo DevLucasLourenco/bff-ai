@@ -3,6 +3,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { api } from '../../lib/api'
 import type { Conversation, Memory, MemoryScope, ModelConfig, Persona, Provider, Settings, ThemeName } from '../../lib/types'
 import { PersonaEditor } from './PersonaEditor'
+import { PersonaAvatar } from '../../components/PersonaAvatar'
 
 type Tab = 'general' | 'models' | 'personas' | 'memories'
 
@@ -173,7 +174,7 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
             <button className="secondary add-persona" onClick={createPersona}><Plus size={15}/> Nova</button>
             {personas.map(persona => <div key={persona.id} className={`persona-nav-row ${editingPersona?.id === persona.id ? 'active' : ''}`}>
               <button className="persona-nav" onClick={() => setEditingPersonaId(persona.id)}>
-                <span>{persona.avatar_emoji}</span>
+                <PersonaAvatar character={persona.avatar_character} emoji={persona.avatar_emoji} className="persona-rail-avatar"/>
                 <div><strong>{persona.name}</strong><small>{settings.active_persona_id === persona.id ? 'padrão' : 'editar'}</small></div>
               </button>
               <button
@@ -189,6 +190,7 @@ export function SettingsPanel({ open, onClose, settings, personas, memories, pro
             </div>)}
           </div>
           {editingPersona && <PersonaEditor
+            key={editingPersona.id}
             persona={editingPersona}
             isDefault={settings.active_persona_id === editingPersona.id}
             onSave={savePersona}

@@ -1,5 +1,7 @@
 import { Check, Save } from 'lucide-react'
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
+import { PersonaAvatar } from '../../components/PersonaAvatar'
+import { CHARACTERS, type AvatarCharacter } from '../../lib/personaVisuals'
 import type { Persona } from '../../lib/types'
 
 /**
@@ -67,6 +69,8 @@ export function PersonaEditor({ persona, isDefault, onSave, onSetDefault }: {
   onSetDefault: () => void
 }) {
   const [promptAberto, setPromptAberto] = useState(false)
+  const [character, setCharacter] = useState<AvatarCharacter | null>(persona.avatar_character)
+  useEffect(() => { setCharacter(persona.avatar_character) }, [persona.id, persona.avatar_character])
 
   const salvar = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -74,6 +78,7 @@ export function PersonaEditor({ persona, isDefault, onSave, onSetDefault }: {
     const texto = (chave: string) => String(data.get(chave) ?? '')
     onSave({
       avatar_emoji: texto('avatar_emoji') || '💗',
+      avatar_character: character,
       name: texto('name'),
       description: texto('description'),
       greeting: texto('greeting'),
@@ -87,6 +92,22 @@ export function PersonaEditor({ persona, isDefault, onSave, onSetDefault }: {
       <label>Emoji<input name="avatar_emoji" defaultValue={persona.avatar_emoji}/></label>
       <label>Nome<input name="name" required defaultValue={persona.name} placeholder="Bestie  ·  Nina  ·  Copiloto"/></label>
     </div>
+    <fieldset className="character-picker">
+      <legend>Visual da persona</legend>
+      <p>Escolha a personagem que aparece e reage nas conversas desta persona.</p>
+      <div className="character-options">
+        <label className={`character-option ${character === null ? 'selected' : ''}`}>
+          <input type="radio" name="avatar_character" value="" checked={character === null} onChange={() => setCharacter(null)}/>
+          <span className="character-emoji" aria-hidden="true">{persona.avatar_emoji}</span>
+          <span>Somente emoji</span>
+        </label>
+        {CHARACTERS.map(option => <label key={option.id} className={`character-option ${character === option.id ? 'selected' : ''}`}>
+          <input type="radio" name="avatar_character" value={option.id} checked={character === option.id} onChange={() => setCharacter(option.id)}/>
+          <PersonaAvatar character={option.id} emoji={persona.avatar_emoji}/>
+          <span>{option.label}</span>
+        </label>)}
+      </div>
+    </fieldset>
     <label>Descrição<input name="description" defaultValue={persona.description} placeholder="como você descreveria essa persona em uma linha"/></label>
 
     <div className="persona-traits">

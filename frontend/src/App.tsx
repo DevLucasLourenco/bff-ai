@@ -25,6 +25,11 @@ export default function App() {
   useEffect(() => { if (theme) applyTheme(theme) }, [theme])
   const conversations = useConversations(reportConfigError)
   const { reloadActive, refreshList, setActive } = conversations
+  const refreshConfiguration = useCallback(async () => {
+    await config.refresh()
+    await refreshList()
+    if (conversations.active?.id) await reloadActive(conversations.active.id)
+  }, [config.refresh, refreshList, reloadActive, conversations.active?.id])
 
   const onSettled = useCallback(async (conversationId: number) => {
     // Recarrega do servidor: é lá que está a verdade sobre o que foi persistido,
@@ -92,7 +97,7 @@ export default function App() {
       providers={config.providers}
       models={config.models}
       conversations={conversations.conversations}
-      onChanged={config.refresh}
+      onChanged={refreshConfiguration}
     />
 
     {/* Toast só para o que não pertence a uma conversa; erro de chat fica ancorado na bolha. */}

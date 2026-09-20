@@ -4,6 +4,7 @@ import type { StreamBuffer } from '../../lib/streamBuffer'
 import type { ApiError, Conversation } from '../../lib/types'
 import { MessageBubble } from './MessageBubble'
 import { StreamingMessage } from './StreamingMessage'
+import { PersonaAvatar } from '../../components/PersonaAvatar'
 
 type Props = {
   conversation: Conversation | null
@@ -137,7 +138,7 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
   return <main className="chat-view">
     <header className="chat-header">
       <div>
-        <div className="persona-title"><span>{conversation.persona_emoji}</span><strong>{conversation.persona_name}</strong></div>
+        <div className="persona-title"><PersonaAvatar character={conversation.persona_character} emoji={conversation.persona_emoji} className="persona-header-avatar"/><strong>{conversation.persona_name}</strong></div>
         <span className="model-caption">{conversation.model_display_name} · {conversation.provider_kind}</span>
       </div>
     </header>
@@ -145,12 +146,15 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     <section className="messages" ref={containerRef} aria-live="polite" aria-busy={streaming}>
       {/* A saudação da persona era editável e nunca aparecia: aqui havia um texto fixo. */}
       {messageCount === 0 && !streaming && !pendingUserMessage && <div className="greeting-bubble">
+        {conversation.persona_character && <PersonaAvatar character={conversation.persona_character} emoji={conversation.persona_emoji} reaction="escutando_atenta" className="persona-greeting-avatar"/>}
         {conversation.persona_greeting.trim() || 'Comece falando qualquer coisa. 💗'}
       </div>}
 
       {conversation.messages.map(message => <MessageBubble
         key={message.id}
         message={message}
+        personaCharacter={conversation.persona_character}
+        personaEmoji={conversation.persona_emoji}
         // Só a última resposta pode ser regenerada: regenerar uma antiga apagaria
         // tudo o que veio depois dela. O backend recusa com 409 também.
         onRegenerate={message.id === lastMessageId && message.role === 'assistant' && !streaming ? onRegenerate : undefined}
@@ -160,7 +164,7 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
         <article className="message user">{pendingUserMessage}</article>
       </div>}
 
-      {streaming && <StreamingMessage buffer={buffer}/>}
+      {streaming && <StreamingMessage buffer={buffer} personaCharacter={conversation.persona_character} personaEmoji={conversation.persona_emoji}/>}
 
       {/* F7.2: erro de conversa aparece ancorado aqui, não num toast genérico. */}
       {error && <div className="inline-error" role="alert">

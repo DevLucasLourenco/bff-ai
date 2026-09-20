@@ -82,6 +82,24 @@ def test_persona_nova_nasce_so_com_nome(client):
     assert criada["composed_prompt"].strip().endswith("Você é Coach.")
 
 
+def test_visual_da_persona_atualiza_conversa_existente_e_pode_ser_removido(client):
+    persona = client.get("/api/personas").json()[0]
+    conversa = client.post("/api/conversations", json={}).json()
+    assert persona["avatar_character"] is None
+    assert conversa["persona_character"] is None
+
+    alterada = client.patch(f"/api/personas/{persona['id']}", json={"avatar_character": "ruiva"})
+    assert alterada.status_code == 200
+    assert alterada.json()["avatar_character"] == "ruiva"
+    assert alterada.json()["composed_prompt"] == persona["composed_prompt"]
+    assert client.get(f"/api/conversations/{conversa['id']}").json()["persona_character"] == "ruiva"
+
+    invalida = client.patch(f"/api/personas/{persona['id']}", json={"avatar_character": "desconhecida"})
+    assert invalida.status_code == 422
+    assert client.patch(f"/api/personas/{persona['id']}", json={"avatar_character": None}).json()["avatar_character"] is None
+    assert client.get(f"/api/conversations/{conversa['id']}").json()["persona_character"] is None
+
+
 # ------------------------------------------------- a regra global chega ao LLM
 
 

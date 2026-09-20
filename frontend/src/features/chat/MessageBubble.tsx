@@ -3,6 +3,9 @@ import { memo } from 'react'
 import type { Message } from '../../lib/types'
 import { Markdown } from './Markdown'
 import { ChatObjectRenderer } from './ChatObjectRenderer'
+import { PersonaAvatar } from '../../components/PersonaAvatar'
+import { classifyReaction } from '../../lib/personaReactions'
+import type { AvatarCharacter } from '../../lib/personaVisuals'
 
 const dateTimeFormatter = new Intl.DateTimeFormat('pt-BR', {
   day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -21,20 +24,26 @@ function messageTimestamp(value: string | undefined): Date | null {
  * Uma mensagem já persistida. `memo` porque o pai rerenderiza a cada resposta
  * nova e o conteúdo destas não muda (F7.3).
  */
-export const MessageBubble = memo(function MessageBubble({ message, onRegenerate }: {
+export const MessageBubble = memo(function MessageBubble({ message, onRegenerate, personaCharacter, personaEmoji }: {
   message: Message
   onRegenerate?: (messageId: number) => void
+  personaCharacter: AvatarCharacter | null
+  personaEmoji: string
 }) {
   const interrupted = message.status !== 'complete'
   const cancelled = message.status === 'cancelled'
   const timestamp = messageTimestamp(message.created_at)
+  const reaction = message.status === 'failed' ? 'ops_erro_leve' : message.content ? classifyReaction(message.content) : 'analisando'
 
-  return <div className={`message-wrap ${message.role}`}>
-    <article className={`message ${message.role} ${interrupted ? 'interrupted' : ''}`}>
-      {message.role === 'assistant' ? <Markdown text={message.content}/> : message.content}
-      {message.attachment_asset_ids?.length ? <div className="message-attachments">{message.attachment_asset_ids.map(id => <img key={id} src={`/api/fashion/assets/${id}`} alt="Foto anexada da peça"/>)}</div> : null}
-      {!message.content && interrupted && <span className="muted">(nada foi gerado)</span>}
-    </article>
+  return <div className={`message-wrap ${message.role} ${message.role === 'assistant' && personaCharacter ? 'with-character' : ''}`}>
+    <div className={message.role === 'assistant' && personaCharacter ? 'assistant-reaction-row' : 'message-row'}>
+      {message.role === 'assistant' && personaCharacter && <PersonaAvatar character={personaCharacter} emoji={personaEmoji} reaction={reaction} className="persona-message-avatar"/>}
+      <article className={`message ${message.role} ${interrupted ? 'interrupted' : ''}`}>
+        {message.role === 'assistant' ? <Markdown text={message.content}/> : message.content}
+        {message.attachment_asset_ids?.length ? <div className="message-attachments">{message.attachment_asset_ids.map(id => <img key={id} src={`/api/fashion/assets/${id}`} alt="Foto anexada da peça"/>)}</div> : null}
+        {!message.content && interrupted && <span className="muted">(nada foi gerado)</span>}
+      </article>
+    </div>
     {message.ui_objects?.map(object => <ChatObjectRenderer key={object.id} object={object}/>)}
 
     {interrupted && <div className="message-notice">

@@ -14,7 +14,7 @@ def view(persona: Persona, ajustes: dict) -> PersonaRead:
         **{campo: getattr(persona, campo) for campo in (
             "id", "name", "description", "personality", "humor", "tone",
             "energy", "objective", "avoid", "extra_instructions",
-            "greeting", "avatar_emoji", "created_at", "updated_at",
+            "greeting", "avatar_emoji", "avatar_character", "created_at", "updated_at",
         )},
         # Montado aqui para a UI poder mostrar exatamente o que será enviado ao
         # modelo, em vez de a usuária ter que imaginar o resultado dos campos.
@@ -56,6 +56,8 @@ def update_persona(persona_id: int, payload: PersonaUpdate, db: Db):
     if not persona:
         raise HTTPException(404, "Persona not found")
     data = payload.model_dump(exclude_none=True)
+    if "avatar_character" in payload.model_fields_set:
+        data["avatar_character"] = payload.avatar_character
     if "name" in data and db.query(Persona).filter(
         Persona.name == data["name"], Persona.id != persona_id, Persona.is_archived.is_(False)
     ).count():

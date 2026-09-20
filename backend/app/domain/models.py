@@ -112,6 +112,7 @@ class Persona(Base):
     extra_instructions: Mapped[str] = mapped_column(Text, default="", server_default="")
     greeting: Mapped[str] = mapped_column(Text, default="")
     avatar_emoji: Mapped[str] = mapped_column(String(24), default="💗")
+    avatar_character: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
     is_archived: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)

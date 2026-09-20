@@ -44,6 +44,7 @@ def view(row: Conversation, include_messages: bool = True, db: Session | None = 
         persona_id=row.persona_id,
         persona_name=row.persona.name,
         persona_emoji=row.persona.avatar_emoji,
+        persona_character=row.persona.avatar_character,
         persona_greeting=row.persona.greeting,
         model_config_id=row.model_config_id,
         model_display_name=row.model_config.display_name,
