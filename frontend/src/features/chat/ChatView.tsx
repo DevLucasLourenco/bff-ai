@@ -1,5 +1,5 @@
 import { ArrowUp, Paperclip, Sparkles, Square, X } from 'lucide-react'
-import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ClipboardEvent, type FormEvent } from 'react'
 import type { StreamBuffer } from '../../lib/streamBuffer'
 import type { ApiError, Conversation } from '../../lib/types'
 import { MessageBubble } from './MessageBubble'
@@ -119,6 +119,13 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     } finally { setSubmitting(false) }
   }
 
+  const pasteImage = (event: ClipboardEvent<HTMLTextAreaElement>) => {
+    const image = Array.from(event.clipboardData.files).find(file => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type))
+    if (!image) return
+    event.preventDefault()
+    setAttachment(new File([image], image.name || 'imagem-colada.png', { type: image.type }))
+  }
+
   if (!conversation) {
     return <main className="chat-view empty-state">
       <div className="empty-orb"><Sparkles size={28}/></div>
@@ -179,6 +186,7 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
         ref={messageInput}
         value={draft}
         onChange={event => setDraft(event.target.value)}
+        onPaste={pasteImage}
         placeholder="Escreva, cole um link ou anexe uma foto…"
         rows={1}
         aria-label="Mensagem"

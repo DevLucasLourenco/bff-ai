@@ -14,7 +14,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from app.domain.models import Conversation, Message, MessageStatus, ModelConfig
+from app.domain.models import Conversation, FashionAsset, Message, MessageStatus, ModelConfig
 from app.services.llm.base import ProviderCapabilities
 from app.services.llm.errors import ProviderAuthError
 from app.fashion.external_collection import CapturedLink, RemoteImage, ExternalImageError
@@ -383,3 +383,45 @@ def test_link_invalido_nao_cria_mensagem_no_chat(client, monkeypatch, db):
     response = send(client, conversation_id, "Quero salvar https://shop.example.com/produto")
     assert response.status_code == 422
     assert client.get(f"/api/conversations/{conversation_id}").json()["messages"] == []
+
+
+def test_link_markdown_com_rastreamento_e_reconhecido_como_peca(client, monkeypatch, db):
+    db.get(ModelConfig, 1).supports_tools = True
+    db.commit()
+    seen = []
+    def capture(url):
+        seen.append(url)
+        raise ExternalImageError("A loja exigiu verificação de acesso")
+    monkeypatch.setattr("app.services.chat.fetch_fashion_link", capture)
+    conversation_id = new_conversation(client)
+    product = "https://produto.mercadolivre.com.br/MLB-5352372694-calcinha-_JM?searchVariation=183366151274"
+    message = f"[{product}]({product}\\&reco_id=abc#polycard_client=vip)"
+    response = send(client, conversation_id, message)
+    assert response.status_code == 422
+    assert seen == [product]
+
+
+def test_link_bloqueado_com_imagem_colada_usa_anexo_e_preserva_origem(client, monkeypatch, db, fake_adapter):
+    from app.fashion import media
+
+    fake_adapter()
+    db.get(ModelConfig, 1).supports_tools = True
+    db.commit()
+    media_dir = Path(__file__).with_name(".chat-pasted-media")
+    media_dir.mkdir(exist_ok=True)
+    monkeypatch.setattr(media, "FASHION_MEDIA_DIR", media_dir)
+    buffer = io.BytesIO()
+    Image.new("RGB", (240, 240), "red").save(buffer, format="PNG")
+    uploaded = client.post("/api/fashion/assets", files={"file": ("copiada.png", buffer.getvalue(), "image/png")})
+    assert uploaded.status_code == 201, uploaded.text
+    asset_id = uploaded.json()["id"]
+    monkeypatch.setattr("app.services.chat.fetch_fashion_link", lambda _url: (_ for _ in ()).throw(AssertionError("Não deve buscar página bloqueada")))
+    conversation_id = new_conversation(client)
+    url = "https://produto.mercadolivre.com.br/MLB-5352372694-calcinha-_JM?searchVariation=183366151274&reco_id=abc"
+    response = client.post(f"/api/conversations/{conversation_id}/messages/stream", json={
+        "content": f"Quero salvar {url}", "attachment_asset_ids": [asset_id],
+    })
+    assert response.status_code == 200, response.text
+    assert db.get(FashionAsset, asset_id).source_url == url.split("&reco_id=")[0]
+    assert client.get(f"/api/conversations/{conversation_id}").json()["messages"][0]["attachment_asset_ids"] == [asset_id]
+    shutil.rmtree(media_dir, ignore_errors=True)

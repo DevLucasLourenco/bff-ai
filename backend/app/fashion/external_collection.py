@@ -4,20 +4,33 @@ from __future__ import annotations
 
 import ipaddress
 import http.client
+import io
 import json
+import re
 import socket
 import ssl
+import time
 from dataclasses import dataclass
 from html.parser import HTMLParser
-from urllib.parse import urljoin, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
 
 import httpx
+from PIL import Image, UnidentifiedImageError
 
-from app.fashion.media import MAX_UPLOAD_BYTES
+from app.fashion.media import MAX_PIXELS, MAX_UPLOAD_BYTES
 
 
 MAX_REDIRECTS = 3
 FETCH_TIMEOUT_SECONDS = 10.0
+PAGE_MAX_BYTES = 2 * 1024 * 1024
+METADATA_MAX_BYTES = 512 * 1024
+MAX_IMAGE_CANDIDATES = 8
+CANDIDATE_FETCH_BUDGET_SECONDS = 20.0
+TRACKING_PARAMETERS = {"fbclid", "gclid", "sid", "ref", "reco_id", "reco_client", "reco_item_pos", "reco_backend", "reco_backend_type", "reco_model", "polycard_client"}
+REQUEST_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+}
 
 
 class ExternalImageError(ValueError):
@@ -58,6 +71,20 @@ def _canonical_url(value: str) -> tuple[str, str]:
     if len(canonical) > 2048 or len(host) > 255:
         raise ExternalImageError("A URL da imagem é longa demais.")
     return canonical, host
+
+
+def normalize_source_url(value: str) -> str:
+    """Remove fragmento e rastreamento sem alterar parâmetros funcionais da loja."""
+    parsed = urlsplit(value.strip().replace("\\&", "&").replace("\\_", "_"))
+    kept_params = [
+        (key, item) for key, item in parse_qsl(parsed.query, keep_blank_values=True)
+        if not key.lower().startswith("utm_") and key.lower() not in TRACKING_PARAMETERS
+    ]
+    # Preserva a codificação original de URLs assinadas quando não há
+    # parâmetros de rastreamento para remover.
+    query = parsed.query if len(kept_params) == len(parse_qsl(parsed.query, keep_blank_values=True)) else urlencode(kept_params)
+    cleaned = urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, ""))
+    return _canonical_url(cleaned)[0]
 
 
 def _validate_public_host(host: str) -> str:
@@ -106,7 +133,7 @@ def _request_pinned(url: str, ip: str, accept: str, max_bytes: int) -> tuple[int
         target = parsed.path or "/"
         if parsed.query:
             target += f"?{parsed.query}"
-        connection.request("GET", target, headers={"Accept": accept, "User-Agent": "BffFashion/1.0"})
+        connection.request("GET", target, headers={"Accept": accept, **REQUEST_HEADERS})
         response = connection.getresponse()
         headers = {key.lower(): value for key, value in response.getheaders()}
         length = headers.get("content-length", "")
@@ -144,7 +171,7 @@ def _fetch_public_resource(url: str, *, max_bytes: int, accept: str, client_fact
                 # Test seam: the production path above pins the socket to the
                 # validated IP; fake clients make network tests deterministic.
                 with client_factory(follow_redirects=False, timeout=FETCH_TIMEOUT_SECONDS, trust_env=False) as client:
-                    with client.stream("GET", current_url, headers={"Accept": accept}) as response:
+                    with client.stream("GET", current_url, headers={"Accept": accept, **REQUEST_HEADERS}) as response:
                         status, headers = response.status_code, response.headers
                         parts: list[bytes] = []
                         total = 0
@@ -189,6 +216,7 @@ class _ProductImageParser(HTMLParser):
         super().__init__()
         self.image_urls: list[str] = []
         self.product_image_urls: list[str] = []
+        self.gallery_image_urls: list[str] = []
         self.title: str | None = None
         self._inside_title = False
         self._json_ld = False
@@ -209,10 +237,18 @@ class _ProductImageParser(HTMLParser):
                 self.title = values["content"][:180]
         if tag == "link" and values.get("rel", "").lower() == "image_src" and values.get("href"):
             self.image_urls.append(values["href"])
-        if tag == "img" and values.get("src") and any(term in values.get("alt", "").lower() for term in ("produto", "product", "peça", "roupa")):
-            self.image_urls.append(values["src"])
-        if tag == "img" and values.get("data-src") and any(term in values.get("alt", "").lower() for term in ("produto", "product", "peça", "roupa")):
-            self.image_urls.append(values["data-src"])
+        if tag in {"img", "source"}:
+            context = " ".join(values.get(key, "") for key in ("alt", "class", "id", "data-testid")).lower()
+            if any(term in context for term in ("produto", "product", "peça", "roupa", "gallery", "galeria", "hero", "photo", "picture")):
+                for key in ("data-zoom-src", "data-original", "data-src", "src"):
+                    if values.get(key):
+                        self.gallery_image_urls.append(values[key])
+                for key in ("data-srcset", "srcset"):
+                    if values.get(key):
+                        # A última variante costuma ser a maior resolução.
+                        self.gallery_image_urls.extend(
+                            part.strip().split()[0] for part in values[key].split(",") if part.strip()
+                        )
 
     def handle_endtag(self, tag: str) -> None:
         if tag == "title":
@@ -239,9 +275,17 @@ class _ProductImageParser(HTMLParser):
                     if isinstance(image, str):
                         self.product_image_urls.append(image)
                     elif isinstance(image, list):
-                        self.product_image_urls.extend(value for value in image if isinstance(value, str))
-                    elif isinstance(image, dict) and isinstance(image.get("url"), str):
-                        self.product_image_urls.append(image["url"])
+                        for value in image:
+                            if isinstance(value, str):
+                                self.product_image_urls.append(value)
+                            elif isinstance(value, dict):
+                                candidate = value.get("contentUrl") or value.get("url")
+                                if isinstance(candidate, str):
+                                    self.product_image_urls.append(candidate)
+                    elif isinstance(image, dict):
+                        candidate = image.get("contentUrl") or image.get("url")
+                        if isinstance(candidate, str):
+                            self.product_image_urls.append(candidate)
             except (ValueError, TypeError):
                 pass
 
@@ -252,24 +296,107 @@ class _ProductImageParser(HTMLParser):
             self._json_ld_parts.append(data)
 
 
-def fetch_fashion_link(url: str, *, client_factory=None) -> CapturedLink:
-    """Aceita URL direta de imagem ou página com imagem principal identificável."""
-    final_url, domain, content, content_type = _fetch_public_resource(
-        url, max_bytes=MAX_UPLOAD_BYTES, accept="text/html,image/webp,image/png,image/jpeg", client_factory=client_factory,
+def _valid_image(content: bytes) -> bool:
+    try:
+        with Image.open(io.BytesIO(content)) as image:
+            if image.format not in {"JPEG", "PNG", "WEBP"} or image.width * image.height > MAX_PIXELS:
+                return False
+            image.verify()
+        return True
+    except (UnidentifiedImageError, OSError, ValueError, SyntaxError):
+        return False
+
+
+def _capture_candidate_images(urls: list[str], *, base_url: str, client_factory=None) -> RemoteImage | None:
+    deadline = time.monotonic() + CANDIDATE_FETCH_BUDGET_SECONDS
+    for image_url in list(dict.fromkeys(urljoin(base_url, url) for url in urls if url and not url.startswith("data:")))[:MAX_IMAGE_CANDIDATES]:
+        if time.monotonic() >= deadline:
+            break
+        try:
+            image = fetch_remote_image(image_url, client_factory=client_factory)
+            if _valid_image(image.content):
+                return image
+        except ExternalImageError:
+            continue
+    return None
+
+
+def _mercadolivre_item_id(url: str) -> str | None:
+    parsed = urlsplit(url)
+    host = (parsed.hostname or "").lower()
+    if host not in {"produto.mercadolivre.com.br", "www.mercadolivre.com.br", "mercadolivre.com.br"}:
+        return None
+    match = re.search(r"/(MLB)-?(\d{6,})(?:-|/|$)", parsed.path, re.I)
+    return f"MLB{match.group(2)}" if match else None
+
+
+def _capture_mercadolivre_api(source_url: str, *, client_factory=None) -> CapturedLink | None:
+    item_id = _mercadolivre_item_id(source_url)
+    if not item_id:
+        return None
+    try:
+        api_url, _, content, content_type = _fetch_public_resource(
+            f"https://api.mercadolibre.com/items/{item_id}",
+            max_bytes=METADATA_MAX_BYTES, accept="application/json", client_factory=client_factory,
+        )
+        if content_type != "application/json":
+            return None
+        data = json.loads(content)
+        if not isinstance(data, dict) or data.get("id") != item_id:
+            return None
+        pictures = data.get("pictures")
+        urls = [picture.get("secure_url") or picture.get("url") for picture in pictures if isinstance(picture, dict)] if isinstance(pictures, list) else []
+        if isinstance(data.get("thumbnail"), str):
+            urls.append(data["thumbnail"])
+        image = _capture_candidate_images(urls, base_url=api_url, client_factory=client_factory)
+        if image:
+            return CapturedLink(image, source_url, urlsplit(source_url).hostname or "", data.get("title") if isinstance(data.get("title"), str) else None)
+    except (ExternalImageError, ValueError, TypeError):
+        pass
+    return None
+
+
+def _is_access_challenge(final_url: str, content: bytes) -> bool:
+    path = urlsplit(final_url).path.lower()
+    head = content[:2048].lower()
+    return any(marker in path for marker in ("account-verification", "captcha", "challenge")) or any(
+        marker in head for marker in (b"suspicious-traffic-frontend", b"cf-chl-", b"captcha-delivery")
     )
+
+
+def fetch_fashion_link(url: str, *, client_factory=None) -> CapturedLink:
+    """Aceita imagem, página de produto e API pública da loja quando disponível."""
+    source_url = normalize_source_url(url)
+    try:
+        final_url, domain, content, content_type = _fetch_public_resource(
+            source_url, max_bytes=MAX_UPLOAD_BYTES,
+            accept="text/html,application/xhtml+xml,image/webp,image/png,image/jpeg", client_factory=client_factory,
+        )
+    except ExternalImageError:
+        fallback = _capture_mercadolivre_api(source_url, client_factory=client_factory)
+        if fallback:
+            return fallback
+        raise
     if (content_type and content_type.startswith("image/")) or (content_type is None and _looks_like_supported_image(content)):
         return CapturedLink(RemoteImage(final_url, domain, content, content_type), final_url, domain, None)
+    if _is_access_challenge(final_url, content):
+        fallback = _capture_mercadolivre_api(source_url, client_factory=client_factory)
+        if fallback:
+            return fallback
+        raise ExternalImageError("A loja exigiu verificação de acesso e não liberou a foto do produto. Mantenha o link na mensagem e cole a imagem da peça com Ctrl+V, ou anexe uma captura de tela.")
     if content_type not in {"text/html", "application/xhtml+xml"} and not (content_type is None and content.lstrip().startswith(b"<")):
         raise ExternalImageError("O link não contém uma imagem ou página de produto reconhecível.")
-    if len(content) > 2 * 1024 * 1024:
+    if len(content) > PAGE_MAX_BYTES:
         raise ExternalImageError("A página é grande demais para extrair uma imagem.")
     parser = _ProductImageParser()
     parser.feed(content.decode("utf-8", errors="replace"))
-    for image_url in list(dict.fromkeys(parser.product_image_urls + parser.image_urls))[:5]:
-        candidate = urljoin(final_url, image_url)
-        try:
-            image = fetch_remote_image(candidate, client_factory=client_factory)
-            return CapturedLink(image, final_url, domain, parser.title)
-        except ExternalImageError:
-            continue
+    image = _capture_candidate_images(
+        parser.product_image_urls + parser.gallery_image_urls + parser.image_urls,
+        base_url=final_url, client_factory=client_factory,
+    )
+    if image:
+        return CapturedLink(image, final_url, domain, parser.title)
+    fallback = _capture_mercadolivre_api(source_url, client_factory=client_factory)
+    if fallback:
+        return fallback
     raise ExternalImageError("Não encontrei uma foto principal nesse link. Envie a URL direta da imagem ou anexe uma foto.")

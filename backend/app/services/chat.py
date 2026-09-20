@@ -8,6 +8,7 @@ import re
 import time
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, replace
+from urllib.parse import urlsplit
 
 from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload
@@ -31,7 +32,7 @@ from app.fashion.tools import ToolUnavailable, ToolResult, fashion_tools
 from app.fashion.ui_objects import persist_objects
 from app.fashion.media import _safe_path, resolve_asset
 from app.fashion.media import remove_asset, store_image
-from app.fashion.external_collection import ExternalImageError, fetch_fashion_link
+from app.fashion.external_collection import ExternalImageError, fetch_fashion_link, normalize_source_url
 from app.repositories.settings import SettingsRepository
 from app.services.context import ContextMessage, build_messages
 from app.services.persona import compose_system_prompt, traits_from_row
@@ -193,13 +194,30 @@ class ChatService:
         # Um link enviado como peça entra no mesmo caminho multimodal do clipe.
         # Capturamos antes de persistir a mensagem para uma URL inválida não
         # deixar um turno sem resposta no histórico.
-        urls = list(dict.fromkeys(match.group(0).rstrip(".,;!?)") for match in re.finditer(r"https?://[^\s<>\"']+", user_content)))
+        url_pattern = r"https?://[^\s<>\[\]\(\)\"']+"
+        urls = list(dict.fromkeys(
+            normalize_source_url(match.group(0).rstrip(".,;!?}"))
+            for match in re.finditer(url_pattern, user_content)
+        ))
+        # Aceita também uma URL enviada no formato Markdown, como os links
+        # copiados de lojas ou de outros aplicativos.
+        surrounding_text = re.sub(url_pattern, "", user_content)
+        link_only = bool(urls) and not re.sub(r"[\s\[\]\(\)\\.,;!?]", "", surrounding_text)
         looks_like_registration = bool(re.search(r"cadastr|salv|guard[ae][- ]roupa|pe[çc]a|produto|roupa|look|comprar|inspir|olha|link|adicion", user_content, re.I))
-        if urls and (looks_like_registration or user_content.strip() == urls[0]):
+        if urls and (looks_like_registration or link_only or attachment_asset_ids):
             if not conversation.model_config.supports_tools:
                 raise ConversationUnavailable("Esse modelo precisa ter ferramentas Fashion habilitadas para cadastrar uma peça pelo chat.")
             if len(urls) + len(attachment_asset_ids) > 4:
                 raise ConversationUnavailable("Envie até quatro fotos ou links por mensagem.")
+            # Se a pessoa colou/copiu a própria foto da página, ela já forneceu
+            # a evidência visual. Associamos a origem ao asset sem depender de
+            # uma loja que bloqueia leitura automatizada.
+            if attachment_asset_ids and len(urls) == 1:
+                asset = resolve_asset(self.db, self.owner_id, attachment_asset_ids[0])
+                if not asset.source_url:
+                    asset.source_url = urls[0]
+                    asset.source_domain = urlsplit(urls[0]).hostname
+                urls = []
             captured_links = [fetch_fashion_link(url) for url in urls]
             created_ids: list[int] = []
             try:

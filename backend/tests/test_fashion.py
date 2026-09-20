@@ -3,10 +3,11 @@
 from pathlib import Path
 import shutil
 import io
+import json
 
 from PIL import Image
 
-from app.fashion.external_collection import ExternalImageError, RemoteImage, fetch_remote_image, fetch_fashion_link
+from app.fashion.external_collection import ExternalImageError, RemoteImage, fetch_remote_image, fetch_fashion_link, normalize_source_url
 
 
 def create_item(client, **extra):
@@ -125,6 +126,8 @@ def test_product_page_extracts_primary_image_without_browsing_other_urls(monkeyp
     import app.fashion.external_collection as external
 
     monkeypatch.setattr(external.socket, "getaddrinfo", lambda *_args, **_kwargs: [(2, 1, 6, "", ("8.8.8.8", 0))])
+    buffer = io.BytesIO()
+    Image.new("RGB", (240, 240), "beige").save(buffer, format="JPEG")
 
     class Response:
         def __init__(self, content, mime): self.status_code, self.headers, self.content = 200, {"content-type": mime}, content
@@ -141,12 +144,81 @@ def test_product_page_extracts_primary_image_without_browsing_other_urls(monkeyp
             self.calls.append(url)
             if url.endswith("/blazer"):
                 return Response(b'<meta property="og:image" content="/images/blazer.jpg"><title>Blazer</title>', "text/html")
-            return Response(b"image", "image/jpeg")
+            return Response(buffer.getvalue(), "image/jpeg")
 
     captured = fetch_fashion_link("https://shop.example.com/blazer", client_factory=Client)
     assert captured.source_url == "https://shop.example.com/blazer"
     assert captured.image.canonical_url == "https://shop.example.com/images/blazer.jpg"
     assert Client.calls == ["https://shop.example.com/blazer", "https://shop.example.com/images/blazer.jpg"]
+
+
+def test_mercadolivre_verification_uses_official_item_images_when_accessible(monkeypatch):
+    import app.fashion.external_collection as external
+
+    monkeypatch.setattr(external.socket, "getaddrinfo", lambda *_args, **_kwargs: [(2, 1, 6, "", ("8.8.8.8", 0))])
+    buffer = io.BytesIO()
+    Image.new("RGB", (240, 240), "red").save(buffer, format="PNG")
+
+    class Response:
+        def __init__(self, content, mime, status=200, location=None):
+            self.status_code = status
+            self.headers = {"content-type": mime, **({"location": location} if location else {})}
+            self.content = content
+        def __enter__(self): return self
+        def __exit__(self, *_args): return False
+        def iter_bytes(self): return iter([self.content])
+
+    class Client:
+        calls = []
+        def __init__(self, **_kwargs): pass
+        def __enter__(self): return self
+        def __exit__(self, *_args): return False
+        def stream(self, _method, url, **_kwargs):
+            self.calls.append(url)
+            if "api.mercadolibre.com/items/" in url:
+                data = {"id": "MLB5352372694", "title": "Calcinha com coração", "pictures": [{"secure_url": "https://http2.mlstatic.com/item.png"}]}
+                return Response(json.dumps(data).encode(), "application/json")
+            if "http2.mlstatic.com" in url:
+                return Response(buffer.getvalue(), "image/png")
+            return Response(b"", "text/html", 302, "https://www.mercadolivre.com.br/gz/account-verification") if "produto.mercadolivre" in url else Response(b"suspicious-traffic-frontend", "text/html")
+
+    source = "https://produto.mercadolivre.com.br/MLB-5352372694-calcinha-_JM?searchVariation=183366151274&reco_id=abc#polycard_client=vip"
+    captured = fetch_fashion_link(source, client_factory=Client)
+    assert captured.source_url == "https://produto.mercadolivre.com.br/MLB-5352372694-calcinha-_JM?searchVariation=183366151274"
+    assert captured.image.canonical_url == "https://http2.mlstatic.com/item.png"
+    assert captured.title == "Calcinha com coração"
+    assert any("/items/MLB5352372694" in url for url in Client.calls)
+
+
+def test_mercadolivre_verification_reports_block_when_api_is_unavailable(monkeypatch):
+    import app.fashion.external_collection as external
+
+    monkeypatch.setattr(external.socket, "getaddrinfo", lambda *_args, **_kwargs: [(2, 1, 6, "", ("8.8.8.8", 0))])
+
+    class Response:
+        status_code = 200
+        headers = {"content-type": "text/html"}
+        def __enter__(self): return self
+        def __exit__(self, *_args): return False
+        def iter_bytes(self): return iter([b'<html data-assets-prefix="suspicious-traffic-frontend"></html>'])
+
+    class Client:
+        def __init__(self, **_kwargs): pass
+        def __enter__(self): return self
+        def __exit__(self, *_args): return False
+        def stream(self, _method, url, **_kwargs):
+            if "api.mercadolibre.com" in url:
+                raise ExternalImageError("A API exige autenticação")
+            return Response()
+
+    with __import__("pytest").raises(ExternalImageError, match="verificação de acesso"):
+        fetch_fashion_link("https://produto.mercadolivre.com.br/MLB-5352372694-calcinha-_JM", client_factory=Client)
+
+
+def test_source_url_keeps_variation_and_removes_tracking():
+    url = normalize_source_url("https://produto.mercadolivre.com.br/MLB-5352372694-_JM?searchVariation=183366151274\\&reco_id=abc#polycard_client=vip")
+    assert url == "https://produto.mercadolivre.com.br/MLB-5352372694-_JM?searchVariation=183366151274"
+    assert normalize_source_url("https://shop.example.com/image?signature=a%2Fb%2Bc") == "https://shop.example.com/image?signature=a%2Fb%2Bc"
 
 
 def test_tools_are_typed_and_external_tools_are_honestly_unavailable(client):
