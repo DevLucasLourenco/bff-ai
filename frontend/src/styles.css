@@ -372,8 +372,8 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 @keyframes character-halo { 0%, 100% { transform: scale(.98); opacity: .75; } 50% { transform: scale(1.04); opacity: 1; } }
 @keyframes character-signal { 0%, 100% { transform: scale(.9); opacity: .7; } 50% { transform: scale(1.25); opacity: 1; } }
 @keyframes character-pose-in { from { transform: translateY(8px) scale(.96); opacity: .55; } to { transform: translateY(0) scale(1); opacity: 1; } }
-.message-attachments { display: flex; gap: var(--s-2); margin-top: var(--s-2); }
-.message-attachments img { width: 96px; height: 96px; object-fit: cover; border-radius: var(--r-sm); }
+.message-attachments { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-bottom: var(--s-2); }
+.message-attachments img { display: block; width: min(200px, 100%); max-height: 280px; height: auto; object-fit: contain; border-radius: var(--r-sm); }
 .muted { color: var(--text-3); font-style: italic; }
 .chat-object { width: min(620px, 100%); margin-top: var(--s-3); padding: var(--s-3); border-radius: var(--r-md); background: var(--surface); box-shadow: var(--raised-1); }
 .chat-object header { display: flex; gap: var(--s-2); align-items: flex-start; color: var(--accent-strong); }
@@ -412,8 +412,10 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .fashion-item-card-editor { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2); padding-top: var(--s-2); border-top: 1px solid var(--divider); }
 .fashion-item-card-editor label { min-width: 0; font-size: 10px; }
 .fashion-item-card-editor input, .fashion-item-card-editor select { min-width: 0; padding: 6px 7px; font-size: 11px; }
-.fashion-item-card-actions { display: flex; gap: 5px; padding-top: var(--s-1); }
-.fashion-item-card-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 28px; padding: 0 8px; border-radius: var(--r-sm); background: var(--surface); color: var(--accent-strong); font-size: 11px; box-shadow: var(--raised-1); }
+.fashion-item-card-actions { display: flex; justify-content: flex-end; align-items: center; gap: 5px; padding-top: var(--s-1); }
+.fashion-item-card-actions button, .fashion-item-card-actions a { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 28px; padding: 0 8px; border-radius: var(--r-sm); background: var(--surface); color: var(--accent-strong); font-size: 11px; box-shadow: var(--raised-1); }
+.fashion-item-card-actions .icon-action { width: 28px; flex: 0 0 28px; padding: 0; }
+.fashion-item-card-actions .fashion-item-link { text-decoration: none; }
 .fashion-item-card-actions button.danger { color: var(--danger); }
 .fashion-item-card-actions button:disabled { cursor: wait; opacity: .6; }
 .fashion-item-card-error { color: var(--danger); font-size: 10px; line-height: 1.35; }

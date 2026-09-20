@@ -6,9 +6,11 @@ import json
 import logging
 import re
 import time
+import unicodedata
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, replace
 from urllib.parse import urlsplit
+from uuid import uuid4
 
 from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload
@@ -48,6 +50,20 @@ logger = logging.getLogger(__name__)
 # em silêncio deixava a UI em "gerando" para sempre.
 HEARTBEAT_SECONDS = 15.0
 _PING = object()
+
+
+def _wants_wardrobe_view(content: str) -> bool:
+    """Detecta pedidos explícitos de abrir o guarda-roupa, inclusive o botão do chat."""
+    plain = unicodedata.normalize("NFKD", content).encode("ascii", "ignore").decode("ascii").lower()
+    plain = re.sub(r"[^a-z0-9]+", " ", plain).strip()
+    if not re.search(r"\b(?:guarda ?roupa|armario)\b", plain):
+        return False
+    if not re.search(r"\b(?:mostr\w*|visualiz\w*|exib\w*|list\w*|abr\w*|consult\w*|ver|veja)\b", plain):
+        return False
+    # Cadastro, edição e combinações precisam seguir seus próprios fluxos.
+    if re.search(r"\b(?:cadastr(?:ar|e|ando)|adicion(?:ar|e|ando)|salv(?:ar|e|ando)|exclu(?:ir|a|indo)|apag(?:ar|ue|ando)|remov(?:er|a|endo)|edit(?:ar|e|ando)|alter(?:ar|e|ando)|atualiz(?:ar|e|ando)|conjunt\w*|combin\w*|look\w*)\b", plain):
+        return False
+    return "http " not in plain and "https " not in plain
 
 
 class _ComBatimento:
@@ -110,6 +126,7 @@ class PreparedTurn:
     dropped_messages: int
     estimated_prompt_tokens: int
     attachment_asset_ids: list[int] | None = None
+    direct_wardrobe_view: bool = False
 
 
 class ChatService:
@@ -187,6 +204,9 @@ class ChatService:
 
         existing = self.db.query(Message).filter(Message.conversation_id == conversation.id).count()
         attachment_asset_ids = list(dict.fromkeys(attachment_asset_ids or []))
+        direct_wardrobe_view = not attachment_asset_ids and _wants_wardrobe_view(user_content)
+        if direct_wardrobe_view and not conversation.model_config.supports_tools:
+            raise ConversationUnavailable("Ative as ferramentas Fashion neste modelo para visualizar o guarda-roupa no chat.")
         if attachment_asset_ids and not conversation.model_config.supports_tools:
             raise ConversationUnavailable("Esse modelo precisa ter ferramentas Fashion habilitadas para analisar a foto pelo chat.")
         for asset_id in attachment_asset_ids:
@@ -247,7 +267,7 @@ class ChatService:
             conversation.title = user_content.strip().replace("\n", " ")[:70] or "Nova conversa"
         self.db.commit()
 
-        return self._build_turn(conversation, current_attachment_ids=attachment_asset_ids)
+        return self._build_turn(conversation, current_attachment_ids=attachment_asset_ids, direct_wardrobe_view=direct_wardrobe_view)
 
     def prepare_regeneration(self, conversation_id: int, message_id: int) -> PreparedTurn:
         """Descarta a última resposta do assistente e prepara outra (F3.5).
@@ -282,9 +302,13 @@ class ChatService:
         if remaining == 0:
             raise ConversationUnavailable("Não sobrou nenhuma mensagem para responder")
         last_user = self.db.query(Message).filter_by(conversation_id=conversation.id, role=MessageRole.USER.value).order_by(Message.id.desc()).first()
-        return self._build_turn(conversation, current_attachment_ids=list(last_user.attachment_asset_ids or []) if last_user else [])
+        attachment_ids = list(last_user.attachment_asset_ids or []) if last_user else []
+        return self._build_turn(
+            conversation, current_attachment_ids=attachment_ids,
+            direct_wardrobe_view=bool(last_user and not attachment_ids and _wants_wardrobe_view(last_user.content)),
+        )
 
-    def _build_turn(self, conversation: Conversation, current_attachment_ids: list[int] | None = None) -> PreparedTurn:
+    def _build_turn(self, conversation: Conversation, current_attachment_ids: list[int] | None = None, direct_wardrobe_view: bool = False) -> PreparedTurn:
         provider = conversation.model_config.provider
         # O prompt é composto: regra global (uma só, obedecida por todas) +
         # campos da persona + instruções extras.
@@ -374,6 +398,7 @@ class ChatService:
             dropped_messages=context.dropped_messages,
             estimated_prompt_tokens=context.estimated_prompt_tokens,
             attachment_asset_ids=current_attachment_ids or [],
+            direct_wardrobe_view=direct_wardrobe_view and bool(tools),
         )
 
     # --------------------------------------------------------------- streaming
@@ -508,36 +533,52 @@ class ChatService:
         messages = list(turn.messages)
         tool_rounds = 0
         tool_calls_total = 0
+        fluxo = None
 
         def elapsed() -> int:
             return round((time.perf_counter() - started) * 1000)
 
         try:
             stream_config = turn.config
-            while True:
-                fluxo = _ComBatimento(turn.adapter.stream(messages, stream_config), HEARTBEAT_SECONDS)
-                async for chunk in fluxo:
-                    if chunk is _PING:
-                        # Comentário SSE: o cliente ignora, mas conta como sinal de vida.
-                        yield ": ping\n\n"
-                        continue
-                    chunks.append(chunk)
-                    yield self._sse("token", {"text": chunk})
-                calls = list(getattr(turn.adapter, "last_tool_calls", []) or [])
-                if not calls:
-                    break
-                stream_config = replace(stream_config, tool_choice="auto")
-                tool_rounds += 1
-                tool_calls_total += len(calls)
-                if tool_rounds > 4 or tool_calls_total > 8:
-                    raise ProviderResponseError("O modelo excedeu o limite de chamadas de ferramenta.")
-                messages.append({"role": "assistant", "content": None, "tool_calls": calls})
-                for call in calls:
-                    result = await run_in_threadpool(self._execute_tool, turn, call)
-                    tool_results.append(result)
-                    messages.append(self._tool_message(call, result))
+            if turn.direct_wardrobe_view:
+                # Exibir o guarda-roupa é uma consulta determinística. O modelo
+                # pode decidir responder só em texto; aqui o componente sempre
+                # nasce do resultado real da tool e fica salvo na conversa.
+                call = {"id": f"wardrobe-view-{uuid4().hex}", "function": {"name": "get_wardrobe", "arguments": "{\"limit\": 50}"}}
+                result = await run_in_threadpool(self._execute_tool, turn, call)
+                if result.status not in {"ok", "empty"}:
+                    raise ProviderResponseError("Não foi possível consultar o guarda-roupa agora.")
+                tool_results.append(result)
+                total = result.data.get("total", 0)
+                reply = "Seu guarda-roupa ainda está vazio." if total == 0 else f"Encontrei {total} {'peça' if total == 1 else 'peças'} no seu guarda-roupa."
+                chunks.append(reply)
+                yield self._sse("token", {"text": reply})
+            else:
+                while True:
+                    fluxo = _ComBatimento(turn.adapter.stream(messages, stream_config), HEARTBEAT_SECONDS)
+                    async for chunk in fluxo:
+                        if chunk is _PING:
+                            # Comentário SSE: o cliente ignora, mas conta como sinal de vida.
+                            yield ": ping\n\n"
+                            continue
+                        chunks.append(chunk)
+                        yield self._sse("token", {"text": chunk})
+                    calls = list(getattr(turn.adapter, "last_tool_calls", []) or [])
+                    if not calls:
+                        break
+                    stream_config = replace(stream_config, tool_choice="auto")
+                    tool_rounds += 1
+                    tool_calls_total += len(calls)
+                    if tool_rounds > 4 or tool_calls_total > 8:
+                        raise ProviderResponseError("O modelo excedeu o limite de chamadas de ferramenta.")
+                    messages.append({"role": "assistant", "content": None, "tool_calls": calls})
+                    for call in calls:
+                        result = await run_in_threadpool(self._execute_tool, turn, call)
+                        tool_results.append(result)
+                        messages.append(self._tool_message(call, result))
         except (asyncio.CancelledError, GeneratorExit):
-            fluxo.cancelar()
+            if fluxo is not None:
+                fluxo.cancelar()
             # Cliente desistiu. A gravação aqui é síncrona de propósito: num
             # GeneratorExit não existe await possível, e perder o texto parcial
             # é exatamente o defeito que o F3.1 conserta.

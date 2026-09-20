@@ -13,7 +13,7 @@ def test_lifespan_verifica_schema_e_semeia_defaults(client):
 
 def test_bootstrap_cria_persona_e_providers(client):
     personas = client.get("/api/personas").json()
-    assert [p["name"] for p in personas] == ["Bestie"]
+    assert [p["name"] for p in personas] == ["Fulaninha"]
 
     providers = client.get("/api/providers").json()
     assert {p["kind"] for p in providers} == {"ollama", "nvidia_nim"}
@@ -24,7 +24,7 @@ def test_bootstrap_cria_persona_e_providers(client):
 def test_banco_limpo_entre_testes(client):
     assert client.get("/api/conversations").json() == []
     created = client.post("/api/conversations", json={}).json()
-    assert created["persona_name"] == "Bestie"
+    assert created["persona_name"] == "Fulaninha"
     assert len(client.get("/api/conversations").json()) == 1
 
 

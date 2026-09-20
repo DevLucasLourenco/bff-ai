@@ -47,12 +47,17 @@ def test_regra_global_vazia_e_respeitada():
 # ------------------------------------------------------------------------ API
 
 
-def test_bootstrap_semeia_bestie_em_campos(client):
+def test_bootstrap_semeia_fulaninha_em_campos(client):
     persona = client.get("/api/personas").json()[0]
-    assert persona["name"] == "Bestie"
-    assert "acolhedora" in persona["personality"]
+    assert persona["name"] == "Fulaninha"
+    assert persona["description"] == "Melhor amiga, leve e acolhedora."
+    assert persona["personality"] == "acolhedora, próxima, divertida - como uma melhor amiga confiável"
     assert "sem forçar piada" in persona["humor"]
-    assert "eufórica" in persona["avoid"]
+    assert persona["tone"] == 'natural e caloroso, priorizando escuta, clareza e companhia; casual, com emojis "pick me girl"\n'
+    assert "Mas excessivamente eufórica quando o assunto permite" in persona["energy"]
+    assert persona["avoid"] == "infantil, artificial"
+    assert persona["avatar_emoji"] == "⭐"
+    assert persona["avatar_character"] == "loira"
     # O bloco de texto livre nasce vazio: tudo coube nos campos.
     assert persona["extra_instructions"] == ""
     assert "system_prompt" not in persona
@@ -62,7 +67,7 @@ def test_composed_prompt_mostra_o_que_sera_enviado(client):
     persona = client.get("/api/personas").json()[0]
     regras = client.get("/api/settings").json()["global_persona_rules"]
     assert persona["composed_prompt"].startswith(regras)
-    assert "Você é Bestie." in persona["composed_prompt"]
+    assert "Você é Fulaninha." in persona["composed_prompt"]
 
 
 def test_editar_um_campo_muda_o_prompt_composto(client):
@@ -73,7 +78,7 @@ def test_editar_um_campo_muda_o_prompt_composto(client):
 
 
 def test_nome_de_persona_e_unico(client):
-    assert client.post("/api/personas", json={"name": "Bestie"}).status_code == 409
+    assert client.post("/api/personas", json={"name": "Fulaninha"}).status_code == 409
 
 
 def test_persona_nova_nasce_so_com_nome(client):
@@ -85,8 +90,8 @@ def test_persona_nova_nasce_so_com_nome(client):
 def test_visual_da_persona_atualiza_conversa_existente_e_pode_ser_removido(client):
     persona = client.get("/api/personas").json()[0]
     conversa = client.post("/api/conversations", json={}).json()
-    assert persona["avatar_character"] is None
-    assert conversa["persona_character"] is None
+    assert persona["avatar_character"] == "loira"
+    assert conversa["persona_character"] == "loira"
 
     alterada = client.patch(f"/api/personas/{persona['id']}", json={"avatar_character": "ruiva"})
     assert alterada.status_code == 200
@@ -112,7 +117,7 @@ def test_regra_global_entra_no_prompt_da_conversa(client, fake_adapter):
 
     system = next(m["content"] for m in adapter.received_messages if m["role"] == "system")
     assert system.startswith("REGRA-CANARIO: nunca prometa nada.")
-    assert "Você é Bestie." in system
+    assert "Você é Fulaninha." in system
 
 
 def test_mudar_a_persona_nao_apaga_a_regra_global(client, fake_adapter):

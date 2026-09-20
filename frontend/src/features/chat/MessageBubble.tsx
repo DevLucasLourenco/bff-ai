@@ -33,8 +33,8 @@ export const MessageBubble = memo(function MessageBubble({ message, onRegenerate
   return <div className={`message-wrap ${message.role}`}>
     <div className="message-row">
       <article className={`message ${message.role} ${interrupted ? 'interrupted' : ''}`}>
-        {message.role === 'assistant' ? <Markdown text={message.content}/> : message.content}
         {message.attachment_asset_ids?.length ? <div className="message-attachments">{message.attachment_asset_ids.map(id => <img key={id} src={`/api/fashion/assets/${id}`} alt="Foto anexada da peça"/>)}</div> : null}
+        {message.role === 'assistant' ? <Markdown text={message.content}/> : message.content}
         {!message.content && interrupted && <span className="muted">(nada foi gerado)</span>}
       </article>
     </div>

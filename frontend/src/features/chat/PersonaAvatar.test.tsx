@@ -23,6 +23,13 @@ describe('visual da persona na conversa', () => {
     expect(html).toContain('Vamos por partes')
   })
 
+  it('mostra a foto salva antes do texto da mensagem da usuária', () => {
+    const html = renderToStaticMarkup(<MessageBubble message={{ ...base, role: 'user', content: 'Minha camisa', attachment_asset_ids: [42] }}/>)
+    expect(html).toContain('src="/api/fashion/assets/42"')
+    expect(html).toContain('alt="Foto anexada da peça"')
+    expect(html.indexOf('src="/api/fashion/assets/42"')).toBeLessThan(html.indexOf('Minha camisa'))
+  })
+
   it('mantém o chat sem visual configurado', () => {
     const html = renderToStaticMarkup(<MessageBubble message={base}/>)
     expect(html).not.toContain('ver reação')

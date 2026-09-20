@@ -12,6 +12,7 @@ import shutil
 from collections.abc import AsyncIterator
 from pathlib import Path
 
+import pytest
 from PIL import Image
 
 from app.domain.models import Conversation, FashionAsset, Message, MessageStatus, ModelConfig
@@ -161,7 +162,7 @@ def test_prompt_comeca_pela_regra_global_e_so_traz_memoria_no_escopo(client, fak
     system_blocks = [m["content"] for m in adapter.received_messages if m["role"] == "system"]
     # O primeiro bloco é o prompt composto: regra global, depois a persona.
     assert system_blocks[0].startswith("Estas regras valem para todas as personas")
-    assert "Você é Bestie." in system_blocks[0]
+    assert "Você é Fulaninha." in system_blocks[0]
     assert "gosta de café" in system_blocks[1]
     assert "segredo da outra conversa" not in " ".join(system_blocks)
 
@@ -176,7 +177,7 @@ def test_memoria_de_persona_nao_vaza_para_outra_persona(client, fake_adapter, db
         "scope": "persona", "persona_id": outra_persona["id"],
     })
 
-    conversation_id = new_conversation(client)  # usa a persona padrao (Bestie)
+    conversation_id = new_conversation(client)  # usa a persona padrão (Fulaninha)
     adapter = fake_adapter()
     send(client, conversation_id)
     assert "memoria exclusiva da Coach" not in json.dumps(adapter.received_messages)
@@ -307,6 +308,51 @@ def test_fashion_tool_call_gera_objeto_sse_e_termina_a_resposta(client, monkeypa
     history = client.get(f"/api/conversations/{conversation_id}")
     assert history.status_code == 200, history.text
     assert history.json()["messages"][-1]["ui_objects"][0]["type"] == "wardrobe_view"
+
+
+@pytest.mark.parametrize("prompt", [
+    "Mostre meu guarda-roupa atualizado.",
+    "me MOSTRE o meu guardaroupa",
+    "Quero visualizar meu armário",
+    "Mostre as peças salvas no meu guarda-roupa",
+])
+def test_pedido_explicito_de_guardaroupa_sempre_gera_componente(client, fake_adapter, db, prompt):
+    db.get(ModelConfig, 1).supports_tools = True
+    db.commit()
+    adapter = fake_adapter(chunks=("Resposta textual do modelo",))
+    item = client.post("/api/fashion/wardrobe", json={"name": "Blazer azul", "category": "casaco"}).json()
+    conversation_id = new_conversation(client)
+
+    events = sse_events(send(client, conversation_id, prompt).text)
+    cards = [payload for name, payload in events if name == "ui_object"]
+    assert len(cards) == 1
+    assert cards[0]["type"] == "wardrobe_view"
+    assert cards[0]["data"]["data"]["items"][0]["id"] == item["id"]
+    assert events[-1][0] == "done"
+    assert adapter.received_config is None
+    history = client.get(f"/api/conversations/{conversation_id}").json()
+    assert history["messages"][-1]["ui_objects"][0]["type"] == "wardrobe_view"
+
+
+def test_guardaroupa_vazio_tambem_gera_componente(client, fake_adapter, db):
+    db.get(ModelConfig, 1).supports_tools = True
+    db.commit()
+    fake_adapter()
+    conversation_id = new_conversation(client)
+    events = sse_events(send(client, conversation_id, "Mostre meu guarda-roupa atualizado.").text)
+    card = next(payload for name, payload in events if name == "ui_object")
+    assert card["data"]["data"] == {"items": [], "total": 0}
+    assert "vazio" in next(payload["text"] for name, payload in events if name == "token")
+
+
+def test_pedido_de_combinacoes_nao_vira_lista_de_guardaroupa(client, fake_adapter, db):
+    db.get(ModelConfig, 1).supports_tools = True
+    db.commit()
+    adapter = fake_adapter(chunks=("Vou pensar em combinações.",))
+    conversation_id = new_conversation(client)
+    events = sse_events(send(client, conversation_id, "Mostre combinações com meu guarda-roupa.").text)
+    assert adapter.received_config is not None
+    assert not any(name == "ui_object" and payload["type"] == "wardrobe_view" for name, payload in events)
 
 
 def test_link_no_chat_gera_card_editavel_com_foto_e_origem(client, monkeypatch, db):

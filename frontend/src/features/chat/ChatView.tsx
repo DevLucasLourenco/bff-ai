@@ -66,6 +66,7 @@ function resizeMessageInput(input: HTMLTextAreaElement) {
 export function ChatView({ conversation, streaming, buffer, pendingUserMessage, error, onSend, onStop, onRegenerate, onDismissError }: Props) {
   const [draft, setDraft] = useState('')
   const [attachment, setAttachment] = useState<File | null>(null)
+  const [pendingPhoto, setPendingPhoto] = useState<{ conversationId: number; content: string; url: string; afterMessageId: number } | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [replay, setReplay] = useState<ReactionReplay | null>(null)
   const attachmentInput = useRef<HTMLInputElement>(null)
@@ -73,7 +74,18 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
   const messageCount = conversation?.messages.length ?? 0
   const lastMessageId = conversation?.messages.at(-1)?.id
   const lastAssistantMessage = conversation?.messages.slice().reverse().find(message => message.role === 'assistant')
-  const { endRef, containerRef } = useAutoScroll([messageCount, streaming, pendingUserMessage], true)
+  const photoForConversation = pendingPhoto?.conversationId === conversation?.id ? pendingPhoto : null
+  const photoAlreadySaved = !!photoForConversation && !!conversation?.messages.some(message => message.role === 'user' && message.id > photoForConversation.afterMessageId)
+  const visiblePendingPhoto = photoAlreadySaved ? null : photoForConversation
+  const showPendingMessage = !photoAlreadySaved && !!(visiblePendingPhoto || pendingUserMessage)
+  const { endRef, containerRef } = useAutoScroll([messageCount, streaming, pendingUserMessage, pendingPhoto], true)
+
+  // A foto precisa continuar visível na bolha enquanto o upload e a resposta
+  // acontecem. A URL local é temporária; o histórico usa a URL do asset salvo.
+  useEffect(() => {
+    const url = pendingPhoto?.url
+    return () => { if (url) URL.revokeObjectURL(url) }
+  }, [pendingPhoto?.url])
 
   // O efeito mede também quebras por largura e rascunhos inseridos por cards.
   useLayoutEffect(() => { if (messageInput.current) resizeMessageInput(messageInput.current) }, [draft, conversation?.id])
@@ -123,14 +135,23 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     const content = draft.trim()
     if ((!content && !attachment) || streaming || submitting || !conversation) return
     const currentAttachment = attachment
+    const sentContent = content || 'Quero cadastrar a peça desta foto no meu guarda-roupa.'
+    if (currentAttachment) {
+      setPendingPhoto({
+        conversationId: conversation.id,
+        content: sentContent,
+        url: URL.createObjectURL(currentAttachment),
+        afterMessageId: lastMessageId ?? 0,
+      })
+    }
     setSubmitting(true)
     setDraft('')
     setAttachment(null)
     if (attachmentInput.current) attachmentInput.current.value = ''
     try {
-      const accepted = await onSend(content || 'Quero cadastrar a peça desta foto no meu guarda-roupa.', currentAttachment)
+      const accepted = await onSend(sentContent, currentAttachment)
       if (!accepted) { setDraft(content); setAttachment(currentAttachment) }
-    } finally { setSubmitting(false) }
+    } finally { setPendingPhoto(null); setSubmitting(false) }
   }
 
   const pasteImage = (event: ClipboardEvent<HTMLTextAreaElement>) => {
@@ -159,7 +180,7 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     <div className={`chat-body ${conversation.persona_character ? 'with-stage' : ''}`}>
     <section className="messages" ref={containerRef} aria-live="polite" aria-busy={streaming}>
       {/* A saudação da persona era editável e nunca aparecia: aqui havia um texto fixo. */}
-      {messageCount === 0 && !streaming && !pendingUserMessage && <div className="greeting-bubble">
+      {messageCount === 0 && !streaming && !showPendingMessage && <div className="greeting-bubble">
         {conversation.persona_greeting.trim() || 'Comece falando qualquer coisa. 💗'}
       </div>}
 
@@ -172,8 +193,11 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
         onRegenerate={message.id === lastMessageId && message.role === 'assistant' && !streaming ? onRegenerate : undefined}
       />)}
 
-      {pendingUserMessage && <div className="message-wrap user">
-        <article className="message user">{pendingUserMessage}</article>
+      {showPendingMessage && <div className="message-wrap user">
+        <div className="message-row"><article className="message user">
+          {visiblePendingPhoto && <div className="message-attachments"><img src={visiblePendingPhoto.url} alt="Foto anexada à mensagem"/></div>}
+          {visiblePendingPhoto?.content ?? pendingUserMessage}
+        </article></div>
       </div>}
 
       {streaming && <StreamingMessage buffer={buffer}/>}

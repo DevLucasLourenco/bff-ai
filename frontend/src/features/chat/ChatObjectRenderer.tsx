@@ -36,6 +36,13 @@ function imageUrl(item: Record<string, unknown>): string | null {
   return text(image.url) || null
 }
 
+function externalHttpUrl(value: unknown): string | null {
+  try {
+    const url = new URL(text(value))
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null
+  } catch { return null }
+}
+
 function ItemVisual({ item }: { item: Record<string, unknown> }) {
   const image = imageUrl(item)
   const name = text(item.name, 'Peça')
@@ -66,6 +73,7 @@ function WardrobeItemCard({ item }: { item: Record<string, unknown> }) {
   const revision = typeof current.revision === 'number' ? current.revision : null
   const image = imageUrl(current)
   const name = text(current.name, 'Peça')
+  const externalUrl = externalHttpUrl(current.external_url)
   const detail = [text(current.color), text(current.category), text(current.style)].filter(Boolean).join(' · ')
   const setField = (field: string, value: string) => setDraft(values => ({ ...values, [field]: value }))
   const startEditing = () => { setDraft(itemEditorValues(current)); setEditing(true); setState('idle') }
@@ -121,7 +129,11 @@ function WardrobeItemCard({ item }: { item: Record<string, unknown> }) {
     <div className="fashion-item-card-actions">
       {editing
         ? <><button type="button" aria-label="Salvar alterações" title="Salvar" disabled={state === 'saving'} onClick={() => void save()}><Check size={14}/><span>{state === 'saving' ? 'Salvando…' : 'Salvar'}</span></button><button type="button" aria-label="Cancelar edição" title="Cancelar" disabled={state === 'saving'} onClick={() => { setEditing(false); setState('idle') }}><X size={14}/></button></>
-        : <><button type="button" aria-label={`Editar ${text(current.name, 'peça')}`} title="Editar" disabled={state === 'deleting'} onClick={startEditing}><Pencil size={14}/><span>Editar</span></button><button type="button" className="danger" aria-label={`Excluir ${text(current.name, 'peça')}`} title="Excluir" disabled={state === 'deleting'} onClick={() => void archive()}><Trash2 size={14}/><span>{state === 'deleting' ? 'Excluindo…' : 'Excluir'}</span></button></>}
+        : <>
+          {externalUrl && <a className="fashion-item-link icon-action" href={externalUrl} target="_blank" rel="noopener noreferrer" aria-label={`Acessar link de ${name}`} title="Acessar link"><ExternalLink size={14}/></a>}
+          <button type="button" className="icon-action" aria-label={`Editar ${name}`} title="Editar" disabled={state === 'deleting'} onClick={startEditing}><Pencil size={14}/></button>
+          <button type="button" className="icon-action danger" aria-label={state === 'deleting' ? `Excluindo ${name}` : `Excluir ${name}`} title="Excluir" disabled={state === 'deleting'} onClick={() => void archive()}><Trash2 size={14}/></button>
+        </>}
     </div>
     {state === 'error' && <small className="fashion-item-card-error">Não foi possível concluir. Atualize o guarda-roupa e tente de novo.</small>}
   </article>
