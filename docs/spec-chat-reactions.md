@@ -2,34 +2,34 @@
 
 ## Problema
 
-Mesmo depois de escolher uma personagem, o chat continuaria estático. O pacote contém 36 poses por personagem, mas nenhuma reação aparece ao escutar, preparar ou responder.
+A implementação inicial repete imagens pequenas como fotos de perfil em cada mensagem. A personagem fica pouco visível e sua reação durante o stream fica presa à primeira frase, mesmo quando o assunto ou o tom da resposta muda.
 
 ## Usuárias
 
-Pessoas que conversam com uma persona que recebeu um visual e querem perceber sinais visuais discretos e coerentes com o andamento da conversa.
+Pessoas que conversam com uma persona que recebeu um visual e querem acompanhar reações perceptíveis, coerentes e contínuas.
 
 ## Proposta
 
-Exibir uma reação da personagem junto das respostas da assistente. Ao enviar uma mensagem, a personagem mostra uma pose de atenção e, enquanto aguarda a geração, uma pose de análise. Durante a resposta e no histórico, a pose é escolhida por regras locais transparentes baseadas no texto da resposta. Assuntos sensíveis recebem uma reação acolhedora; respostas sem sinal forte usam uma pose neutra. A mesma regra é aplicada ao stream e às mensagens carregadas depois, sem depender de suporte a ferramentas pelo modelo.
+Colocar a personagem em uma área visual própria, grande e sempre visível na conversa, fora das bolhas. Ela escuta após o envio, pensa enquanto aguarda e reage a novos trechos conforme a resposta chega. Mudanças de pose têm intervalo mínimo e transição curta para não piscar. O texto e os componentes Fashion preservam sua área. Uma ação discreta nas respostas permite rever a reação no histórico. As regras locais usam apenas sinais claros do texto, sem nova chamada ao modelo.
 
 ## Histórias
 
 - Como usuária, quero ver a personagem reagir enquanto conversamos, para sentir continuidade visual sem abrir outra tela.
-- Como usuária, quero que uma resposta de apoio tenha uma pose adequada e que uma resposta comum não receba uma reação exagerada.
-- Como usuária, quero rever a conversa e encontrar a mesma reação da resposta concluída.
+- Como usuária, quero ver a personagem mudar enquanto a resposta avança, inclusive em respostas longas.
+- Como usuária, quero rever uma reação antiga sem imagens repetidas ao lado de cada mensagem.
 
 ## Critérios de aceitação
 
-1. Em conversa com visual escolhido, a saudação e cada resposta da assistente mostram imagem da personagem; mensagens da usuária não recebem avatar da assistente.
-2. Após enviar mensagem e antes dos primeiros tokens, a personagem mostra atenção/análise; ao receber texto, a reação acompanha a resposta sem piscar a cada token.
-3. Respostas com sinais claros de acolhimento, celebração, dúvida ou explicação usam poses adequadas; texto sem sinal claro usa pose neutra.
-4. Respostas interrompidas mantêm um visual coerente, sem esconder aviso de falha, metadados nem componentes Fashion.
-5. Reabrir a conversa reproduz a reação de cada resposta concluída; trocar a personagem preserva o tipo de reação e troca apenas a arte.
-6. Em persona sem visual, o chat permanece utilizável com emoji; imagens ausentes não quebram o texto. Movimento respeita `prefers-reduced-motion`.
+1. Em conversa com visual escolhido, a personagem aparece em um palco próprio, visível sem rolar o histórico. Não há avatar repetido nas bolhas nem miniatura da personagem no cabeçalho.
+2. Após envio, o palco indica atenção e depois análise durante a espera. Ao chegar texto, a pose muda conforme trechos novos da resposta; dois trechos com sinais diferentes podem produzir duas reações no mesmo turno, com intervalo mínimo entre trocas. A reação final permanece visível até a próxima interação.
+3. Sinais claros de acolhimento, celebração, dúvida, humor, ideia ou explicação selecionam poses correspondentes. Sem sinal claro, a pose é calma e coerente com a fase da conversa. O estado é descrito por texto visível.
+4. O palco não cobre texto, composer, metadados, avisos ou componentes Fashion; em telas estreitas vira uma faixa horizontal acima do histórico.
+5. Uma resposta antiga oferece uma ação acessível para reproduzir no palco sua reação final. Trocar a personagem mantém o mesmo tipo de reação e muda apenas a arte.
+6. Sem personagem selecionada, o chat continua utilizável e exibe o emoji usual. Se uma imagem falhar, o palco recua para o emoji. Movimento reduzido remove flutuação e transições, sem esconder estado.
 
 ## Fora do escopo
 
-Inferência emocional por outro modelo, pedir à LLM uma etiqueta de emoção, áudio, animações contínuas, interpretação da emoção da usuária e persistência de eventos por token.
+Inferência emocional por outro modelo, pedir à LLM uma etiqueta de emoção, áudio, novos quadros desenhados e persistência de eventos por token.
 
 ## Dependências
 
@@ -37,9 +37,8 @@ Inferência emocional por outro modelo, pedir à LLM uma etiqueta de emoção, �
 
 ## Métrica principal
 
-Percentual de respostas da assistente em conversas com visual escolhido que exibem um arquivo de reação válido, com objetivo funcional de 100% nos caminhos cobertos. Não há linha de base de produto; verificar por testes de catálogo e inspeção do chat.
+Percentual de conversas com personagem selecionada em que o palco apresenta imagem válida nas fases de espera e resposta, com objetivo funcional de 100% nos caminhos cobertos. Não há linha de base de produto; verificar por testes de catálogo, transições e inspeção visual.
 
 ## Esforço e prioridade
 
-Médio (1–3 dias), P1. O menor incremento útil cobre estado de espera, resposta concluída, histórico e fallback.
-
+Médio (1–3 dias), P1. O menor incremento útil cobre palco responsivo, reação durante todo o stream, replay e fallback.

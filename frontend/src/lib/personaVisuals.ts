@@ -26,13 +26,46 @@ for (const [path, url] of Object.entries(imageUrls)) {
   imageCatalog.get(match[1])?.set(match[2], url)
 }
 
-export type Reaction =
-  | 'feliz_sorrindo' | 'rindo' | 'muito_empolgada' | 'surpresa'
-  | 'pensativa' | 'confusa' | 'pedindo_desculpas' | 'ops_erro_leve'
-  | 'comemorando' | 'tive_uma_ideia' | 'explicando_algo'
-  | 'escutando_atenta' | 'nao_entendi' | 'elogiando_usuario'
-  | 'motivando_incentivando' | 'confortando' | 'vamos_resolver_isso'
-  | 'analisando'
+export const REACTION_LABELS = {
+  feliz_sorrindo: 'Sorrindo',
+  rindo: 'Rindo',
+  muito_empolgada: 'Muito animada',
+  piscando_brincando: 'Brincando',
+  carinhosa_fofa: 'Carinhosa',
+  apaixonada_encantada: 'Encantada',
+  aprovando_concordando: 'Concordando',
+  surpresa: 'Surpresa',
+  chocada: 'Chocada',
+  confusa: 'Confusa',
+  pensativa: 'Pensativa',
+  curiosa: 'Curiosa',
+  concentrada_seria: 'Concentrada',
+  negando_desaprovando: 'Discordando',
+  envergonhada_timida: 'Tímida',
+  triste_chateada: 'Chateada',
+  brava_irritada: 'Irritada',
+  frustrada: 'Frustrada',
+  preocupada_ansiosa: 'Preocupada',
+  com_medo_assustada: 'Assustada',
+  cansada_com_sono: 'Cansada',
+  entediada: 'Entediada',
+  pedindo_desculpas: 'Pedindo desculpas',
+  ops_erro_leve: 'Ops!',
+  comemorando: 'Comemorando',
+  tive_uma_ideia: 'Tive uma ideia',
+  explicando_algo: 'Explicando',
+  escutando_atenta: 'Ouvindo você',
+  entendi: 'Entendi',
+  nao_entendi: 'Não entendi',
+  elogiando_usuario: 'Te elogiando',
+  motivando_incentivando: 'Te incentivando',
+  confortando: 'Te acolhendo',
+  vamos_resolver_isso: 'Vamos resolver',
+  analisando: 'Analisando',
+  segredo_sussurro: 'Contando um segredo',
+} as const
+
+export type Reaction = keyof typeof REACTION_LABELS
 
 export function characterImage(character: AvatarCharacter | null | undefined, reaction: Reaction): string | null {
   if (!character) return null

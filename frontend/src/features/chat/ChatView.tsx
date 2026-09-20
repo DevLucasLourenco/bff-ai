@@ -1,10 +1,11 @@
 import { ArrowUp, Paperclip, Sparkles, Square, X } from 'lucide-react'
-import { useEffect, useLayoutEffect, useRef, useState, type ClipboardEvent, type FormEvent } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ClipboardEvent, type FormEvent } from 'react'
 import type { StreamBuffer } from '../../lib/streamBuffer'
-import type { ApiError, Conversation } from '../../lib/types'
+import type { ApiError, Conversation, Message } from '../../lib/types'
 import { MessageBubble } from './MessageBubble'
 import { StreamingMessage } from './StreamingMessage'
-import { PersonaAvatar } from '../../components/PersonaAvatar'
+import { CharacterStage, type ReactionReplay } from './CharacterStage'
+import { classifyReaction } from '../../lib/personaReactions'
 
 type Props = {
   conversation: Conversation | null
@@ -66,10 +67,12 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
   const [draft, setDraft] = useState('')
   const [attachment, setAttachment] = useState<File | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [replay, setReplay] = useState<ReactionReplay | null>(null)
   const attachmentInput = useRef<HTMLInputElement>(null)
   const messageInput = useRef<HTMLTextAreaElement>(null)
   const messageCount = conversation?.messages.length ?? 0
   const lastMessageId = conversation?.messages.at(-1)?.id
+  const lastAssistantMessage = conversation?.messages.slice().reverse().find(message => message.role === 'assistant')
   const { endRef, containerRef } = useAutoScroll([messageCount, streaming, pendingUserMessage], true)
 
   // O efeito mede também quebras por largura e rascunhos inseridos por cards.
@@ -79,6 +82,16 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
+  useEffect(() => { setReplay(null) }, [conversation?.id])
+
+  const replayReaction = useCallback((message: Message) => {
+    if (!conversation) return
+    setReplay(previous => ({
+      conversationId: conversation.id,
+      sequence: (previous?.sequence ?? 0) + 1,
+      reaction: message.status === 'failed' ? 'ops_erro_leve' : classifyReaction(message.content),
+    }))
+  }, [conversation?.id])
 
   // Ações de cards já trazem um pedido completo. Elas entram na conversa sem
   // ocupar nem apagar um rascunho que a pessoa esteja escrevendo no composer.
@@ -135,26 +148,25 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     </main>
   }
 
-  return <main className="chat-view">
+  return <main className={`chat-view ${conversation.persona_character ? 'has-character' : ''}`}>
     <header className="chat-header">
       <div>
-        <div className="persona-title"><PersonaAvatar character={conversation.persona_character} emoji={conversation.persona_emoji} className="persona-header-avatar"/><strong>{conversation.persona_name}</strong></div>
+        <div className="persona-title">{!conversation.persona_character && <span aria-hidden="true">{conversation.persona_emoji}</span>}<strong>{conversation.persona_name}</strong></div>
         <span className="model-caption">{conversation.model_display_name} · {conversation.provider_kind}</span>
       </div>
     </header>
 
+    <div className={`chat-body ${conversation.persona_character ? 'with-stage' : ''}`}>
     <section className="messages" ref={containerRef} aria-live="polite" aria-busy={streaming}>
       {/* A saudação da persona era editável e nunca aparecia: aqui havia um texto fixo. */}
       {messageCount === 0 && !streaming && !pendingUserMessage && <div className="greeting-bubble">
-        {conversation.persona_character && <PersonaAvatar character={conversation.persona_character} emoji={conversation.persona_emoji} reaction="escutando_atenta" className="persona-greeting-avatar"/>}
         {conversation.persona_greeting.trim() || 'Comece falando qualquer coisa. 💗'}
       </div>}
 
       {conversation.messages.map(message => <MessageBubble
         key={message.id}
         message={message}
-        personaCharacter={conversation.persona_character}
-        personaEmoji={conversation.persona_emoji}
+        onReplayReaction={conversation.persona_character && !streaming ? replayReaction : undefined}
         // Só a última resposta pode ser regenerada: regenerar uma antiga apagaria
         // tudo o que veio depois dela. O backend recusa com 409 também.
         onRegenerate={message.id === lastMessageId && message.role === 'assistant' && !streaming ? onRegenerate : undefined}
@@ -164,7 +176,7 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
         <article className="message user">{pendingUserMessage}</article>
       </div>}
 
-      {streaming && <StreamingMessage buffer={buffer} personaCharacter={conversation.persona_character} personaEmoji={conversation.persona_emoji}/>}
+      {streaming && <StreamingMessage buffer={buffer}/>}
 
       {/* F7.2: erro de conversa aparece ancorado aqui, não num toast genérico. */}
       {error && <div className="inline-error" role="alert">
@@ -182,6 +194,20 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
 
       <div ref={endRef}/>
     </section>
+    {conversation.persona_character && <CharacterStage
+      key={conversation.id}
+      conversationId={conversation.id}
+      name={conversation.persona_name}
+      character={conversation.persona_character}
+      emoji={conversation.persona_emoji}
+      buffer={buffer}
+      streaming={streaming}
+      pendingUserMessage={pendingUserMessage}
+      lastAssistantMessage={lastAssistantMessage}
+      error={error}
+      replay={replay}
+    />}
+    </div>
 
     <form className="composer" onSubmit={submit}>
       <input ref={attachmentInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={event => setAttachment(event.target.files?.[0] ?? null)}/>

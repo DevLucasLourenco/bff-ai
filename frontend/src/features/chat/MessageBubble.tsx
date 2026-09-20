@@ -1,11 +1,8 @@
-import { AlertTriangle, CircleSlash, RefreshCw } from 'lucide-react'
+import { AlertTriangle, CircleSlash, RefreshCw, Sparkles } from 'lucide-react'
 import { memo } from 'react'
 import type { Message } from '../../lib/types'
 import { Markdown } from './Markdown'
 import { ChatObjectRenderer } from './ChatObjectRenderer'
-import { PersonaAvatar } from '../../components/PersonaAvatar'
-import { classifyReaction } from '../../lib/personaReactions'
-import type { AvatarCharacter } from '../../lib/personaVisuals'
 
 const dateTimeFormatter = new Intl.DateTimeFormat('pt-BR', {
   day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -24,20 +21,17 @@ function messageTimestamp(value: string | undefined): Date | null {
  * Uma mensagem já persistida. `memo` porque o pai rerenderiza a cada resposta
  * nova e o conteúdo destas não muda (F7.3).
  */
-export const MessageBubble = memo(function MessageBubble({ message, onRegenerate, personaCharacter, personaEmoji }: {
+export const MessageBubble = memo(function MessageBubble({ message, onRegenerate, onReplayReaction }: {
   message: Message
   onRegenerate?: (messageId: number) => void
-  personaCharacter: AvatarCharacter | null
-  personaEmoji: string
+  onReplayReaction?: (message: Message) => void
 }) {
   const interrupted = message.status !== 'complete'
   const cancelled = message.status === 'cancelled'
   const timestamp = messageTimestamp(message.created_at)
-  const reaction = message.status === 'failed' ? 'ops_erro_leve' : message.content ? classifyReaction(message.content) : 'analisando'
 
-  return <div className={`message-wrap ${message.role} ${message.role === 'assistant' && personaCharacter ? 'with-character' : ''}`}>
-    <div className={message.role === 'assistant' && personaCharacter ? 'assistant-reaction-row' : 'message-row'}>
-      {message.role === 'assistant' && personaCharacter && <PersonaAvatar character={personaCharacter} emoji={personaEmoji} reaction={reaction} className="persona-message-avatar"/>}
+  return <div className={`message-wrap ${message.role}`}>
+    <div className="message-row">
       <article className={`message ${message.role} ${interrupted ? 'interrupted' : ''}`}>
         {message.role === 'assistant' ? <Markdown text={message.content}/> : message.content}
         {message.attachment_asset_ids?.length ? <div className="message-attachments">{message.attachment_asset_ids.map(id => <img key={id} src={`/api/fashion/assets/${id}`} alt="Foto anexada da peça"/>)}</div> : null}
@@ -55,12 +49,15 @@ export const MessageBubble = memo(function MessageBubble({ message, onRegenerate
       </button>}
     </div>}
 
-    {message.role === 'assistant' && (timestamp || message.latency_ms != null || message.completion_tokens != null || onRegenerate) && <div className="message-meta">
+    {message.role === 'assistant' && (timestamp || message.latency_ms != null || message.completion_tokens != null || onRegenerate || onReplayReaction) && <div className="message-meta">
       {timestamp && <time dateTime={timestamp.toISOString()} title={timestamp.toLocaleString('pt-BR')}>{dateTimeFormatter.format(timestamp)}</time>}
       {message.latency_ms != null && <span>{(message.latency_ms / 1000).toFixed(1)}s</span>}
       {message.completion_tokens != null && <span>{message.completion_tokens} tokens</span>}
       {onRegenerate && <button type="button" className="link-button" onClick={() => onRegenerate(message.id)}>
         <RefreshCw size={13}/> regenerar
+      </button>}
+      {onReplayReaction && <button type="button" className="link-button reaction-replay" onClick={() => onReplayReaction(message)}>
+        <Sparkles size={13}/> ver reação
       </button>}
     </div>}
   </div>

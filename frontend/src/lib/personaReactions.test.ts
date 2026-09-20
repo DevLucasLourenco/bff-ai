@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { classifyReaction, reactionText, streamingReaction } from './personaReactions'
-import { CHARACTERS, characterImage, characterReactionCount } from './personaVisuals'
+import { classifyReaction, listeningReaction, reactionText, streamingReaction } from './personaReactions'
+import { CHARACTERS, REACTION_LABELS, characterImage, characterReactionCount } from './personaVisuals'
 
 describe('catálogo de personagens', () => {
   it('publica as 36 poses de cada uma das oito personagens', () => {
     expect(CHARACTERS).toHaveLength(8)
     for (const character of CHARACTERS) {
       expect(characterReactionCount(character.id)).toBe(36)
-      for (const reaction of ['feliz_sorrindo', 'escutando_atenta', 'analisando', 'confortando'] as const) {
+      for (const reaction of Object.keys(REACTION_LABELS) as (keyof typeof REACTION_LABELS)[]) {
         expect(characterImage(character.id, reaction)).toMatch(/\.png/)
       }
     }
@@ -15,12 +15,12 @@ describe('catálogo de personagens', () => {
 })
 
 describe('reações durante a conversa', () => {
-  it('usa uma pose estável quando a primeira frase se completa', () => {
-    const sentence = 'Vamos por partes para resolver essa situação.'
-    expect(reactionText(sentence.slice(0, 20), false)).toBeNull()
-    expect(streamingReaction(sentence.slice(0, 20))).toBe('analisando')
-    expect(streamingReaction(sentence)).toBe('vamos_resolver_isso')
-    expect(classifyReaction(`${sentence} Depois explico os detalhes.`)).toBe(streamingReaction(sentence))
+  it('acompanha a frase mais recente numa mesma resposta', () => {
+    expect(streamingReaction('Lendo sua mensagem')).toBeNull()
+    expect(streamingReaction('Parabéns!')).toBe('comemorando')
+    expect(streamingReaction('Parabéns! Agora vamos resolver isso.')).toBe('vamos_resolver_isso')
+    expect(reactionText('Parabéns! Agora vamos resolver isso.')).toBe('Agora vamos resolver isso.')
+    expect(classifyReaction('Parabéns! Agora vamos resolver isso.')).toBe('vamos_resolver_isso')
   })
 
   it('prioriza acolhimento e usa pose neutra sem sinal claro', () => {
@@ -32,5 +32,12 @@ describe('reações durante a conversa', () => {
   it('troca uma resposta curta para a reação contextual assim que ela termina', () => {
     expect(streamingReaction('Parabéns!')).toBe('comemorando')
     expect(streamingReaction('Sinto muito.')).toBe('confortando')
+  })
+
+  it('reage à mensagem recebida quando há sinais explícitos', () => {
+    expect(listeningReaction('Consegui passar!')).toBe('comemorando')
+    expect(listeningReaction('Estou triste hoje')).toBe('confortando')
+    expect(listeningReaction('Qual você escolheria?')).toBe('curiosa')
+    expect(listeningReaction('Oi')).toBe('escutando_atenta')
   })
 })
