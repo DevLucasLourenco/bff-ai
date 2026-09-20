@@ -28,4 +28,9 @@ describe('reações durante a conversa', () => {
     expect(classifyReaction('Parabéns! Você conseguiu terminar essa etapa.')).toBe('comemorando')
     expect(classifyReaction('Aqui está a lista solicitada.')).toBe('feliz_sorrindo')
   })
+
+  it('troca uma resposta curta para a reação contextual assim que ela termina', () => {
+    expect(streamingReaction('Parabéns!')).toBe('comemorando')
+    expect(streamingReaction('Sinto muito.')).toBe('confortando')
+  })
 })

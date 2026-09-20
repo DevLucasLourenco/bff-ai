@@ -7,7 +7,7 @@ import type { Reaction } from './personaVisuals'
  */
 export function reactionText(text: string, complete = true): string | null {
   const clean = text.replace(/[#*_`>\[\]]/g, '').trim()
-  const firstSentence = clean.match(/^.{35,}?[.!?](?=\s|$)/s)
+  const firstSentence = clean.match(/^.*?[.!?](?=\s|$)/s)
   if (firstSentence && firstSentence[0].length <= 140) return firstSentence[0]
   if (clean.length >= 140) return clean.slice(0, 140)
   return complete ? clean : null

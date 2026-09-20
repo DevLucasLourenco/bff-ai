@@ -103,7 +103,7 @@ export function PersonaEditor({ persona, isDefault, onSave, onSetDefault }: {
         </label>
         {CHARACTERS.map(option => <label key={option.id} className={`character-option ${character === option.id ? 'selected' : ''}`}>
           <input type="radio" name="avatar_character" value={option.id} checked={character === option.id} onChange={() => setCharacter(option.id)}/>
-          <PersonaAvatar character={option.id} emoji={persona.avatar_emoji}/>
+          <PersonaAvatar character={option.id} emoji={persona.avatar_emoji} imageAlt={`Prévia da personagem ${option.label}`}/>
           <span>{option.label}</span>
         </label>)}
       </div>

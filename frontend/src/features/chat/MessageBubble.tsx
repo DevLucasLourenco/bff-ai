@@ -55,7 +55,7 @@ export const MessageBubble = memo(function MessageBubble({ message, onRegenerate
       </button>}
     </div>}
 
-    {message.role === 'assistant' && !interrupted && <div className="message-meta">
+    {message.role === 'assistant' && (timestamp || message.latency_ms != null || message.completion_tokens != null || onRegenerate) && <div className="message-meta">
       {timestamp && <time dateTime={timestamp.toISOString()} title={timestamp.toLocaleString('pt-BR')}>{dateTimeFormatter.format(timestamp)}</time>}
       {message.latency_ms != null && <span>{(message.latency_ms / 1000).toFixed(1)}s</span>}
       {message.completion_tokens != null && <span>{message.completion_tokens} tokens</span>}
