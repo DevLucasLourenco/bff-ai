@@ -1,5 +1,7 @@
 # Spec: escolher o visual de cada persona
 
+> Registro histórico da primeira versão. O catálogo ativo agora contém somente `frontend/src/assets/bff_reactions/morena/`; a pasta antiga permanece no repositório apenas como referência para desenvolvimento.
+
 ## Problema
 
 As personas já têm nome, comportamento e emoji, mas a usuária não consegue escolher uma das personagens ilustradas disponíveis para representá-las. Os arquivos em `frontend/src/assets/bff_ai_reacoes_individuais/bff_ai_reacoes_individuais/por_personagem` ainda não participam da experiência.
@@ -41,4 +43,3 @@ Percentual de personas ativas com personagem escolhido. A instrumentação e a l
 ## Esforço e prioridade
 
 Médio (1–3 dias), P1. A opção de escolher e ver a personagem sem reações é o menor incremento útil.
-

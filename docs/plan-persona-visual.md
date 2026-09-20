@@ -1,5 +1,7 @@
 # Plano: escolher o visual de cada persona
 
+> Plano histórico da primeira versão. Atualmente, a seleção oferece Morena ou “Somente emoji”, e nenhum recurso é carregado da pasta antiga.
+
 Corresponde 1:1 a [spec-persona-visual.md](spec-persona-visual.md). Implementar todos os critérios antes de considerar esta etapa concluída.
 
 | Critério da spec | Implementação | Verificação |
@@ -21,4 +23,3 @@ Corresponde 1:1 a [spec-persona-visual.md](spec-persona-visual.md). Implementar 
 ## Pronto quando
 
 Backend aceita seleção, troca e remoção; frontend mantém escolha após recarga; `pytest`, testes de frontend e build passam. As imagens só são carregadas pelo navegador quando aparecem na interface.
-

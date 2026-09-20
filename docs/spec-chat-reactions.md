@@ -1,5 +1,7 @@
 # Spec: reações visuais da personagem no chat
 
+> Registro histórico da primeira versão. As reações ativas usam exclusivamente os 34 PNGs de `frontend/src/assets/bff_reactions/morena/`, sem recorrer à pasta antiga.
+
 ## Problema
 
 A implementação inicial repete imagens pequenas como fotos de perfil em cada mensagem. A personagem fica pouco visível e sua reação durante o stream fica presa à primeira frase, mesmo quando o assunto ou o tom da resposta muda.

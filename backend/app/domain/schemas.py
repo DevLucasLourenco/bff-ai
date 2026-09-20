@@ -9,10 +9,7 @@ from app.services.llm.factory import PROVIDER_KINDS
 
 # Derivado do registry de adapters: a lista de kinds válidos existe em um lugar só.
 ProviderKind = Literal[PROVIDER_KINDS]
-AvatarCharacter = Literal[
-    "morena", "loira", "ruiva", "japonesa_oriental", "cabelos_brancos",
-    "fashionista", "lobinha_spooky", "vampirinha_gotica",
-]
+AvatarCharacter = Literal["morena"]
 
 
 class OrmModel(BaseModel):

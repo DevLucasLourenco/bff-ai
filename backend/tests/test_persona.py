@@ -8,6 +8,8 @@ salvaguarda sumir sem ninguém notar.
 import json
 
 from app.services.persona import DEFAULT_GLOBAL_RULES, PersonaTraits, compose_system_prompt
+from app.domain.models import Persona
+from app.services.bootstrap import bootstrap
 
 
 # ------------------------------------------------------------------ composição
@@ -57,7 +59,7 @@ def test_bootstrap_semeia_fulaninha_em_campos(client):
     assert "Mas excessivamente eufórica quando o assunto permite" in persona["energy"]
     assert persona["avoid"] == "infantil, artificial"
     assert persona["avatar_emoji"] == "⭐"
-    assert persona["avatar_character"] == "loira"
+    assert persona["avatar_character"] == "morena"
     # O bloco de texto livre nasce vazio: tudo coube nos campos.
     assert persona["extra_instructions"] == ""
     assert "system_prompt" not in persona
@@ -90,19 +92,40 @@ def test_persona_nova_nasce_so_com_nome(client):
 def test_visual_da_persona_atualiza_conversa_existente_e_pode_ser_removido(client):
     persona = client.get("/api/personas").json()[0]
     conversa = client.post("/api/conversations", json={}).json()
-    assert persona["avatar_character"] == "loira"
-    assert conversa["persona_character"] == "loira"
+    assert persona["avatar_character"] == "morena"
+    assert conversa["persona_character"] == "morena"
 
-    alterada = client.patch(f"/api/personas/{persona['id']}", json={"avatar_character": "ruiva"})
-    assert alterada.status_code == 200
-    assert alterada.json()["avatar_character"] == "ruiva"
-    assert alterada.json()["composed_prompt"] == persona["composed_prompt"]
-    assert client.get(f"/api/conversations/{conversa['id']}").json()["persona_character"] == "ruiva"
-
-    invalida = client.patch(f"/api/personas/{persona['id']}", json={"avatar_character": "desconhecida"})
-    assert invalida.status_code == 422
-    assert client.patch(f"/api/personas/{persona['id']}", json={"avatar_character": None}).json()["avatar_character"] is None
+    removida = client.patch(f"/api/personas/{persona['id']}", json={"avatar_character": None})
+    assert removida.status_code == 200
+    assert removida.json()["avatar_character"] is None
     assert client.get(f"/api/conversations/{conversa['id']}").json()["persona_character"] is None
+
+    alterada = client.patch(f"/api/personas/{persona['id']}", json={"avatar_character": "morena"})
+    assert alterada.status_code == 200
+    assert alterada.json()["avatar_character"] == "morena"
+    assert alterada.json()["composed_prompt"] == persona["composed_prompt"]
+    assert client.get(f"/api/conversations/{conversa['id']}").json()["persona_character"] == "morena"
+
+    invalida = client.patch(f"/api/personas/{persona['id']}", json={"avatar_character": "ruiva"})
+    assert invalida.status_code == 422
+
+
+def test_bootstrap_atualiza_visual_antigo_sem_mudar_outras_preferencias(db):
+    persona = db.get(Persona, 1)
+    persona.avatar_character = "loira"
+    persona.description = "Descrição personalizada"
+    db.commit()
+
+    bootstrap(db)
+    db.refresh(persona)
+    assert persona.avatar_character == "morena"
+    assert persona.description == "Descrição personalizada"
+
+    persona.avatar_character = None
+    db.commit()
+    bootstrap(db)
+    db.refresh(persona)
+    assert persona.avatar_character is None
 
 
 # ------------------------------------------------- a regra global chega ao LLM

@@ -39,7 +39,7 @@ describe('visual da persona na conversa', () => {
   it('mantém o stream textual e o palco em sua própria área', () => {
     const buffer = new StreamBuffer()
     const html = renderToStaticMarkup(<StreamingMessage buffer={buffer}/>)
-    const stage = renderToStaticMarkup(<CharacterStage conversationId={1} name="Nina" character="ruiva" emoji="💗" buffer={buffer} streaming={false} pendingUserMessage={null} error={null} replay={null}/>)
+    const stage = renderToStaticMarkup(<CharacterStage conversationId={1} name="Nina" character="morena" emoji="💗" buffer={buffer} streaming={false} pendingUserMessage={null} error={null} replay={null}/>)
     expect(html).not.toContain('28_escutando_atenta')
     expect(html).toContain('pensando')
     expect(stage).toContain('28_escutando_atenta')
@@ -49,7 +49,7 @@ describe('visual da persona na conversa', () => {
 
   it('reabre a conversa exibindo a reação da última resposta', () => {
     const stage = renderToStaticMarkup(<CharacterStage
-      conversationId={1} name="Nina" character="ruiva" emoji="💗" buffer={new StreamBuffer()}
+      conversationId={1} name="Nina" character="morena" emoji="💗" buffer={new StreamBuffer()}
       streaming={false} pendingUserMessage={null} error={null} replay={null}
       lastAssistantMessage={{ ...base, content: 'Parabéns! Você conseguiu.' }}
     />)
@@ -58,8 +58,8 @@ describe('visual da persona na conversa', () => {
   })
 
   it('fornece texto alternativo quando é uma prévia de galeria', () => {
-    const html = renderToStaticMarkup(<PersonaAvatar character="ruiva" emoji="💗" imageAlt="Prévia da personagem Ruiva"/>)
-    expect(html).toContain('alt="Prévia da personagem Ruiva"')
+    const html = renderToStaticMarkup(<PersonaAvatar character="morena" emoji="💗" imageAlt="Prévia da personagem Morena"/>)
+    expect(html).toContain('alt="Prévia da personagem Morena"')
     expect(html).not.toContain('aria-hidden="true"')
   })
 

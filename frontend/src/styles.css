@@ -221,7 +221,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 }
 .brand { display: flex; align-items: center; gap: var(--s-3); padding: 0 var(--s-2) var(--s-2); font-size: 18px; letter-spacing: -.02em; }
 .brand-mark {
-  width: 50px; height: 50px; flex: none;
+  width: 75px; height: 75px; flex: none;
   display: grid; place-items: center;
 }
 .brand-mark img { display: block; width: 100%; height: 100%; object-fit: contain; }
@@ -272,7 +272,7 @@ label { display: grid; gap: var(--s-1); font-size: 12px; font-weight: 650; color
 .empty-state h1 { margin: var(--s-4) 0 var(--s-2); font-size: 32px; letter-spacing: -.04em; }
 .empty-state p { margin: 0 auto; max-width: 460px; color: var(--text-2); line-height: 1.6; }
 .empty-orb {
-  margin: auto; width: 120px; height: 120px;
+  margin: auto; width: 240px; height: 240px;
   display: grid; place-items: center;
 }
 .empty-orb img { display: block; width: 100%; height: 100%; object-fit: contain; }

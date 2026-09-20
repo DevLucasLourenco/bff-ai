@@ -69,8 +69,8 @@ export function PersonaEditor({ persona, isDefault, onSave, onSetDefault }: {
   onSetDefault: () => void
 }) {
   const [promptAberto, setPromptAberto] = useState(false)
-  const [character, setCharacter] = useState<AvatarCharacter | null>(persona.avatar_character)
-  useEffect(() => { setCharacter(persona.avatar_character) }, [persona.id, persona.avatar_character])
+  const [character, setCharacter] = useState<AvatarCharacter | null>(persona.avatar_character ? 'morena' : null)
+  useEffect(() => { setCharacter(persona.avatar_character ? 'morena' : null) }, [persona.id, persona.avatar_character])
 
   const salvar = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()

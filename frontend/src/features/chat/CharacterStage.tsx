@@ -20,7 +20,7 @@ const PHASE_LABEL: Record<Phase, string> = {
 const MIN_POSE_TIME_MS = 950
 
 function completedReaction(message?: Message): Reaction {
-  if (message?.status === 'failed') return 'ops_erro_leve'
+  if (message?.status === 'failed') return 'pedindo_desculpas'
   return message?.content ? classifyReaction(message.content) : 'escutando_atenta'
 }
 
@@ -154,7 +154,7 @@ export function CharacterStage({ conversationId, name, character, emoji, buffer,
     if (error) {
       clearIdleTimer()
       setPhase('error')
-      showReaction('ops_erro_leve', true)
+      showReaction('pedindo_desculpas', true)
     } else if (phase === 'error') {
       setPhase('idle')
       showReaction('escutando_atenta', true)

@@ -1,5 +1,7 @@
 # Plano: reações visuais da personagem no chat
 
+> Plano histórico da primeira versão. O catálogo ativo é a pasta `frontend/src/assets/bff_reactions/morena/`; os antigos personagens não são carregados pelo aplicativo.
+
 Corresponde 1:1 a [spec-chat-reactions.md](spec-chat-reactions.md). Depende da seleção visual de [plan-persona-visual.md](plan-persona-visual.md).
 
 | Critério da spec | Implementação | Verificação |

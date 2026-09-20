@@ -102,7 +102,7 @@ export function ChatView({ conversation, streaming, buffer, pendingUserMessage, 
     setReplay(previous => ({
       conversationId: conversation.id,
       sequence: (previous?.sequence ?? 0) + 1,
-      reaction: message.status === 'failed' ? 'ops_erro_leve' : classifyReaction(message.content),
+      reaction: message.status === 'failed' ? 'pedindo_desculpas' : classifyReaction(message.content),
     }))
   }, [conversation?.id])
 

@@ -30,10 +30,17 @@ def bootstrap(db: Session) -> None:
                 description="Melhor amiga, leve e acolhedora.",
                 greeting="Oii 💗 Como você tá? Me conta o que tá passando pela sua cabeça hoje.",
                 avatar_emoji="⭐",
-                avatar_character="loira",
+                avatar_character="morena",
                 **FULANINHA,
             )
         )
+
+    # Personagens antigos não têm imagens no catálogo ativo. Preserva a escolha
+    # de exibir reações, apontando personas existentes para a nova Morena.
+    db.query(Persona).filter(
+        Persona.avatar_character.is_not(None),
+        Persona.avatar_character != "morena",
+    ).update({Persona.avatar_character: "morena"}, synchronize_session=False)
 
     if db.query(ProviderConfig).count() == 0:
         ollama = ProviderConfig(
