@@ -36,7 +36,8 @@ describe('visual da persona na conversa', () => {
     expect(html).not.toContain('28_escutando_atenta')
     expect(html).toContain('pensando')
     expect(stage).toContain('28_escutando_atenta')
-    expect(stage).toContain('Reações ao vivo')
+    expect(stage).toContain('aria-label="Reações de Nina"')
+    expect(stage).toContain('class="sr-only" role="status"')
   })
 
   it('reabre a conversa exibindo a reação da última resposta', () => {

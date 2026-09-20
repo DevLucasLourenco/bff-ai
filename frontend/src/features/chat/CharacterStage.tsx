@@ -168,7 +168,6 @@ export function CharacterStage({ conversationId, name, character, emoji, buffer,
   }, [clearPoseTimer, clearWaitingTimers, clearIdleTimer])
 
   return <aside className={`character-stage phase-${phase}`} aria-label={`Reações de ${name}`}>
-    <div className="character-stage-kicker"><span aria-hidden="true" className="character-stage-signal"/> Reações ao vivo</div>
     <div className="character-stage-visual" aria-hidden="true">
       <div className="character-stage-halo"/>
       <div className="character-stage-ground"/>
@@ -176,10 +175,6 @@ export function CharacterStage({ conversationId, name, character, emoji, buffer,
         <PersonaAvatar key={`${character}-${reaction}`} character={character} emoji={emoji} reaction={reaction} className="character-stage-portrait"/>
       </div>
     </div>
-    <div className="character-stage-caption">
-      <strong>{name}</strong>
-      <span role="status">{PHASE_LABEL[phase]}</span>
-      <small>{REACTION_LABELS[reaction]}</small>
-    </div>
+    <span className="sr-only" role="status">{name}: {PHASE_LABEL[phase]}. {REACTION_LABELS[reaction]}.</span>
   </aside>
 }
