@@ -153,8 +153,13 @@ bff-ai/
 
 ## Fashion Module
 
-Em **Configurações → Fashion**, é possível cadastrar peças manualmente, com foto
-opcional, buscar no guarda-roupa e arquivar itens. As rotas ficam sob
+O guarda-roupa é usado pelo chat: a pessoa pode enviar uma foto, colar uma URL
+direta de imagem ou pedir para guardar a peça de uma página de produto. O servidor
+captura a foto, e o chat apresenta uma proposta editável antes de salvar. Páginas
+com dados estruturados, metadados sociais ou galeria são reconhecidas; há consultas
+ao catálogo público para links VTEX e à API de itens do Mercado Livre quando a
+página não entrega a imagem. Lojas que bloqueiam ambos os caminhos ainda exigem
+que a pessoa cole ou anexe a foto junto do link. As rotas ficam sob
 `/api/fashion/`; o contrato e as próximas etapas estão em
 [docs/SPEC_FASHION_MODULE.md](docs/SPEC_FASHION_MODULE.md) e
 [docs/PLANO_FASHION_MODULE.md](docs/PLANO_FASHION_MODULE.md).

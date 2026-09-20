@@ -150,7 +150,7 @@ P = pequeno, M = médio, G = grande. São portes relativos, não estimativas de 
 
 **Objetivo.** Permitir que imagens, produtos e referências salvas da internet façam parte da coleção Fashion, preservando sua origem e distinguindo itens possuídos, desejados e inspirações.
 
-**Estado atual.** Foto anexada, URL direta e página com imagem principal identificável entram pelo chat. O backend captura a imagem, preserva a origem e envia a cópia WebP ao modelo; o resultado aparece em card editável e só é gravado após confirmação. A guia e o formulário Fashion saíram da interface. Extração sem metadados, busca de produtos e extensão permanecem como expansões posteriores.
+**Estado atual.** Foto anexada, URL direta e página com imagem principal identificável entram pelo chat. O backend decodifica páginas compactadas, tenta dados estruturados, metadados e galerias, e usa APIs públicas de VTEX ou Mercado Livre como fallback quando aplicável. A imagem é copiada em WebP com a origem preservada e enviada ao modelo; o resultado aparece em card editável e só é gravado após confirmação. A guia e o formulário Fashion saíram da interface. Busca de produtos e extensão permanecem como expansões posteriores. Lojas que bloqueiam página e API exigem foto fornecida pela usuária junto do link.
 
 **Como.** Entregar em fases, sempre com revisão e gesto explícito da usuária:
 

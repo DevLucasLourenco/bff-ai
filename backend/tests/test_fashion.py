@@ -4,7 +4,11 @@ from pathlib import Path
 import shutil
 import io
 import json
+import gzip
+import zlib
 
+import brotli
+import pytest
 from PIL import Image
 
 from app.fashion.external_collection import ExternalImageError, RemoteImage, fetch_remote_image, fetch_fashion_link, normalize_source_url
@@ -150,6 +154,109 @@ def test_product_page_extracts_primary_image_without_browsing_other_urls(monkeyp
     assert captured.source_url == "https://shop.example.com/blazer"
     assert captured.image.canonical_url == "https://shop.example.com/images/blazer.jpg"
     assert Client.calls == ["https://shop.example.com/blazer", "https://shop.example.com/images/blazer.jpg"]
+
+
+@pytest.mark.parametrize("encoding,encode", [
+    ("gzip", gzip.compress),
+    ("deflate", zlib.compress),
+    ("br", brotli.compress),
+])
+def test_page_decoding_honors_content_encoding_and_expanded_size(encoding, encode):
+    from app.fashion.external_collection import _decode_content
+
+    html = b"<html>" + b"<p>produto</p>" * 200 + b"</html>"
+    assert _decode_content(encode(html), encoding, len(html)) == html
+    with pytest.raises(ExternalImageError, match="limite"):
+        _decode_content(encode(html), encoding, len(html) - 1)
+
+
+def test_page_decoding_accepts_raw_deflate_and_rejects_truncated_gzip():
+    from app.fashion.external_collection import _decode_content
+
+    html = b"<html><title>Produto</title></html>"
+    compressor = zlib.compressobj(wbits=-zlib.MAX_WBITS)
+    raw_deflate = compressor.compress(html) + compressor.flush()
+    assert _decode_content(raw_deflate, "deflate", len(html)) == html
+    with pytest.raises(ExternalImageError, match="incompleto"):
+        _decode_content(gzip.compress(html)[:-4], "gzip", len(html))
+
+
+def test_pinned_product_page_decodes_gzip_before_extracting_image(monkeypatch):
+    import app.fashion.external_collection as external
+
+    monkeypatch.setattr(external.socket, "getaddrinfo", lambda *_args, **_kwargs: [(2, 1, 6, "", ("8.8.8.8", 0))])
+    html = b'<script type="application/ld+json">{"@type":"Product","image":"https://images.example.com/shirt.jpg"}</script>'
+    buffer = io.BytesIO()
+    Image.new("RGB", (240, 240), "blue").save(buffer, format="JPEG")
+
+    class Response:
+        status = 200
+        def __init__(self, body, headers): self.body, self.headers = io.BytesIO(body), headers
+        def getheaders(self): return self.headers.items()
+        def read(self, size): return self.body.read(size)
+
+    class Connection:
+        def __init__(self, host, *_args): self.host = host
+        def request(self, _method, _target, *, headers):
+            assert "gzip" in headers["Accept-Encoding"]
+        def getresponse(self):
+            if self.host == "shop.example.com":
+                return Response(gzip.compress(html), {"Content-Type": "text/html", "Content-Encoding": "gzip"})
+            return Response(buffer.getvalue(), {"Content-Type": "image/jpeg"})
+        def close(self): pass
+
+    monkeypatch.setattr(external, "_PinnedHTTPSConnection", Connection)
+    captured = fetch_fashion_link("https://shop.example.com/shirt")
+    assert captured.image.canonical_url == "https://images.example.com/shirt.jpg"
+    assert captured.image.content == buffer.getvalue()
+
+
+def test_product_group_variant_image_and_social_image_metadata():
+    from app.fashion.external_collection import _ProductImageParser
+
+    parser = _ProductImageParser()
+    parser.feed('''<meta property="og:image:url" content="/social.jpg">
+      <script type="application/ld+json">{"@graph":[{"@type":"ProductGroup","hasVariant":[{"@type":"Product","image":"/variant.jpg"}]}]}</script>''')
+    assert parser.product_image_urls == ["/variant.jpg"]
+    assert parser.image_urls == ["/social.jpg"]
+
+
+def test_vtex_public_catalog_recovers_image_when_page_has_no_metadata(monkeypatch):
+    import app.fashion.external_collection as external
+
+    monkeypatch.setattr(external.socket, "getaddrinfo", lambda *_args, **_kwargs: [(2, 1, 6, "", ("8.8.8.8", 0))])
+    buffer = io.BytesIO()
+    Image.new("RGB", (240, 240), "blue").save(buffer, format="JPEG")
+    product = [{"linkText": "team-tech", "productName": "Camiseta Team Tech", "items": [
+        {"itemId": "111", "images": [{"imageUrl": "https://cdn.example.com/red.jpg"}]},
+        {"itemId": "222", "images": [{"imageUrl": "https://cdn.example.com/blue.jpg"}]},
+    ]}]
+
+    class Response:
+        def __init__(self, body, mime): self.status_code, self.headers, self.body = 200, {"content-type": mime}, body
+        def __enter__(self): return self
+        def __exit__(self, *_args): return False
+        def iter_bytes(self): return iter([self.body])
+
+    class Client:
+        calls = []
+        def __init__(self, **_kwargs): pass
+        def __enter__(self): return self
+        def __exit__(self, *_args): return False
+        def stream(self, _method, url, **_kwargs):
+            self.calls.append(url)
+            if "/api/catalog_system/pub/products/search/" in url:
+                return Response(json.dumps(product).encode(), "application/json")
+            if url == "https://cdn.example.com/blue.jpg":
+                return Response(buffer.getvalue(), "image/jpeg")
+            if url == "https://cdn.example.com/red.jpg":
+                raise AssertionError("A variante selecionada deve vir primeiro")
+            return Response(b"<html><title>Sem metadados</title></html>", "text/html")
+
+    captured = fetch_fashion_link("https://shop.example.com/team-tech/p?skuId=222", client_factory=Client)
+    assert captured.title == "Camiseta Team Tech"
+    assert captured.image.canonical_url == "https://cdn.example.com/blue.jpg"
+    assert any("/api/catalog_system/pub/products/search/team-tech/p" in call for call in Client.calls)
 
 
 def test_mercadolivre_verification_uses_official_item_images_when_accessible(monkeypatch):

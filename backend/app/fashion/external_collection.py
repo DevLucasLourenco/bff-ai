@@ -10,11 +10,13 @@ import re
 import socket
 import ssl
 import time
+import zlib
 from dataclasses import dataclass
 from html.parser import HTMLParser
-from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlunsplit
 
 import httpx
+import brotli
 from PIL import Image, UnidentifiedImageError
 
 from app.fashion.media import MAX_PIXELS, MAX_UPLOAD_BYTES
@@ -30,6 +32,7 @@ TRACKING_PARAMETERS = {"fbclid", "gclid", "sid", "ref", "reco_id", "reco_client"
 REQUEST_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
     "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+    "Accept-Encoding": "gzip, deflate, br",
 }
 
 
@@ -124,6 +127,59 @@ class _PinnedHTTPSConnection(http.client.HTTPSConnection):
             raise
 
 
+def _decode_zlib(content: bytes, max_bytes: int, wbits: int) -> bytes:
+    decoder = zlib.decompressobj(wbits)
+    expanded = decoder.decompress(content, max_bytes + 1)
+    if len(expanded) > max_bytes:
+        raise ExternalImageError("O conteúdo do link excede o limite permitido.")
+    expanded += decoder.flush(max_bytes - len(expanded) + 1)
+    if len(expanded) > max_bytes:
+        raise ExternalImageError("O conteúdo do link excede o limite permitido.")
+    if not decoder.eof:
+        raise ExternalImageError("O site devolveu conteúdo compactado incompleto.")
+    return expanded
+
+
+def _decode_content(content: bytes, encoding: str, max_bytes: int) -> bytes:
+    """Aplica Content-Encoding em ordem inversa, limitando também os bytes expandidos."""
+    codings = [part.strip().lower() for part in encoding.split(",") if part.strip()]
+    for coding in reversed(codings):
+        if coding == "identity":
+            continue
+        if coding in {"gzip", "x-gzip", "deflate"}:
+            wbits = 16 + zlib.MAX_WBITS if coding in {"gzip", "x-gzip"} else zlib.MAX_WBITS
+            try:
+                expanded = _decode_zlib(content, max_bytes, wbits)
+            except zlib.error as exc:
+                if coding != "deflate":
+                    raise ExternalImageError("O site devolveu conteúdo compactado inválido.") from exc
+                # Algumas lojas enviam deflate sem o envelope zlib (RFC 9110).
+                try:
+                    expanded = _decode_zlib(content, max_bytes, -zlib.MAX_WBITS)
+                except zlib.error as raw_exc:
+                    raise ExternalImageError("O site devolveu conteúdo compactado inválido.") from raw_exc
+            content = expanded
+        elif coding == "br":
+            try:
+                decoder = brotli.Decompressor()
+                parts: list[bytes] = []
+                total = 0
+                for offset in range(0, len(content), 1024):
+                    part = decoder.process(content[offset:offset + 1024])
+                    total += len(part)
+                    if total > max_bytes:
+                        raise ExternalImageError("O conteúdo do link excede o limite permitido.")
+                    parts.append(part)
+                if not decoder.is_finished():
+                    raise ExternalImageError("O site devolveu conteúdo compactado incompleto.")
+            except brotli.error as exc:
+                raise ExternalImageError("O site devolveu conteúdo compactado inválido.") from exc
+            content = b"".join(parts)
+        else:
+            raise ExternalImageError("O site usou uma compactação de resposta não suportada.")
+    return content
+
+
 def _request_pinned(url: str, ip: str, accept: str, max_bytes: int) -> tuple[int, dict[str, str], bytes]:
     parsed = urlsplit(url)
     port = parsed.port or (443 if parsed.scheme == "https" else 80)
@@ -146,7 +202,8 @@ def _request_pinned(url: str, ip: str, accept: str, max_bytes: int) -> tuple[int
             if total > max_bytes:
                 raise ExternalImageError("O conteúdo do link excede o limite permitido.")
             chunks.append(chunk)
-        return response.status, headers, b"".join(chunks)
+        content = _decode_content(b"".join(chunks), headers.get("content-encoding", ""), max_bytes)
+        return response.status, headers, content
     except (OSError, http.client.HTTPException, ssl.SSLError) as exc:
         raise ExternalImageError("Não foi possível baixar o conteúdo do link.") from exc
     finally:
@@ -231,11 +288,11 @@ class _ProductImageParser(HTMLParser):
             self._json_ld_parts = []
         if tag == "meta":
             key = (values.get("property") or values.get("name") or values.get("itemprop") or "").lower()
-            if key in {"og:image", "og:image:secure_url", "twitter:image", "image"} and values.get("content"):
+            if key in {"og:image", "og:image:url", "og:image:secure_url", "twitter:image", "twitter:image:src", "image"} and values.get("content"):
                 self.image_urls.append(values["content"])
             if key in {"og:title", "twitter:title"} and values.get("content"):
                 self.title = values["content"][:180]
-        if tag == "link" and values.get("rel", "").lower() == "image_src" and values.get("href"):
+        if tag == "link" and (values.get("rel", "").lower() == "image_src" or values.get("itemprop", "").lower() == "image") and values.get("href"):
             self.image_urls.append(values["href"])
         if tag in {"img", "source"}:
             context = " ".join(values.get(key, "") for key in ("alt", "class", "id", "data-testid")).lower()
@@ -257,20 +314,7 @@ class _ProductImageParser(HTMLParser):
             self._json_ld = False
             try:
                 document = json.loads("".join(self._json_ld_parts))
-                entries = document if isinstance(document, list) else [document]
-                expanded = []
-                for entry in entries:
-                    if isinstance(entry, dict):
-                        graph = entry.get("@graph")
-                        expanded.extend(graph if isinstance(graph, list) else [entry])
-                entries = expanded
-                for entry in entries:
-                    if not isinstance(entry, dict):
-                        continue
-                    kinds = entry.get("@type", [])
-                    kinds = [kinds] if isinstance(kinds, str) else kinds
-                    if not isinstance(kinds, list) or not any(isinstance(kind, str) and kind.lower().endswith("product") for kind in kinds):
-                        continue
+                for entry in _product_entries(document):
                     image = entry.get("image")
                     if isinstance(image, str):
                         self.product_image_urls.append(image)
@@ -294,6 +338,26 @@ class _ProductImageParser(HTMLParser):
             self.title = data.strip()[:180] or None
         if self._json_ld:
             self._json_ld_parts.append(data)
+
+
+def _product_entries(value: object, depth: int = 0):
+    """Encontra Product e ProductGroup também em @graph e hasVariant."""
+    if depth > 5:
+        return
+    if isinstance(value, list):
+        for child in value:
+            yield from _product_entries(child, depth + 1)
+    elif isinstance(value, dict):
+        kinds = value.get("@type", [])
+        kinds = [kinds] if isinstance(kinds, str) else kinds
+        if isinstance(kinds, list) and any(
+            isinstance(kind, str) and kind.lower().rsplit("/", 1)[-1] in {"product", "productgroup"}
+            for kind in kinds
+        ):
+            yield value
+        for key in ("@graph", "mainEntity", "hasVariant"):
+            if key in value:
+                yield from _product_entries(value[key], depth + 1)
 
 
 def _valid_image(content: bytes) -> bool:
@@ -356,6 +420,51 @@ def _capture_mercadolivre_api(source_url: str, *, client_factory=None) -> Captur
     return None
 
 
+def _capture_vtex_api(source_url: str, *, client_factory=None) -> CapturedLink | None:
+    """Consulta o catálogo público VTEX quando a página /slug/p não expõe foto."""
+    parsed = urlsplit(source_url)
+    match = re.fullmatch(r"/([^/]+)/p/?", parsed.path)
+    if not match:
+        return None
+    slug = match.group(1)
+    api_url = urlunsplit((parsed.scheme, parsed.netloc, f"/api/catalog_system/pub/products/search/{slug}/p", "", ""))
+    try:
+        final_url, _, content, content_type = _fetch_public_resource(
+            api_url, max_bytes=METADATA_MAX_BYTES, accept="application/json", client_factory=client_factory,
+        )
+        if content_type != "application/json":
+            return None
+        products = json.loads(content)
+        if not isinstance(products, list) or not products:
+            return None
+        product = next((item for item in products if isinstance(item, dict) and item.get("linkText") == unquote(slug)), None)
+        if product is None:
+            return None
+        items = product.get("items")
+        if not isinstance(items, list):
+            return None
+        selected_sku = next((value for key, value in parse_qsl(parsed.query) if key.lower() in {"skuid", "idsku", "sku"}), None)
+        if selected_sku:
+            items = sorted(items, key=lambda item: str(item.get("itemId")) != selected_sku if isinstance(item, dict) else True)
+        urls: list[str] = []
+        for item in items:
+            images = item.get("images") if isinstance(item, dict) else None
+            if not isinstance(images, list):
+                continue
+            urls.extend(image["imageUrl"] for image in images if isinstance(image, dict) and isinstance(image.get("imageUrl"), str))
+        image = _capture_candidate_images(urls, base_url=final_url, client_factory=client_factory)
+        if image:
+            title = product.get("productName")
+            return CapturedLink(image, source_url, parsed.hostname or "", title[:180] if isinstance(title, str) else None)
+    except (ExternalImageError, ValueError, TypeError):
+        pass
+    return None
+
+
+def _capture_store_api(source_url: str, *, client_factory=None) -> CapturedLink | None:
+    return _capture_mercadolivre_api(source_url, client_factory=client_factory) or _capture_vtex_api(source_url, client_factory=client_factory)
+
+
 def _is_access_challenge(final_url: str, content: bytes) -> bool:
     path = urlsplit(final_url).path.lower()
     head = content[:2048].lower()
@@ -373,14 +482,14 @@ def fetch_fashion_link(url: str, *, client_factory=None) -> CapturedLink:
             accept="text/html,application/xhtml+xml,image/webp,image/png,image/jpeg", client_factory=client_factory,
         )
     except ExternalImageError:
-        fallback = _capture_mercadolivre_api(source_url, client_factory=client_factory)
+        fallback = _capture_store_api(source_url, client_factory=client_factory)
         if fallback:
             return fallback
         raise
     if (content_type and content_type.startswith("image/")) or (content_type is None and _looks_like_supported_image(content)):
         return CapturedLink(RemoteImage(final_url, domain, content, content_type), final_url, domain, None)
     if _is_access_challenge(final_url, content):
-        fallback = _capture_mercadolivre_api(source_url, client_factory=client_factory)
+        fallback = _capture_store_api(source_url, client_factory=client_factory)
         if fallback:
             return fallback
         raise ExternalImageError("A loja exigiu verificação de acesso e não liberou a foto do produto. Mantenha o link na mensagem e cole a imagem da peça com Ctrl+V, ou anexe uma captura de tela.")
@@ -396,7 +505,7 @@ def fetch_fashion_link(url: str, *, client_factory=None) -> CapturedLink:
     )
     if image:
         return CapturedLink(image, final_url, domain, parser.title)
-    fallback = _capture_mercadolivre_api(source_url, client_factory=client_factory)
+    fallback = _capture_store_api(source_url, client_factory=client_factory)
     if fallback:
         return fallback
     raise ExternalImageError("Não encontrei uma foto principal nesse link. Envie a URL direta da imagem ou anexe uma foto.")
